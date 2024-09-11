@@ -2,16 +2,19 @@
 
 namespace App\Providers;
 
-use Illuminate\Support\Facades\Vite;
+use App\Models\Task;
 use App\Models\User;
+use App\Models\Comment;
+use App\Models\Project;
 use Carbon\CarbonImmutable;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\Relation;
-use Illuminate\Foundation\Console\CliDumper;
-use Illuminate\Foundation\Http\HtmlDumper;
 use Illuminate\Support\Facades\Date;
-use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Vite;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Foundation\Http\HtmlDumper;
+use Illuminate\Foundation\Console\CliDumper;
+use Illuminate\Database\Eloquent\Relations\Relation;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -37,5 +40,12 @@ class AppServiceProvider extends ServiceProvider
             'user' => User::class,
         ]);
         Date::use(CarbonImmutable::class);
+
+        Relation::morphMap([
+            'user' => User::class,
+            'task' => Task::class,
+            'comment' => Comment::class,
+            'project' => Project::class,
+        ]);
     }
 }

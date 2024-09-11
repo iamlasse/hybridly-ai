@@ -4,11 +4,12 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
+use Hybridly\View\Factory;
+use Hybridly\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
-use Inertia\Inertia;
 use Inertia\Response;
 
 class AuthenticatedSessionController extends Controller
@@ -16,9 +17,9 @@ class AuthenticatedSessionController extends Controller
     /**
      * Display the login view.
      */
-    public function create(): Response
+    public function create(): Factory
     {
-        return Inertia::render('Auth/Login', [
+        return hybridly('Auth.Login', [
             'canResetPassword' => Route::has('password.request'),
             'status' => session('status'),
         ]);
