@@ -18,8 +18,8 @@ const {show, close, unmount} = useDialog();
 
 <template>
     <Dialog v-model:open="isOpen" @update:open="close">
-        <DialogContent @interact-outside=" close " @escape-key-down=" close " @pointer-down-outside=" close ">
-            <DialogHeader>
+        <DialogContent @after-leave=" unmount " @interact-outside=" close " @escape-key-down=" close " @pointer-down-outside=" close ">
+            <DialogHeader class="p-0">
                 <DialogTitle>
                     <slot name="title"/>
                 </DialogTitle>
