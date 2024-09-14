@@ -12,11 +12,17 @@ import
     } from '@/components/ui/sheet'
     const { show, close, unmount } = useDialog()
 
+const handleAfterLeave = () =>
+{
+    console.log( 'after leave' )
+    unmount()
+}
 </script>
 
 <template>
-    <Sheet v-model:open="show">
-        <SheetContent class="p-0">
+    <Sheet v-model:open="show" @update:open="close">
+        <SheetContent class="p-0" @interact-outside=" close " @escape-key-down=" close " @pointer-down-outside=" close "
+            @after-leave=" handleAfterLeave ">
             <!-- <SheetHeader>
                 <SheetTitle>
                     <slot name="title" />

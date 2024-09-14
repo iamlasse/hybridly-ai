@@ -57,10 +57,10 @@ function logout ()
                     </div>
                 </div>
             </div> -->
-            <!-- <Link :href=" route( 'logout' ) " method="post" as="button"
+            <router-link :href=" route( 'logout' ) " method="post" as="button"
                 class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 mt-3 px-4 rounded" preserve-scroll>
             Logout
-            </Link> -->
+            </router-link>
         </aside>
 
         <!-- Main Content -->

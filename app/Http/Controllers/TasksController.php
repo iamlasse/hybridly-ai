@@ -52,11 +52,13 @@ class TasksController extends Controller
 
     public function show(Task $task)
     {
-        return view('Tasks.Show', [
-            'task' => $task->load(['comments.user']),
-            'comments' => fn() => $task->comments
-        ])
-            ->base('projects.show', $task->project->getKey())
+        return view('Tasks.Show', )->properties(
+            [
+                'task' => $task->load(['comments.user']),
+                'comments' => fn() => $task->comments
+            ]
+        )
+            ->base('projects.show', $task->project, force: true, keep: false)
         ;
     }
 

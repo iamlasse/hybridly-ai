@@ -1,3 +1,7 @@
 {
-	"extends": "./.hybridly/tsconfig.json"
+
+	"extends": "./.hybridly/tsconfig.json",
+    "compilerOptions": {
+        "moduleResolution": "node"
+    }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Data\ProjectData;
 use App\Http\Requests\CreateProjectRequest;
 use App\Http\Requests\UpdateProjectRequest;
 use App\Models\Project;
@@ -12,7 +13,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
-use Inertia\Inertia;
 
 class ProjectController extends Controller
 {
@@ -34,6 +34,7 @@ class ProjectController extends Controller
         $project = $request->user()->projects()->create([
             ...$validated,
             'status' => $request->status ?? 'active',
+            'slug' => Str::slug($request->name),
         ]);
 
         if ($request->has('stages')) {
@@ -52,18 +53,21 @@ class ProjectController extends Controller
 
     public function show(Project $project)
     {
-        $project->load([
-            'collaborators',
+        $data = ProjectData::from($project->loadMissing([
+            'collaborators' => function ($query) {
+                $query->whereNot('collaborator_id', auth()->id());
+            },
             'stages' => function ($query) {
                 $query->orderBy('order');
             },
             'tasks' => function ($query) {
-                $query->orderBy('status')->orderBy('order');
-            }, 'tasks.comments']);
+                $query->withCount('comments')->orderBy('status')->orderBy('order');
+            },
+        ]));
 
         return hybridly('Projects.Show', [
-            'project' => $project,
-            'users' => User::all()->except(auth()->user()->id),
+            'project' => $data,
+            'users' => User::get()->except(auth()->id()),
         ]);
     }
 
@@ -99,12 +103,7 @@ class ProjectController extends Controller
 
         $project->collaborators()->attach($request->user_id);
 
-        return hybridly(
-            properties: [
-                'project' => $project->loadMissing(['collaborators', 'stages', 'tasks']),
-                'collaborators' => $project->collaborators()->get(),
-            ]
-        );
+        return back()->with('success', 'Collaborator added successfully.');
     }
 
     public function addStage(Request $request, Project $project)

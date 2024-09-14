@@ -51,7 +51,7 @@
                 class="block w-full bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-2 px-4 rounded">+ Add
                 Column</button>
             <form v-else @submit.prevent=" addColumn " class="bg-white p-4 rounded shadow">
-                <input v-model=" form.fields.name " type="text" placeholder="Enter column name"
+                <input v-model=" addColumnForm.fields.name " type="text" placeholder="Enter column name"
                     class="w-full mb-2 p-2 border rounded" ref="newColumnInput" @keydown.esc=" cancelAddColumn ">
                 <button type="submit"
                     class="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded">
@@ -63,31 +63,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, defineProps, defineEmits, watchEffect, nextTick, onMounted, onUnmounted } from 'vue';
 import draggable from 'vuedraggable';
-
-
-interface Task
-{
-    id: number;
-    name: string;
-    description: string;
-    status: string;
-    order: number;
-}
-
-interface Column
-{
-    id: string;
-    name: string;
-    tasks: Task[];
-    newTaskName: string;
-    showAddTask: boolean;
-    order: number;
-}
-
+import type { Column } from '@/types';
 const props = defineProps<{
-    columns: Column[];
+    columns: Object[];
     projectId: number;
 }>();
 
@@ -101,7 +80,7 @@ const newTaskInput = ref<HTMLInputElement | null>( null );
 
 watchEffect( () =>
 {
-    localColumns.value = JSON.parse( JSON.stringify( props.columns ) ).map( ( column: any, index: any ) => ( {
+    localColumns.value = JSON.parse( JSON.stringify( props.columns ) ).map( ( column: Column, index: any ) => ( {
         ...column,
         newTaskName: '',
         showAddTask: false,
@@ -171,7 +150,7 @@ function updateColumnsOrder ()
     } );
 }
 
-const form = useForm( {
+const addColumnForm = useForm( {
     method: 'post',
     url: route( 'projects.stages.store', { project: props.projectId } ),
     fields: {
@@ -184,7 +163,7 @@ async function addColumn ()
 {
     try
     {
-        form.submit();
+        addColumnForm.submit();
     } catch ( error )
     {
         console.error( 'Error adding column:', error );
@@ -197,7 +176,7 @@ function cancelAddColumn ()
     newColumnName.value = '';
 }
 
-function handleKeydown ( event: KeyboardEvent )
+function handleKeyUp( event: KeyboardEvent )
 {
     if ( event.key === 'Escape' )
     {
@@ -212,31 +191,28 @@ function handleKeydown ( event: KeyboardEvent )
     }
 }
 
-const selectedTask = ref( null );
+const selectedTask = ref<App.Data.TaskData | null>( null );
 
-function selectTask ( { task }: {
-    task: Task;
-} )
-{
-    if ( task.id === selectedTask.value?.id )
-    {
-        selectedTask.value = null;
-        return;
-    }
+function selectTask(task: App.Data.TaskData ) {
+    // if ( task.id === selectedTask.value?.id )
+    // {
+    //     selectedTask.value = null;
+    //     return;
+    // }
 
-    console.log( 'select task', task.id );
+    console.log('select task', task?.id);
 
     selectedTask.value = task;
     // //   emit('selectTask', task);
-    router.get( route( 'tasks.show', { task: task.id } ), {}, {
+    router.get(route('tasks.show', { task: task.id }), {
         preserveScroll: true,
-        onSuccess: () =>
-        {
+        hooks: {
+            success: () => {
+                console.log('success');
+            }
         }
-    } );
-}
-
-function showAddTaskCard ( column: Column )
+    });
+}function showAddTaskCard ( column: Column )
 {
     localColumns.value.forEach( col =>
     {
@@ -292,6 +268,25 @@ function handleOutsideClick ( event: MouseEvent )
     }
 }
 
+function handleOutsideClickTaskCard ( event: MouseEvent )
+{
+    const target = event.target as HTMLElement;
+    if ( !target.closest( '.task-card' ) )
+    {
+        selectedTask.value = null;
+    }
+}
+// Handle click outside task card, set selected task to null
+onMounted( () =>
+{
+    document.addEventListener( 'click', handleOutsideClickTaskCard );
+} );
+
+onUnmounted( () =>
+{
+    document.removeEventListener( 'click', handleOutsideClickTaskCard );
+} );
+
 function deleteStage ( column: Column )
 {
     console.log( 'Delete stage clicked:', column.name );
@@ -319,12 +314,12 @@ function deleteStage ( column: Column )
 
 onMounted( () =>
 {
-    document.addEventListener( 'keydown', handleKeydown );
+    document.addEventListener( 'keyup', handleKeyUp );
 } );
 
 onUnmounted( () =>
 {
-    document.removeEventListener( 'keydown', handleKeydown );
+    document.removeEventListener( 'keyup', handleKeyUp );
 } );
 
 watchEffect( () =>

@@ -13,7 +13,7 @@ defineProps < {
 
 const form = useForm( {
     method: 'POST',
-    url: route( 'auth.login'),
+    url: route( 'login'),
     fields: {
         email: 'test@example.com',
         password: 'password',

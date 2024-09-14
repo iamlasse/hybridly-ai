@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import { useForm } from '@inertiajs/vue3';
 import Modal from './Modal.vue';
 import InputLabel from './InputLabel.vue';
 import TextInput from './TextInput.vue';
@@ -11,9 +10,13 @@ const show = defineModel({ default: false, required: true });
 
 const emit = defineEmits(['close']);
 
-const form = useForm({
-    name: '',
-    description: '',
+const form = useForm( {
+    method: 'POST',
+    url: route( 'projects.store' ),
+    fields: {
+        name: '',
+        description: '',
+    }
 });
 
 const closeModal = () => {
@@ -21,11 +24,12 @@ const closeModal = () => {
     emit('close');
 };
 
-const createProject = () => {
-    form.post(route('projects.store'), {
+const createProject = async () => {
+    await form.submitWith( {
         preserveScroll: true,
-        onSuccess: () => closeModal(),
-    });
+    } );
+
+    closeModal();
 };
 </script>
 
@@ -40,7 +44,7 @@ const createProject = () => {
                         id="name"
                         type="text"
                         class="mt-1 block w-full"
-                        v-model="form.name"
+                        v-model="form.fields.name"
                         required
                         autofocus
                     />
@@ -53,7 +57,7 @@ const createProject = () => {
                         id="description"
                         type="text"
                         class="mt-1 block w-full"
-                        v-model="form.description"
+                        v-model="form.fields.description"
                     />
                     <InputError :message="form.errors.description" class="mt-2" />
                 </div>

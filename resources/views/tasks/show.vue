@@ -1,13 +1,14 @@
 <script setup lang="ts">
-import Dialog from '@/components/sdialog.vue';
+import Dialog from '@/components/rdialog.vue';
+import type { Comment, Task } from '@/types';
 import
     {
     Button
 } from '@/components/ui/button'
-const props = defineProps( {
-    task: Object,
-    comments: Array
-} );
+const props = defineProps<{
+    task: Task;
+    comments: Comment[]
+}>();
 
 const commentForm = useForm( {
     method: 'POST',
@@ -15,30 +16,34 @@ const commentForm = useForm( {
     fields: {
         body: ''
     },
+    hooks: {
+        success: ( payload: any, context: any ) =>
+        {
+            console.log( 'comment added', payload, context );
+        }
+    }
 } );
 
 const onSubmit = () =>
 {
-    commentForm.submit();
+    commentForm.submitWith( {
+        preserveState: false
+    });
 };
 </script>
 
 <template>
     <Dialog>
-        <div class="flex flex-col h-full justify-between overflow-y-scroll p-6">
-            <div class="content flex-1 ">
-                <header>
-                    <h3 class="font-semibold">{{ task.title }}</h3>
-                </header>
-            </div>
+        <template #title>
+            <h3 class="font-semibold">{{ task.title }}</h3>
+        </template>
+        <div class="grid grid-rows-[1fr_auto] h-[calc(100%-48px)] overflow-y-scroll p-6">
 
             <div class="comments pb-4">
                 <CComment v-for="     comment in comments     " :key=" comment.id " :comment=" comment " />
             </div>
-            <div class="bg-slate-50 border-t -ml-6 -mr-6 px-6 -mb-6 py-2">
-
-
-                <div class="  ">
+            <div class="bg-slate-100 border-t -mr-6 -ml-6  sticky bottom-0">
+                <div class="   ">
                     <form @submit.prevent=" onSubmit ">
                         <div class="flex flex-col gap-2 p-2">
                             <TextInput class="border-0 w-full" type="text" name="body"
@@ -49,10 +54,6 @@ const onSubmit = () =>
                             </div>
                         </div>
                     </form>
-                    <div>
-
-
-                    </div>
                 </div>
             </div>
             <!-- <div class="mt-auto"></div> -->

@@ -2,7 +2,7 @@
 
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 
-Route::middleware('guest')->as('auth.')->group(function () {
+Route::middleware('guest')->as('')->group(function () {
     // Route::get('register', [RegisteredUserController::class, 'create'])
                 // ->name('register');
 
@@ -24,4 +24,10 @@ Route::middleware('guest')->as('auth.')->group(function () {
 
     // Route::post('reset-password', [NewPasswordController::class, 'store'])
     //             ->name('password.store');
+});
+
+
+Route::middleware('auth')->group(function () {
+    Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
+
 });

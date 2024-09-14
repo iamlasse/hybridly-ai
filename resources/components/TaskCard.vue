@@ -1,10 +1,9 @@
 <script lang="ts" setup>
 import Vue from 'vue'
-const $props = defineProps( {
-    task: Object,
-    index: Number,
-    selected: Boolean
-} )
+const $props = defineProps<{
+    task: App.Data.TaskData,
+    selected: Boolean,
+}>()
 
 const $emit = defineEmits( [ 'selectTask' ] )
 
@@ -29,16 +28,15 @@ function getStatusClass ( status: string ): string
         'border-green-800': selected,
     } ">
         <div class="task-card h-full border-l-6 bg-white text-gray-800 p-3 mb-2 rounded shadow cursor-move"
-            @click.stop="$emit( 'selectTask', { task, index } )">
+            @click.stop="$emit( 'selectTask', task )">
             <h4 class="font-medium">{{ task.title }}</h4>
             <div class="flex justify-between items-center">
                 <p class="text-sm text-gray-600 truncate">{{ task.description }}</p>
-                {{ index }}
             </div>
             <div class="flex flex-col">
                 <div class="mt-2 flex gap-1 items-center">
                     <v-icon name="oi-comment-discussion" class="text-gray-600"></v-icon>
-                    <p class="text-xs text-gray-600">{{ task.comments.length }}</p>
+                    <p class="text-xs text-gray-600">{{ task.comments_count }}</p>
                 </div>
             </div>
         </div>

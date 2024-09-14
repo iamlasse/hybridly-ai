@@ -36,9 +36,7 @@ class AppServiceProvider extends ServiceProvider
         Validator::excludeUnvalidatedArrayKeys();
         Model::shouldBeStrict();
         Model::unguard();
-        Relation::enforceMorphMap([
-            'user' => User::class,
-        ]);
+
         Date::use(CarbonImmutable::class);
 
         Relation::morphMap([

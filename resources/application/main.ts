@@ -1,10 +1,10 @@
 import { initializeHybridly } from 'virtual:hybridly/config'
 import { createHead, useHead } from '@unhead/vue'
 import { OhVueIcon, addIcons } from "oh-vue-icons";
-import { FaTasks, OiCommentDiscussion } from "oh-vue-icons/icons";
+import { FaTasks, OiCommentDiscussion, BiXLg } from "oh-vue-icons/icons";
 import './tailwind.css'
 
-addIcons( FaTasks, OiCommentDiscussion );
+addIcons( FaTasks, OiCommentDiscussion, BiXLg );
 initializeHybridly( {
     devTools: true,
     viewTransition: false,

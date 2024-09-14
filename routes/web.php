@@ -80,7 +80,7 @@ Route::post('/task/{task:id}/comment', function (Task $task) {
         'body' => request('body'),
     ]);
 
-    return redirect()->back();
+    return back();
 })->name('task.comments.store');
 
 Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
