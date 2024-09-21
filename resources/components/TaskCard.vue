@@ -24,21 +24,19 @@ function getStatusClass ( status: string ): string
 </script>
 
 <template>
-    <div class="border rounded" :class=" {
-        'border-green-800': selected,
-    } ">
-        <div class="task-card h-full border-l-6 bg-white text-gray-800 p-3 mb-2 rounded shadow cursor-move"
-            @click.stop="$emit( 'selectTask', task )">
-            <h4 class="font-medium">{{ task.title }}</h4>
-            <div class="flex justify-between items-center">
-                <p class="text-sm text-gray-600 truncate">{{ task.description }}</p>
-            </div>
-            <div class="flex flex-col">
-                <div class="mt-2 flex gap-1 items-center">
-                    <v-icon name="oi-comment-discussion" class="text-gray-600"></v-icon>
-                    <p class="text-xs text-gray-600">{{ task.comments_count }}</p>
-                </div>
+    <div class="h-full border rounded" :class="{ 'border-green-800': selected }">
+    <div class="task-card h-full flex flex-col border-l-6 bg-white text-gray-800 p-3 rounded shadow cursor-move"
+        @click.stop="$emit('selectTask', task)">
+        <h4 class="font-medium mb-2">{{ task.title }}</h4>
+        <div class="flex-grow">
+            <p class="text-sm text-gray-600 line-clamp-2">{{ task.description }}</p>
+        </div>
+        <div class="mt-2 flex justify-between items-center">
+            <div class="flex gap-1 items-center">
+                <v-icon name="oi-comment-discussion" class="text-gray-600"></v-icon>
+                <p class="text-xs text-gray-600">{{ task.comments_count }}</p>
             </div>
         </div>
     </div>
+</div>
 </template>
