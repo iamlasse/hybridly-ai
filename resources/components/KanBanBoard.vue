@@ -1,5 +1,5 @@
 <template>
-    <div class="kanban-board h-full max-h-[85vh] px-4 flex overflow-x-auto text-slate-500"
+    <div class="kanban-board h-full max-h-[90vh] px-4 flex overflow-x-auto text-slate-500"
         @click=" handleOutsideClick ">
         <draggable v-model=" computedColumns " :animation=" 200 " ghost-class="ghost-column" handle=".column-handle"
             @change=" onColumnDragChange " item-key="id" class="flex">
@@ -34,7 +34,8 @@
                         <div v-if=" column.showAddTask " class="add-task-card bg-white shadow-sm p-1" @click.stop>
                             <TextInput v-model=" column.newTaskName " type="text" placeholder="Write a task name"
                                 class="w-full mb-2 border-0 active:border-0 ring-0 active:ring-0 focus:ring-0 shadow-none "
-                                @keyup.enter="addTask( column )" @keyup.esc="cancelAddTask( column )" ref="newTaskInput" />
+                                @keyup.enter="addTask( column )" @keyup.esc="cancelAddTask( column )"
+                                ref="newTaskInput" />
                             <div class="flex justify-end">
                                 <button @click="cancelAddTask( column )" class="text-gray-500 mr-2">Cancel</button>
                                 <PrimaryButton @click="addTask( column )" class="bg-blue-500 hover:bg-blue-600">
@@ -180,7 +181,7 @@ function cancelAddColumn ()
     newColumnName.value = '';
 }
 
-function handleKeyUp( event: KeyboardEvent )
+function handleKeyUp ( event: KeyboardEvent )
 {
     if ( event.key === 'Escape' )
     {
@@ -197,26 +198,28 @@ function handleKeyUp( event: KeyboardEvent )
 
 const selectedTask = ref<App.Data.TaskData | null>( null );
 
-function selectTask(task: App.Data.TaskData ) {
+function selectTask ( task: App.Data.TaskData )
+{
     // if ( task.id === selectedTask.value?.id )
     // {
     //     selectedTask.value = null;
     //     return;
     // }
 
-    console.log('select task', task?.id);
+    console.log( 'select task', task?.id );
 
     selectedTask.value = task;
     // //   emit('selectTask', task);
-    router.get(route('tasks.show', { task: task.id }), {
+    router.get( route( 'tasks.show', { task: task.id } ), {
         preserveScroll: true,
         hooks: {
-            success: () => {
-                console.log('success');
+            success: () =>
+            {
+                console.log( 'success' );
             }
         }
-    });
-}function showAddTaskCard ( column: Column )
+    } );
+} function showAddTaskCard ( column: Column )
 {
     localColumns.value.forEach( col =>
     {
