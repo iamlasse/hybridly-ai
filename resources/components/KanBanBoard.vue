@@ -245,9 +245,23 @@ function cancelAddTask ( column: Column )
     column.newTaskName = '';
 }
 
+const user = ref(null);
+const maxTasksPerStage = ref(5);
+
+onMounted(async () => {
+    const response = await fetch('/api/user');
+    user.value = await response.json();
+    maxTasksPerStage.value = user.value.is_premium ? Infinity : 5;
+});
+
 function addTask ( column: Column )
 {
     if ( !column.newTaskName.trim() ) return;
+
+    if (column.tasks.length >= maxTasksPerStage.value) {
+        alert('Your account only allows you to add up to 5 tasks per stage. Please upgrade to add more.');
+        return;
+    }
 
     emit( 'addTask', {
         name: column.newTaskName,

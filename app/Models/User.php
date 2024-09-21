@@ -16,6 +16,12 @@ class User extends Authenticatable
 {
     use HasFactory, Notifiable;
 
+    protected $casts = [
+        'email_verified_at' => 'datetime',
+        'password' => 'hashed',
+        'is_premium' => 'boolean',
+    ];
+
     /**
      * The attributes that are mass assignable.
      *

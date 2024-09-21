@@ -18,20 +18,35 @@ class ProjectController extends Controller
 {
     public function index()
     {
-        $projects = Project::select('id', 'name', 'description', 'status')->get();
+        $user = auth()->user();
+        $projects = $user->projects()->select('id', 'name', 'description', 'status')->get();
+        $collaboratingProjects = $user->collaborating_projects()->select('id', 'name', 'description', 'status')->get();
 
-        return hybridly('Projects.Index', ['projects' => $projects]);
+        $canCreateMoreProjects = $user->is_premium || $projects->count() < 3;
+
+        return hybridly('Projects.Index', [
+            'projects' => $projects,
+            'collaboratingProjects' => $collaboratingProjects,
+            'canCreateMoreProjects' => $canCreateMoreProjects,
+        ]);
     }
 
     public function store(CreateProjectRequest $request): RedirectResponse
     {
+        $user = $request->user();
+        $projectCount = $user->projects()->count();
+
+        if (!$user->is_premium && $projectCount >= 3) {
+            return back()->with('error', 'Your account only allows you to add up to 3 boards. Please upgrade to add more.');
+        }
+
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
             'status' => 'nullable|string|in:active,completed,on_hold',
         ]);
 
-        $project = $request->user()->projects()->create([
+        $project = $user->projects()->create([
             ...$validated,
             'status' => $request->status ?? 'active',
             'slug' => Str::slug($request->name),

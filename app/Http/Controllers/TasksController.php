@@ -31,6 +31,13 @@ class TasksController extends Controller
      */
     public function store(Request $request, Project $project)
     {
+        $user = $request->user();
+        $taskCount = $project->tasks()->where('status', $request->input('status'))->count();
+
+        if (!$user->is_premium && $taskCount >= 5) {
+            return back()->with('error', 'Your account only allows you to add up to 5 tasks per stage. Please upgrade to add more.');
+        }
+
         $request->validate([
             'name' => 'required|string|max:255',
             'status' => 'required|string|max:255',
