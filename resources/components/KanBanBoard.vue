@@ -4,7 +4,7 @@
         <draggable v-model=" computedColumns " :animation=" 200 " ghost-class="ghost-column" handle=".column-handle"
             @change=" onColumnDragChange " item-key="id" class="flex">
             <template #item=" { element: column } ">
-                <div class="kanban-column flex-shrink-0 w-64 bg-gray-100 p-4 mr-4 rounded  overflow-y-scroll">
+                <div class="kanban-column flex-shrink-0 w-64 bg-gray-100 p-4 mr-4 rounded flex flex-col">
                     <div class="flex justify-between items-center mb-4 column-handle cursor-move">
                         <h3 class="text-lg text-gray-800 font-semibold">{{ column.name }}</h3>
                         <span class="group">
@@ -19,30 +19,34 @@
                         </span>
                     </div>
 
-                    <draggable v-model=" column.tasks " :group=" { name: 'tasks', pull: true, put: true } "
-                        ghost-class="ghost" @change=" ( e ) => onDragChange( e, column ) "
-                        class=" flex flex-col gap-2 h-full" item-key="id">
-                        <template #item=" { element } ">
-                            <TaskCard :task=" element " :selected=" element.id === selectedTask?.id "
-                                @select-task=" selectTask " />
-                        </template>
-                    </draggable>
-
-                    <div v-if=" column.showAddTask " class="add-task-card bg-white shadow-sm p-1" @click.stop>
-                        <TextInput v-model=" column.newTaskName " type="text" placeholder="Write a task name"
-                            class="w-full mb-2 border-0 active:border-0 ring-0 active:ring-0 focus:ring-0 shadow-none "
-                            @keyup.enter="addTask( column )" @keyup.esc="cancelAddTask( column )" ref="newTaskInput" />
-                        <div class="flex justify-end">
-                            <button @click="cancelAddTask( column )" class="text-gray-500 mr-2">Cancel</button>
-                            <PrimaryButton @click="addTask( column )" class="bg-blue-500 hover:bg-blue-600">
-                                Add
-                            </PrimaryButton>
-                        </div>
+                    <div class="flex-grow overflow-y-auto">
+                        <draggable v-model=" column.tasks " :group=" { name: 'tasks', pull: true, put: true } "
+                            ghost-class="ghost" @change=" ( e ) => onDragChange( e, column ) "
+                            class="flex flex-col gap-2" item-key="id">
+                            <template #item=" { element } ">
+                                <TaskCard :task=" element " :selected=" element.id === selectedTask?.id "
+                                    @select-task=" selectTask " />
+                            </template>
+                        </draggable>
                     </div>
-                    <button v-else @click.stop="showAddTaskCard( column )"
-                        class="w-full text-center hover:bg-slate-200 rounded-md p-2 text-gray-500 hover:text-gray-700 text-sm mt-2">
-                        + Add task
-                    </button>
+
+                    <div class="mt-4">
+                        <div v-if=" column.showAddTask " class="add-task-card bg-white shadow-sm p-1" @click.stop>
+                            <TextInput v-model=" column.newTaskName " type="text" placeholder="Write a task name"
+                                class="w-full mb-2 border-0 active:border-0 ring-0 active:ring-0 focus:ring-0 shadow-none "
+                                @keyup.enter="addTask( column )" @keyup.esc="cancelAddTask( column )" ref="newTaskInput" />
+                            <div class="flex justify-end">
+                                <button @click="cancelAddTask( column )" class="text-gray-500 mr-2">Cancel</button>
+                                <PrimaryButton @click="addTask( column )" class="bg-blue-500 hover:bg-blue-600">
+                                    Add
+                                </PrimaryButton>
+                            </div>
+                        </div>
+                        <button v-else @click.stop="showAddTaskCard( column )"
+                            class="w-full text-center hover:bg-slate-200 rounded-md p-2 text-gray-500 hover:text-gray-700 text-sm">
+                            + Add task
+                        </button>
+                    </div>
                 </div>
             </template>
         </draggable>
