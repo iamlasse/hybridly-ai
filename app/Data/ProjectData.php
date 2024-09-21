@@ -5,12 +5,11 @@ namespace App\Data;
 use Hybridly\Support\Data\DataResource;
 use Illuminate\Database\Eloquent\Collection;
 use Spatie\LaravelData\Attributes\DataCollectionOf;
-use Spatie\LaravelData\Attributes\LoadRelation;
 
 class ProjectData extends DataResource
 {
     public static array $authorizations = [
-        'addCollaborators'
+        'addCollaborators',
     ];
 
     public function __construct(
@@ -24,7 +23,5 @@ class ProjectData extends DataResource
         public readonly ?Collection $collaborators,
         #[DataCollectionOf(TaskData::class)]
         public readonly ?Collection $tasks,
-    ) {
-
-    }
+    ) {}
 }

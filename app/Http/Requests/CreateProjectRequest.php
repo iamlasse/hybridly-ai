@@ -10,10 +10,10 @@ class CreateProjectRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "name" => ["required", "string"],
-            "description" => ["sometimes", "string"],
-            "status" => ["nullable", "string"],
-            "collaborators" => ["array"],
+            'name' => ['required', 'string'],
+            'description' => ['sometimes', 'string'],
+            'status' => ['nullable', 'string'],
+            'collaborators' => ['array'],
         ];
     }
 

@@ -10,6 +10,7 @@ class Comment extends Model
     protected $fillable = ['body', 'commentable_id', 'commentable_type'];
 
     protected $appends = ['readable_created_time'];
+
     public function commentable()
     {
         return $this->morphTo();
@@ -23,7 +24,7 @@ class Comment extends Model
     public function readableCreatedTime(): Attribute
     {
         return Attribute::make(
-            get: fn() => $this->created_at->diffForHumans()
+            get: fn () => $this->created_at->diffForHumans()
         );
     }
 }

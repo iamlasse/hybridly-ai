@@ -2,12 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use Inertia\Inertia;
-use App\Http\Controllers\Controller;
-
 class DashboardController extends Controller
 {
-
     public function index()
     {
         $projects = auth()->user()->projects()->with([
@@ -19,8 +15,7 @@ class DashboardController extends Controller
 
         return hybridly('dashboard', [
             'projects' => $projects,
-            'collaborating_projects' => $collaboratingProjects
+            'collaborating_projects' => $collaboratingProjects,
         ]);
     }
-
 }

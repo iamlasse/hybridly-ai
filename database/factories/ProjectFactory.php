@@ -28,7 +28,7 @@ class ProjectFactory extends Factory
         ];
     }
 
-     public function configure(): static
+    public function configure(): static
     {
         return $this->afterCreating(function (Project $project) {
             $project->stages()->createMany([

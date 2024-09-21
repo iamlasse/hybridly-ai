@@ -2,20 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Models\Task;
 use App\Models\Project;
-use App\Models\Stage;
+use App\Models\Task;
 use Illuminate\Http\RedirectResponse;
-use Inertia\Response;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Inertia\Inertia;
 
 use function Hybridly\view;
 
 class TasksController extends Controller
 {
-
     /**
      * Display a listing of the resource.
      *
@@ -27,10 +23,10 @@ class TasksController extends Controller
 
         return inertia('Tasks/Index', compact('tasks'));
     }
+
     /**
      * Store a newly created task in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request, Project $project)
@@ -52,14 +48,11 @@ class TasksController extends Controller
 
     public function show(Task $task)
     {
-        return view('Tasks.Show', )->properties(
-            [
-                'task' => $task->load(['comments.user']),
-                'comments' => fn() => $task->comments
-            ]
-        )
-            ->base('projects.show', $task->project, force: true, keep: false)
-        ;
+        return view('Tasks.Show', [
+            'task' => $task->load(['comments.user']),
+            'comments' => fn () => $task->comments,
+        ])
+            ->base('projects.show', $task->project, force: true, keep: false);
     }
 
     public function update(Request $request, Project $project, Task $task): RedirectResponse

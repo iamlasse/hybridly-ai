@@ -22,7 +22,7 @@ class DatabaseSeeder extends Seeder
             'email' => 'test@example.com',
         ]);
 
-       $project = Project::factory()->create();
+        $project = Project::factory()->create();
 
         Task::factory(10)->hasComments(3)->create([
             'project_id' => $project->id,

@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Task;
 use App\Models\Comment;
+use App\Models\Task;
 use Illuminate\Http\Request;
 
 class CommentController extends Controller
@@ -23,7 +23,7 @@ class CommentController extends Controller
             ? Task::findOrFail($commentableId)
             : Project::findOrFail($commentableId);
 
-        $comment = new Comment();
+        $comment = new Comment;
         $comment->body = $request->input('body');
         $comment->user_id = auth()->id();
 

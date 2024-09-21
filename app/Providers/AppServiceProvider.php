@@ -2,19 +2,18 @@
 
 namespace App\Providers;
 
-use App\Models\Task;
-use App\Models\User;
 use App\Models\Comment;
 use App\Models\Project;
+use App\Models\Task;
+use App\Models\User;
 use Carbon\CarbonImmutable;
-use Illuminate\Support\Facades\Date;
-use Illuminate\Support\Facades\Vite;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\ServiceProvider;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Foundation\Http\HtmlDumper;
-use Illuminate\Foundation\Console\CliDumper;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Foundation\Console\CliDumper;
+use Illuminate\Foundation\Http\HtmlDumper;
+use Illuminate\Support\Facades\Date;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {

@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\CommentController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProjectController;
@@ -17,12 +16,11 @@ Route::get('/', function () {
         'canRegister' => Route::has('register'),
         'laravelVersion' => Application::VERSION,
         'phpVersion' => phpversion(),
-        'projects' => Project::get()
-     ]);
+        'projects' => Project::get(),
+    ]);
 });
 
 Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
-
 
 // New routes for tasks and projects
 Route::resource('projects', ProjectController::class)->only(['index', 'store', 'update', 'show'])
@@ -49,7 +47,6 @@ Route::put('/projects/{project}/status', [ProjectController::class, 'updateStatu
 Route::put('/projects/{project}/tasks', [TasksController::class, 'store'])
     ->middleware(['auth:sanctum'])
     ->name('projects.tasks.store');
-
 
 Route::put('/projects/{project}/tasks', [TasksController::class, 'store'])->middleware(['auth:sanctum'])->name('projects.tasks.store');
 
@@ -86,4 +83,4 @@ Route::post('/task/{task:id}/comment', function (Task $task) {
 Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
 Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-require __DIR__ . '/auth.php';
+require __DIR__.'/auth.php';

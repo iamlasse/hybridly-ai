@@ -138,7 +138,7 @@ class ProjectController extends Controller
     public function updateStagesOrder(Request $request, Project $project)
     {
         collect($request->columns)->each(function ($column) use ($project) {
-            $project->stages()->where('slug', $column['id'])->update(['order' => $column['order']+1]);
+            $project->stages()->where('slug', $column['id'])->update(['order' => $column['order'] + 1]);
         });
 
         return back()->with('success', 'Stages order updated successfully.');
