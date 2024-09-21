@@ -108,6 +108,12 @@ class ProjectController extends Controller
 
     public function addCollaborator(Request $request, Project $project)
     {
+        $user = $request->user();
+
+        if (!$user->is_premium) {
+            return back()->with('error', 'Only premium users can add collaborators. Please upgrade your account.');
+        }
+
         $userIds = $project->collaborators()->pluck('collaborator_id')->toArray();
 
         $request->validate([

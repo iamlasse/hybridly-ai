@@ -1,31 +1,29 @@
 <script setup lang="ts">
 import { ref, computed, App } from 'vue';
-import { can } from 'hybridly'
+import { can } from 'hybridly';
 
 import
-    {
-        Select,
-        SelectContent,
-        SelectGroup,
-        SelectItem,
-        SelectLabel,
-        SelectTrigger,
-        SelectValue,
-    } from '@/components/ui/select'
+{
+    Select,
+    SelectContent,
+    SelectGroup,
+    SelectItem,
+    SelectLabel,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select';
 
 // import { Task } from '@/types';
 
 const props = defineProps<{
     project: App.Data.ProjectData;
-    users: App.Data.UserData[]
-}>()
+    users: App.Data.UserData[];
+}>();
 
-const canAddCollaborators = can( props.project, 'addCollaborators' )
-
-console.log( canAddCollaborators );
+const canAddCollaborators = can( props.project, 'addCollaborators' );
 
 
-const localProject = computed( () =>   props.project ) ;
+const localProject = computed( () => props.project );
 
 // New state for selected task and panel visibility
 const selectedTask = ref<Task | null>( null );
@@ -36,7 +34,7 @@ function addNewTask ( columnId: string )
     const form = newTaskForms.value.find( f => f.columnId === columnId );
     if ( form.name.trim() === '' ) return;
 
-    console.log( form , columnId);
+    console.log( form, columnId );
 
     // router.put( route( 'projects.tasks.store', { project: localProject.value.id } ), {
     //     data: {
@@ -65,10 +63,10 @@ const projectForm = useForm( {
 const showModal = ref( false );
 const form = useForm( {
     method: 'post',
-    url: route ( 'projects.tasks.store', { project: localProject.value.id } ),
-        fields: {
-            name: ''
-        }
+    url: route( 'projects.tasks.store', { project: localProject.value.id } ),
+    fields: {
+        name: ''
+    }
 } );
 
 const editTitle = ref( false );
@@ -81,7 +79,7 @@ const showCollaboratorModal = ref( false );
 
 function saveProject ()
 {
-    projectForm.submit()
+    projectForm.submit();
 }
 
 function openModal ()
@@ -164,7 +162,7 @@ const collaboratorForm = useForm( {
         {
             console.log( 'collaborator added', payload, context );
             // router.reload( { only: [ 'users' ] } )
-            closeCollaboratorModal()
+            closeCollaboratorModal();
         },
         fail: ( context: any ) =>
         {
@@ -282,15 +280,6 @@ function deleteStage ( { stageId, tasksToReassign }: {
                 tasksToReassign,
                 newStatus: pendingStage.slug,
             },
-            onSuccess: () =>
-            {
-                // Optionally, add some user feedback here
-            },
-            onError: ( errors ) =>
-            {
-                // Revert local state changes if the server update fails
-                localProject.value = JSON.parse( JSON.stringify( props.project ) );
-            },
         }
     );
 }
@@ -304,8 +293,9 @@ function deleteStage ( { stageId, tasksToReassign }: {
         <header class="flex items-center justify-end">
             <TeamMembers :collaborators=" localProject.collaborators ">
                 <template #form>
-                    <PrimaryButton v-if="canAddCollaborators" @click=" openCollaboratorModal "
-                        class="flex justify-center items-center !rounded-full w-8 h-8 p-1 -m-3 hover:bg-pink-600 transition duration-300">
+                    <PrimaryButton
+                        class="disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-slate-500 disabled:hover:bg-slate-500 flex justify-center items-center !rounded-full w-8 h-8 p-1 -m-3 hover:bg-pink-600 transition duration-300"
+                        :disabled=" !canAddCollaborators " @click=" openCollaboratorModal ">
                         +
                     </PrimaryButton>
                 </template>
@@ -345,13 +335,14 @@ function deleteStage ( { stageId, tasksToReassign }: {
         <form @submit.prevent=" addCollaborator " class="mt-4">
 
             <div class="mb-4 text-slate-500">
-                <Select v-model=" collaboratorForm.fields.user_id " @update:model-value="collaboratorForm.clearErrors()" class="w-full">
+                <Select v-model=" collaboratorForm.fields.user_id " @update:model-value="collaboratorForm.clearErrors()"
+                    class="w-full">
                     <SelectTrigger>
                         <SelectValue placeholder="Select a user" />
                     </SelectTrigger>
                     <SelectContent>
                         <SelectLabel>Users</SelectLabel>
-                        <SelectItem class="" v-for="    user in users    " :key=" user.id "
+                        <SelectItem class="" v-for="            user in users            " :key=" user.id "
                             :value=" user.id?.toString() ">
                             {{ user.name }}
                         </SelectItem>
@@ -360,15 +351,16 @@ function deleteStage ( { stageId, tasksToReassign }: {
             </div>
             <InputError v-if=" collaboratorForm.errors.user_id " :message=" collaboratorForm.errors.user_id "
                 class="mt-1 text-xs text-red-600" />
-            </form>
-            <template #footer>
-                <div class="flex justify-end mt-6">
-                    <PrimaryButton @click="addCollaborator" type="submit" :disabled=" collaboratorForm.processing || !collaboratorForm.fields.user_id "
+        </form>
+        <template #footer>
+            <div class="flex justify-end mt-6">
+                <PrimaryButton @click=" addCollaborator " type="submit"
+                    :disabled=" collaboratorForm.processing || !collaboratorForm.fields.user_id "
                     class="transition disabled:opacity-50 duration-300 ease-in-out transform text-sm px-4 py-2 bg-gradient-to-r from-indigo-400 to-indigo-600 hover:from-indigo-500 hover:to-indigo-700">
                     Add Collaborator
                 </PrimaryButton>
             </div>
         </template>
-        </Modal>
+    </Modal>
 
 </template>

@@ -17,6 +17,6 @@ class ProjectPolicy
 
     public function addCollaborators(User $user, Project $project)
     {
-        return $user->id === $project->user_id;
+        return $user->id === $project->user_id && $user->is_premium;
     }
 }

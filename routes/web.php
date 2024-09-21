@@ -4,6 +4,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\TasksController;
+use App\Http\Controllers\UpgradeController;
 use App\Models\Project;
 use App\Models\Task;
 use Illuminate\Foundation\Application;
@@ -80,7 +81,11 @@ Route::post('/task/{task:id}/comment', function (Task $task) {
     return back();
 })->name('task.comments.store');
 
+Route::get('/upgrade', [UpgradeController::class, 'show'])->name('upgrade.show');
+Route::post('/upgrade', [UpgradeController::class, 'process'])->name('upgrade.process');
+
+
 Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
 Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';

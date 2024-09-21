@@ -16,7 +16,7 @@ class DashboardController extends Controller
         return hybridly('dashboard', [
             'projects' => $projects,
             'collaborating_projects' => $collaboratingProjects,
-            'canCreateMoreProjects' => auth()->user()->is_premium || $projects->count() < 3,
+            'canCreateMoreProjects' => auth()->user()->is_premium || $projects->count() < 3
         ]);
     }
 }
