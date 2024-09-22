@@ -1,6 +1,5 @@
 <template>
-    <div class="kanban-board h-full max-h-[90vh] px-4 flex overflow-x-auto text-slate-500"
-        @click=" handleOutsideClick ">
+    <div class="kanban-board h-full px-4 flex overflow-x-auto text-slate-500" @click=" handleOutsideClick ">
         <draggable v-model=" computedColumns " :animation=" 200 " ghost-class="ghost-column" handle=".column-handle"
             @change=" onColumnDragChange " item-key="id" class="flex">
             <template #item=" { element: column } ">
@@ -245,21 +244,23 @@ function cancelAddTask ( column: Column )
     column.newTaskName = '';
 }
 
-const user = ref(null);
-const maxTasksPerStage = ref(5);
+const user = ref( null );
+const maxTasksPerStage = ref( 5 );
 
-onMounted(async () => {
-    const response = await fetch('/api/user');
+onMounted( async () =>
+{
+    const response = await fetch( '/api/user' );
     user.value = await response.json();
     maxTasksPerStage.value = user.value.is_premium ? Infinity : 5;
-});
+} );
 
 function addTask ( column: Column )
 {
     if ( !column.newTaskName.trim() ) return;
 
-    if (column.tasks.length >= maxTasksPerStage.value) {
-        alert('Your account only allows you to add up to 5 tasks per stage. Please upgrade to add more.');
+    if ( column.tasks.length >= maxTasksPerStage.value )
+    {
+        alert( 'Your account only allows you to add up to 5 tasks per stage. Please upgrade to add more.' );
         return;
     }
 

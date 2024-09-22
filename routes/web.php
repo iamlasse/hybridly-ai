@@ -1,5 +1,8 @@
 <?php
 
+
+
+use App\Http\Controllers\BillingController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProjectController;
@@ -19,6 +22,13 @@ Route::get('/', function () {
         'phpVersion' => phpversion(),
         'projects' => Project::get(),
     ]);
+})->name('home');
+
+
+Route::middleware(['auth:sanctum'])->group(function () {
+
+    Route::get('/billing', [BillingController::class, 'show'])->name('billing.show');
+    Route::put('/billing/cancel-subscription', [BillingController::class, 'cancelSubscription'])->name('billing.cancel-subscription');
 });
 
 Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
@@ -81,9 +91,11 @@ Route::post('/task/{task:id}/comment', function (Task $task) {
     return back();
 })->name('task.comments.store');
 
-Route::get('/upgrade', [UpgradeController::class, 'show'])->name('upgrade.show');
-Route::post('/upgrade', [UpgradeController::class, 'process'])->name('upgrade.process');
-
+Route::middleware(['auth:sanctum'])->as('upgrade.')->group(function () {
+    Route::get('/upgrade/options', [UpgradeController::class, 'show'])->name('show');
+    Route::post('/upgrade/process', [UpgradeController::class, 'process'])->name('process');
+    Route::get('/upgrade/checkout', [UpgradeController::class, 'checkout'])->name('checkout');
+});
 
 Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
 Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');

@@ -1,0 +1,17 @@
+services:
+    openhands:
+        container_name: openhands-app
+        image: ghcr.io/all-hands-ai/openhands:0.9
+        environment:
+            - SANDBOX_RUNTIME_CONTAINER_IMAGE=ghcr.io/all-hands-ai/runtime:0.9-nikolaik
+            - WORKSPACE_BASE=/opt/workspace_base
+            - WORKSPACE_MOUNT_PATH=${WORKSPACE_BASE}
+            - NIKOLAIK_CONTAINER_IMAGE=ghcr.io/all-hands-ai/runtime:0.9-nikolaik
+            - SANDBOX_USER_ID=testuser
+            - LLM_BASE_URL="http://host.docker.internal:11434"
+            - LLM_OLLAMA_BASE_URL="http://host.docker.internal:11434"
+        volumes:
+            - ${WORKSPACE_BASE}:/opt/workspace_base
+            - /var/run/docker.sock:/var/run/docker.sock
+        ports:
+            - 3000:3000

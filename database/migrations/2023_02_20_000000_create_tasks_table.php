@@ -1,4 +1,3 @@
-// database/migrations/2023_02_20_000000_create_tasks_table.php
 <?php
 
 use App\Models\Project;

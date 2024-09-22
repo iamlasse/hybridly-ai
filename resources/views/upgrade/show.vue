@@ -1,85 +1,69 @@
-<script setup lang="ts">
+<script setup>
+import { ref } from 'vue';
 
+const selectedPlan = ref( 'free' );
 
-const stripe = Stripe( '{{ env('STRIPE_KEY') }}' );
-const elements = stripe.elements();
-const cardElement = elements.create( 'card' );
-cardElement.mount( '#card-element' );
-
-const cardHolderName = document.getElementById( 'card-holder-name' );
-const cardButton = document.getElementById( 'card-button' );
-const form = ref( 'payment-form' );
-
-form.addEventListener( 'submit', async ( e ) =>
+const handleNavigate = async ( e ) =>
 {
     e.preventDefault();
-    const { paymentMethod, error } = await stripe.createPaymentMethod( 'card', cardElement, {
-        billing_details: { name: cardHolderName.value }
-    } );
 
-    if ( error )
+    if ( selectedPlan.value === 'free' )
     {
-        // Display error.message to the user
-        console.error( error );
-    } else
-    {
-        // Send paymentMethod.id to your server
-        const token = document.querySelector( 'meta[name="csrf-token"]' )?.getAttribute( 'content' );
-        const response = await fetch( route( 'upgrade.process' ), {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': token
-            },
-            body: JSON.stringify( {
-                payment_method_id: paymentMethod.id,
-            } )
-        } );
-
-        const result = await response.json();
-
-        if ( result.requires_action )
-        {
-            const { error } = await stripe.handleCardAction( result.payment_intent_client_secret );
-            if ( error )
-            {
-                console.error( error );
-            } else
-            {
-                // The card action has been handled
-                // The payment was successful
-            }
-        } else if ( result.success )
-        {
-            // The payment was successful
-            window.location.href = route( 'dashboard' );
-        }
+        // Handle free plan selection
+        return router.get( route( 'dashboard' ) );
     }
-} );
+
+    if ( selectedPlan.value === 'enterprise' )
+    {
+        // Handle enterprise plan selection (e.g., redirect to contact page)
+        return router.get( route( 'contact' ) );
+    }
+
+    if ( selectedPlan.value === 'premium' )
+    {
+        router.get( route( 'upgrade.checkout' ) );
+    }
+};
 </script>
 
 <template>
-    <section>
-        <h2 class="text-2xl font-bold mb-4">Upgrade to Premium</h2>
-        <form ref="payment-form" :action=" route( 'upgrade.process' ) " method="POST" id="payment-form">
-            @csrf
-            <div class="mb-4">
-                <label for="card-holder-name" class="block text-sm font-medium text-gray-700">Card Holder Name</label>
-                <input type="text" id="card-holder-name"
-                    class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm">
+    <section class="max-w-4xl mx-auto mt-10">
+        <h2 class="text-3xl font-bold mb-6 text-gray-800 text-center">Choose Your Plan</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div v-for="                    plan in [ 'free', 'premium', 'enterprise' ]                    " :key=" plan "
+                class="border rounded-lg p-6 flex flex-col items-center"
+                :class=" { 'border-indigo-500': selectedPlan === plan } ">
+                <h3 class="text-xl font-semibold mb-4 capitalize">{{ plan }}</h3>
+                <ul class="mb-6 text-sm">
+                    <li v-if=" plan === 'free' ">• Basic features</li>
+                    <li v-if=" plan === 'premium' ">• All features</li>
+                    <li v-if=" plan === 'premium' ">• Priority support</li>
+                    <li v-if=" plan === 'enterprise' ">• Custom solutions</li>
+                    <li v-if=" plan === 'enterprise' ">• Dedicated support</li>
+                </ul>
+                <PrimaryButton @click="selectedPlan = plan" class="px-4 py-2 rounded-md text-sm font-medium"
+                    :class=" selectedPlan === plan ? 'bg-indigo-600 text-white' : 'bg-gray-200 text-gray-700' ">
+                    Select {{ plan }}
+                </PrimaryButton>
             </div>
-
-            <div class="mb-4">
-                <label for="card-element" class="block text-sm font-medium text-gray-700">Credit or debit card</label>
-                <div id="card-element" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2">
-                    <!-- A Stripe Element will be inserted here. -->
-                </div>
-            </div>
-
-            <button type="submit" id="card-button"
-                class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                Process Payment
-            </button>
-        </form>
+        </div>
+        <div v-if=" selectedPlan === 'free' " class="text-center">
+            <p class="mb-4">You've selected the Free plan. No payment is required.</p>
+            <PrimaryButton @click=" handleNavigate ">
+                Continue with Free Plan
+            </PrimaryButton>
+        </div>
+        <div v-if=" selectedPlan === 'premium' " class="text-center">
+            <p class="mb-4">You've selected the premium plan. You will be sent to the checkout.</p>
+            <PrimaryButton @click=" handleNavigate ">
+                Continue with Premium
+            </PrimaryButton>
+        </div>
+        <div v-if=" selectedPlan === 'enterprise' " class="text-center">
+            <p class="mb-4">For Enterprise solutions, please contact our sales team.</p>
+            <PrimaryButton @click=" handleNavigate ">
+                Contact Sales
+            </PrimaryButton>
+        </div>
     </section>
 </template>

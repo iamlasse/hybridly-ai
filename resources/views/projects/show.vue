@@ -20,6 +20,10 @@ const props = defineProps<{
     users: App.Data.UserData[];
 }>();
 
+const user = useProperty( 'security.user' );
+
+const { is_premium } = user;
+
 const canAddCollaborators = can( props.project, 'addCollaborators' );
 
 
@@ -289,7 +293,17 @@ function deleteStage ( { stageId, tasksToReassign }: {
 
     <div class="hidden">{{ project }}</div>
 
-    <div class="bg-gradient-to-b from-indigo-800 via-pink-500 to-indigo-200 h-full dark:from-gray-800 dark:to-gray-900">
+    <div
+        class="bg-gradient-to-b from-indigo-800 via-pink-500 to-indigo-200 h-full overflow-scroll pb-12 dark:from-gray-800 dark:to-gray-900">
+        <div v-if=" !user.is_premium " class="bg-yellow-50 border border-yellow-200 text-yellow-800 p-4 my-6 mx-4 rounded-lg shadow-sm"
+        role="alert">
+        <p class="text-sm">Want to unlock more features? 
+            <router-link href="/upgrade"
+                class="font-medium text-yellow-700 underline hover:text-yellow-800 transition-colors duration-200">
+                Upgrade to premium
+            </router-link>
+        </p>
+    </div>
         <header class="flex items-center justify-end">
             <TeamMembers :collaborators=" localProject.collaborators ">
                 <template #form>
@@ -342,8 +356,8 @@ function deleteStage ( { stageId, tasksToReassign }: {
                     </SelectTrigger>
                     <SelectContent>
                         <SelectLabel>Users</SelectLabel>
-                        <SelectItem class="" v-for="            user in users            " :key=" user.id "
-                            :value=" user.id?.toString() ">
+                        <SelectItem class="" v-for="                           user in users                           "
+                            :key=" user.id " :value=" user.id?.toString() ">
                             {{ user.name }}
                         </SelectItem>
                     </SelectContent>

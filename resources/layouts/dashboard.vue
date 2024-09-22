@@ -6,6 +6,8 @@ function logout ()
 {
     // router.post( route( 'logout' ) );
 }
+
+const user = useProperty( 'security.user' );
 </script>
 
 <template>
@@ -14,52 +16,79 @@ function logout ()
         <aside class="w-64 p-6 flex flex-col bg-gray-900">
             <!-- User Profile -->
             <!-- <div class="mb-8">
-                <img :src=" $page.props.auth.user.avatar || 'https://ui-avatars.com/api/?name=' + encodeURIComponent( $page.props.auth.user.name ) "
-                    :alt=" $page.props.auth.user.name " class="h-24 w-24 rounded-full mb-4" />
-                <h2 class="text-xl font-bold">{{ $page.props.auth.user.name }}</h2>
-                <p class="text-sm opacity-75">{{ $page.props.auth.user.email }}</p>
+                <img :src=" user.avatar || 'https://ui-avatars.com/api/?name=' + encodeURIComponent( user.name ) "
+                    :alt=" user.name " class="h-24 w-24 rounded-full mb-4" />
+                <h2 class="text-xl font-bold">{{ user.name }}</h2>
+                <p class="text-sm opacity-75">{{ user.email }}</p>
             </div> -->
 
             <!-- Navigation -->
             <nav class="flex-grow">
                 <ul class="space-y-2">
                     <li>
-                        <router-link :href=" route( 'dashboard' ) " class="flex items-center p-2 rounded hover:bg-gray-800">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" viewBox="0 0 20 20"
-                            fill="currentColor">
-                            <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
-                            <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
-                        </svg>
-                        Dashboard
+                        <router-link :href=" route( 'dashboard' ) "
+                            class="flex items-center p-2 rounded hover:bg-gray-800">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" viewBox="0 0 20 20"
+                                fill="currentColor">
+                                <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
+                                <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
+                            </svg>
+                            Dashboard
                         </router-link>
                     </li>
                     <li>
-                        <router-link :href=" route( 'dashboard' ) " class="flex items-center p-2 rounded hover:bg-gray-800">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" viewBox="0 0 20 20"
-                            fill="currentColor">
-                            <path
-                                d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" />
-                        </svg>
-                        Sent
+                        <router-link :href=" route( 'dashboard' ) "
+                            class="flex items-center p-2 rounded hover:bg-gray-800">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" viewBox="0 0 20 20"
+                                fill="currentColor">
+                                <path
+                                    d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" />
+                            </svg>
+                            Sent
+                        </router-link>
+                    </li>
+                    <li>
+                        <router-link :href=" route( 'billing.show' ) "
+                            class="flex items-center p-2 rounded hover:bg-gray-800">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" viewBox="0 0 20 20"
+                                fill="currentColor">
+                                <path fill-rule="evenodd"
+                                    d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4zm6 4a2 2 0 100-4 2 2 0 000 4z"
+                                    clip-rule="evenodd" />
+                            </svg>
+                            Billing
                         </router-link>
                     </li>
                 </ul>
             </nav>
+
+            <!-- User Details -->
+            <div class="mt-auto">
+                <div class="bg-gray-800 rounded-lg p-4">
+                    <img :src=" user.avatar || `https://ui-avatars.com/api/?name=${ encodeURIComponent( user.name ) }` "
+                        :alt=" user.name " class="h-12 w-12 rounded-full mb-2 mx-auto" />
+                    <h3 class="text-lg font-semibold text-center">{{ user.name }}</h3>
+                    <p class="text-sm text-gray-400 text-center">{{ user.email }}</p>
+                    <p class="text-xs text-gray-400 text-center mt-1">
+                        {{ user.is_premium ? 'Premium' : 'Free' }} Plan
+                    </p>
+                </div>
+            </div>
 
             <!-- Project List -->
 
             <!-- <div class="profile-section bg-white shadow-md rounded px-8 py-4 mt-4">
                 <div class="flex items-center justify-between">
                     <div class="flex items-center">
-                        <img :src=" $page.props.auth.user.profile_photo_url " alt="Profile"
+                        <img :src=" user.profile_photo_url " alt="Profile"
                             class="h-10 w-10 rounded-full mr-3">
-                        <span class="text-gray-800">{{ $page.props.auth.user.name }}</span>
+                        <span class="text-gray-800">{{ user.name }}</span>
                     </div>
                 </div>
             </div> -->
             <router-link :href=" route( 'logout' ) " method="post" as="button"
                 class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 mt-3 px-4 rounded" preserve-scroll>
-            Logout
+                Logout
             </router-link>
         </aside>
 

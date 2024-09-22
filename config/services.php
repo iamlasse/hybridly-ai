@@ -34,5 +34,9 @@ return [
             'channel' => env('SLACK_BOT_USER_DEFAULT_CHANNEL'),
         ],
     ],
+    'stripe' => [
+        // 'premium_price_id' =>  'prod_QtDLf9Nl3yTE2M'
+        'premium_price_id' =>  'price_1Q1QudBu5sNug6D6jK8VFZkA'
+    ]
 
 ];
