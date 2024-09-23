@@ -3,20 +3,20 @@ const { defineProps, defineSlots, defineEmits, defineExpose, defineModel, define
 let __VLS_typeProps;
 const props = defineProps();
 const commentForm = useForm({
-    method: 'POST',
-    url: route('task.comments.store', { task: props.task }),
+    method: "POST",
+    url: route("task.comments.store", { task: props.task }),
     fields: {
-        body: ''
+        body: "",
     },
     hooks: {
         success: (payload, context) => {
-            console.log('comment added', payload, context);
-        }
-    }
+            console.log("comment added", payload, context);
+        },
+    },
 });
 const onSubmit = () => {
     commentForm.submitWith({
-        preserveState: false
+        preserveState: false,
     });
 };
 const __VLS_fnComponent = (await import('vue')).defineComponent({});
@@ -46,7 +46,7 @@ function __VLS_template() {
     {
         const { title: __VLS_thisSlot } = __VLS_nonNullable(__VLS_5.slots);
         __VLS_elementAsFunction(__VLS_intrinsicElements.h3, __VLS_intrinsicElements.h3)({ ...{ class: ("font-semibold") }, });
-        (__VLS_ctx.task.name);
+        (__VLS_ctx.task.title);
     }
     __VLS_elementAsFunction(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({ ...{ class: ("grid grid-rows-[1fr_auto] h-[calc(100%-48px)] overflow-y-scroll p-6") }, });
     __VLS_elementAsFunction(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({ ...{ class: ("comments pb-4") }, });
@@ -57,7 +57,7 @@ function __VLS_template() {
         const __VLS_7 = __VLS_asFunctionalComponent(__VLS_6, new __VLS_6({ key: ((comment.id)), comment: ((comment)), }));
         const __VLS_8 = __VLS_7({ key: ((comment.id)), comment: ((comment)), }, ...__VLS_functionalComponentArgsRest(__VLS_7));
     }
-    __VLS_elementAsFunction(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({ ...{ class: ("bg-slate-100 border-t -mr-6 -ml-6  sticky bottom-0") }, });
+    __VLS_elementAsFunction(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({ ...{ class: ("bg-slate-100 border-t -mr-6 -ml-6 sticky bottom-0") }, });
     __VLS_elementAsFunction(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({ ...{ class: ("   ") }, });
     __VLS_elementAsFunction(__VLS_intrinsicElements.form, __VLS_intrinsicElements.form)({ ...{ onSubmit: (__VLS_ctx.onSubmit) }, });
     __VLS_elementAsFunction(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({ ...{ class: ("flex flex-col gap-2 p-2") }, });
@@ -68,8 +68,8 @@ function __VLS_template() {
     const __VLS_14 = __VLS_13({ ...{ class: ("border-0 w-full") }, type: ("text"), name: ("body"), modelValue: ((__VLS_ctx.commentForm.fields.body)), }, ...__VLS_functionalComponentArgsRest(__VLS_13));
     __VLS_elementAsFunction(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({ ...{ class: ("actions flex justify-between items-center") }, });
     __VLS_elementAsFunction(__VLS_intrinsicElements.p, __VLS_intrinsicElements.p)({ ...{ class: ("text-sm") }, });
-    const __VLS_18 = __VLS_resolvedLocalAndGlobalComponents.Button;
-    /** @type { [typeof __VLS_components.Button, typeof __VLS_components.Button, ] } */
+    const __VLS_18 = __VLS_resolvedLocalAndGlobalComponents.PrimaryButton;
+    /** @type { [typeof __VLS_components.PrimaryButton, typeof __VLS_components.primaryButton, typeof __VLS_components.PrimaryButton, typeof __VLS_components.primaryButton, ] } */
     // @ts-ignore
     const __VLS_19 = __VLS_asFunctionalComponent(__VLS_18, new __VLS_18({ size: ("sm"), type: ("submit"), }));
     const __VLS_20 = __VLS_19({ size: ("sm"), type: ("submit"), }, ...__VLS_functionalComponentArgsRest(__VLS_19));

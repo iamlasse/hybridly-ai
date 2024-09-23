@@ -8,6 +8,7 @@ status: string | null;
 user: App.Data.UserData;
 stages: any;
 collaborators: any | null;
+tasks_count: number | null;
 tasks: Array<App.Data.TaskData> | null;
 authorization: { addCollaborators: boolean; }
 };
@@ -33,7 +34,7 @@ id: number;
 name: string;
 email: string;
 is_premium: boolean;
-avatar: string;
+avatar: string | null;
 activeSubscription: any | null;
 email_verified_at: string | null;
 };

@@ -1,18 +1,21 @@
+/// <reference types=".vue-global-types/vue_3.5_false.d.ts" />
 const { defineProps, defineSlots, defineEmits, defineExpose, defineModel, defineOptions, withDefaults, } = await import('vue');
 let __VLS_typeProps;
 const props = defineProps();
+console.log(props);
+const localProjects = computed(() => props.projects);
 const projectClass = (status) => {
     switch (status) {
-        case 'active':
-            return 'bg-green-500';
-        case 'pending':
-            return 'bg-yellow-500';
-        case 'completed':
-            return 'bg-pink-500';
-        case 'on_hold':
-            return 'bg-slate-500';
+        case "active":
+            return "bg-green-500";
+        case "pending":
+            return "bg-yellow-500";
+        case "completed":
+            return "bg-pink-500";
+        case "on_hold":
+            return "bg-slate-500";
         default:
-            return 'bg-blue-500';
+            return "bg-blue-500";
     }
 };
 const __VLS_fnComponent = (await import('vue')).defineComponent({});
@@ -38,13 +41,13 @@ function __VLS_template() {
     __VLS_elementAsFunction(__VLS_intrinsicElements.h1, __VLS_intrinsicElements.h1)({ ...{ class: ("mb-4 text-2xl font-bold text-white dark:text-white") }, });
     var __VLS_0 = {};
     __VLS_elementAsFunction(__VLS_intrinsicElements.ul, __VLS_intrinsicElements.ul)({ ...{ class: ("flex gap-2 flex-wrap") }, });
-    for (const [project, index] of __VLS_getVForSourceType((__VLS_ctx.projects.data))) {
+    for (const [project, index] of __VLS_getVForSourceType((__VLS_ctx.projects))) {
         __VLS_elementAsFunction(__VLS_intrinsicElements.li, __VLS_intrinsicElements.li)({ key: ((index)), ...{ class: ("bg-white block dark:bg-gray-800 rounded-lg shadow-md flex-shrink-0 flex-1 min-w-80 max-w-80 transition-transform duration-300") }, });
         const __VLS_1 = __VLS_resolvedLocalAndGlobalComponents.RouterLink;
         /** @type { [typeof __VLS_components.RouterLink, typeof __VLS_components.routerLink, typeof __VLS_components.RouterLink, typeof __VLS_components.routerLink, ] } */
         // @ts-ignore
-        const __VLS_2 = __VLS_asFunctionalComponent(__VLS_1, new __VLS_1({ href: ((`/projects/${project.id}`)), ...{ class: ("flex flex-col h-full ") }, }));
-        const __VLS_3 = __VLS_2({ href: ((`/projects/${project.id}`)), ...{ class: ("flex flex-col h-full ") }, }, ...__VLS_functionalComponentArgsRest(__VLS_2));
+        const __VLS_2 = __VLS_asFunctionalComponent(__VLS_1, new __VLS_1({ href: ((`/projects/${project.id}`)), ...{ class: ("flex flex-col h-full") }, }));
+        const __VLS_3 = __VLS_2({ href: ((`/projects/${project.id}`)), ...{ class: ("flex flex-col h-full") }, }, ...__VLS_functionalComponentArgsRest(__VLS_2));
         __VLS_elementAsFunction(__VLS_intrinsicElements.header, __VLS_intrinsicElements.header)({ ...{ class: ("bg-gradient-to-r from-gray-900 to-gray-500 p-4 rounded-t-lg flex justify-between items-center") }, });
         __VLS_elementAsFunction(__VLS_intrinsicElements.h2, __VLS_intrinsicElements.h2)({ ...{ class: ("text-xl font-bold text-white truncate pr-3") }, });
         (project.name);

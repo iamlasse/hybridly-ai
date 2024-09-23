@@ -1,3 +1,4 @@
+/// <reference types=".vue-global-types/vue_3.5_false.d.ts" />
 const { defineProps, defineSlots, defineEmits, defineExpose, defineModel, defineOptions, withDefaults, } = await import('vue');
 const form = useForm({
     method: 'post',
@@ -48,59 +49,41 @@ function __VLS_template() {
     const __VLS_6 = __VLS_resolvedLocalAndGlobalComponents.TextInput;
     /** @type { [typeof __VLS_components.TextInput, ] } */
     // @ts-ignore
-    const __VLS_7 = __VLS_asFunctionalComponent(__VLS_6, new __VLS_6({ ...{ 'onChange': {} }, id: ("name"), modelValue: ((__VLS_ctx.form.name)), type: ("text"), ...{ class: ("block w-full") }, }));
-    const __VLS_8 = __VLS_7({ ...{ 'onChange': {} }, id: ("name"), modelValue: ((__VLS_ctx.form.name)), type: ("text"), ...{ class: ("block w-full") }, }, ...__VLS_functionalComponentArgsRest(__VLS_7));
-    let __VLS_12;
-    const __VLS_13 = {
-        onChange: (...[$event]) => {
-            __VLS_ctx.form.validate('name');
-        }
-    };
-    let __VLS_9;
-    let __VLS_10;
-    const __VLS_11 = __VLS_pickFunctionalComponentCtx(__VLS_6, __VLS_8);
+    const __VLS_7 = __VLS_asFunctionalComponent(__VLS_6, new __VLS_6({ id: ("name"), modelValue: ((__VLS_ctx.form.fields.name)), type: ("text"), ...{ class: ("block w-full") }, }));
+    const __VLS_8 = __VLS_7({ id: ("name"), modelValue: ((__VLS_ctx.form.fields.name)), type: ("text"), ...{ class: ("block w-full") }, }, ...__VLS_functionalComponentArgsRest(__VLS_7));
     if (__VLS_ctx.form.errors.name) {
-        const __VLS_14 = __VLS_resolvedLocalAndGlobalComponents.InputError;
+        const __VLS_12 = __VLS_resolvedLocalAndGlobalComponents.InputError;
         /** @type { [typeof __VLS_components.InputError, ] } */
         // @ts-ignore
-        const __VLS_15 = __VLS_asFunctionalComponent(__VLS_14, new __VLS_14({ message: ((__VLS_ctx.form.errors.name)), ...{ class: ("mt-1 text-sm text-red-500") }, }));
-        const __VLS_16 = __VLS_15({ message: ((__VLS_ctx.form.errors.name)), ...{ class: ("mt-1 text-sm text-red-500") }, }, ...__VLS_functionalComponentArgsRest(__VLS_15));
+        const __VLS_13 = __VLS_asFunctionalComponent(__VLS_12, new __VLS_12({ message: ((__VLS_ctx.form.errors.name)), ...{ class: ("mt-1 text-sm text-red-500") }, }));
+        const __VLS_14 = __VLS_13({ message: ((__VLS_ctx.form.errors.name)), ...{ class: ("mt-1 text-sm text-red-500") }, }, ...__VLS_functionalComponentArgsRest(__VLS_13));
     }
     __VLS_elementAsFunction(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({ ...{ class: ("mt-4") }, });
-    const __VLS_20 = __VLS_resolvedLocalAndGlobalComponents.InputLabel;
+    const __VLS_18 = __VLS_resolvedLocalAndGlobalComponents.InputLabel;
     /** @type { [typeof __VLS_components.InputLabel, ] } */
     // @ts-ignore
-    const __VLS_21 = __VLS_asFunctionalComponent(__VLS_20, new __VLS_20({ for: ("description"), value: ("Description"), }));
-    const __VLS_22 = __VLS_21({ for: ("description"), value: ("Description"), }, ...__VLS_functionalComponentArgsRest(__VLS_21));
-    const __VLS_26 = __VLS_resolvedLocalAndGlobalComponents.TextInput;
+    const __VLS_19 = __VLS_asFunctionalComponent(__VLS_18, new __VLS_18({ for: ("description"), value: ("Description"), }));
+    const __VLS_20 = __VLS_19({ for: ("description"), value: ("Description"), }, ...__VLS_functionalComponentArgsRest(__VLS_19));
+    const __VLS_24 = __VLS_resolvedLocalAndGlobalComponents.TextInput;
     /** @type { [typeof __VLS_components.TextInput, ] } */
     // @ts-ignore
-    const __VLS_27 = __VLS_asFunctionalComponent(__VLS_26, new __VLS_26({ ...{ 'onChange': {} }, id: ("description"), modelValue: ((__VLS_ctx.form.description)), type: ("text"), ...{ class: ("block w-full") }, }));
-    const __VLS_28 = __VLS_27({ ...{ 'onChange': {} }, id: ("description"), modelValue: ((__VLS_ctx.form.description)), type: ("text"), ...{ class: ("block w-full") }, }, ...__VLS_functionalComponentArgsRest(__VLS_27));
-    let __VLS_32;
-    const __VLS_33 = {
-        onChange: (...[$event]) => {
-            __VLS_ctx.form.validate('description');
-        }
-    };
-    let __VLS_29;
-    let __VLS_30;
-    const __VLS_31 = __VLS_pickFunctionalComponentCtx(__VLS_26, __VLS_28);
+    const __VLS_25 = __VLS_asFunctionalComponent(__VLS_24, new __VLS_24({ id: ("description"), modelValue: ((__VLS_ctx.form.fields.description)), type: ("text"), ...{ class: ("block w-full") }, }));
+    const __VLS_26 = __VLS_25({ id: ("description"), modelValue: ((__VLS_ctx.form.fields.description)), type: ("text"), ...{ class: ("block w-full") }, }, ...__VLS_functionalComponentArgsRest(__VLS_25));
     if (__VLS_ctx.form.errors.description) {
-        const __VLS_34 = __VLS_resolvedLocalAndGlobalComponents.InputError;
+        const __VLS_30 = __VLS_resolvedLocalAndGlobalComponents.InputError;
         /** @type { [typeof __VLS_components.InputError, ] } */
         // @ts-ignore
-        const __VLS_35 = __VLS_asFunctionalComponent(__VLS_34, new __VLS_34({ message: ((__VLS_ctx.form.errors.description)), ...{ class: ("mt-1 text-sm text-red-500") }, }));
-        const __VLS_36 = __VLS_35({ message: ((__VLS_ctx.form.errors.description)), ...{ class: ("mt-1 text-sm text-red-500") }, }, ...__VLS_functionalComponentArgsRest(__VLS_35));
+        const __VLS_31 = __VLS_asFunctionalComponent(__VLS_30, new __VLS_30({ message: ((__VLS_ctx.form.errors.description)), ...{ class: ("mt-1 text-sm text-red-500") }, }));
+        const __VLS_32 = __VLS_31({ message: ((__VLS_ctx.form.errors.description)), ...{ class: ("mt-1 text-sm text-red-500") }, }, ...__VLS_functionalComponentArgsRest(__VLS_31));
     }
     __VLS_elementAsFunction(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({ ...{ class: ("mt-6") }, });
-    const __VLS_40 = __VLS_resolvedLocalAndGlobalComponents.PrimaryButton;
+    const __VLS_36 = __VLS_resolvedLocalAndGlobalComponents.PrimaryButton;
     /** @type { [typeof __VLS_components.PrimaryButton, typeof __VLS_components.PrimaryButton, ] } */
     // @ts-ignore
-    const __VLS_41 = __VLS_asFunctionalComponent(__VLS_40, new __VLS_40({ type: ("submit"), ...{ class: ("w-full") }, disabled: ((__VLS_ctx.form.processing)), }));
-    const __VLS_42 = __VLS_41({ type: ("submit"), ...{ class: ("w-full") }, disabled: ((__VLS_ctx.form.processing)), }, ...__VLS_functionalComponentArgsRest(__VLS_41));
-    __VLS_nonNullable(__VLS_45.slots).default;
-    const __VLS_45 = __VLS_pickFunctionalComponentCtx(__VLS_40, __VLS_42);
+    const __VLS_37 = __VLS_asFunctionalComponent(__VLS_36, new __VLS_36({ type: ("submit"), ...{ class: ("w-full") }, disabled: ((__VLS_ctx.form.processing)), }));
+    const __VLS_38 = __VLS_37({ type: ("submit"), ...{ class: ("w-full") }, disabled: ((__VLS_ctx.form.processing)), }, ...__VLS_functionalComponentArgsRest(__VLS_37));
+    __VLS_nonNullable(__VLS_41.slots).default;
+    const __VLS_41 = __VLS_pickFunctionalComponentCtx(__VLS_36, __VLS_38);
     __VLS_styleScopedClasses[''];
     __VLS_styleScopedClasses[''];
     __VLS_styleScopedClasses['block'];

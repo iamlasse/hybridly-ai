@@ -31,15 +31,13 @@ const saveProject = () =>
     <form class="" @submit.prevent=" saveProject ">
         <div class="">
             <InputLabel for="name" value="Name" />
-            <TextInput id="name" @change="form.validate( 'name' )" v-model=" form.name " type="text"
-                class="block w-full" />
+            <TextInput id="name" v-model=" form.fields.name " type="text" class="block w-full" />
             <InputError v-if=" form.errors.name " :message=" form.errors.name " class="mt-1 text-sm text-red-500" />
         </div>
 
         <div class="mt-4">
             <InputLabel for="description" value="Description" />
-            <TextInput id="description" @change="form.validate( 'description' )" v-model=" form.description "
-                type="text" class="block w-full" />
+            <TextInput id="description" v-model=" form.fields.description " type="text" class="block w-full" />
             <InputError v-if=" form.errors.description " :message=" form.errors.description "
                 class="mt-1 text-sm text-red-500" />
         </div>

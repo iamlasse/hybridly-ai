@@ -21,6 +21,7 @@ class ProjectData extends DataResource
         public readonly UserData $user,
         public readonly Collection $stages,
         public readonly ?Collection $collaborators,
+        public readonly ?int $tasks_count,
         #[DataCollectionOf(TaskData::class)]
         public readonly ?Collection $tasks,
     ) {}

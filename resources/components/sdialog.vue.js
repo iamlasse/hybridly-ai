@@ -1,3 +1,4 @@
+/// <reference types=".vue-global-types/vue_3.5_false.d.ts" />
 import { Sheet, SheetContent, } from '@/components/ui/sheet';
 const { defineProps, defineSlots, defineEmits, defineExpose, defineModel, defineOptions, withDefaults, } = await import('vue');
 const { show, close, unmount } = useDialog();

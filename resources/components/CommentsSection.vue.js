@@ -1,6 +1,5 @@
+/// <reference types=".vue-global-types/vue_3.5_false.d.ts" />
 import { ref, onMounted } from 'vue';
-import { router, useForm } from '@inertiajs/vue3';
-import CComment from '@/Components/CComment.vue';
 const { defineProps, defineSlots, defineEmits, defineExpose, defineModel, defineOptions, withDefaults, } = await import('vue');
 let __VLS_typeProps;
 const props = defineProps();
@@ -19,18 +18,22 @@ const commentForm = useForm({
 // const loadedTask = ref<Task|null>()
 const addComment = () => {
     router.post(route('task.comments.store', { task: props.owner?.id }), {
-        body: commentForm.fields.comment,
-        commentable_id: props.owner?.id,
-        commentable_type: 'task',
+        data: {
+            body: commentForm.fields.comment,
+            commentable_id: props.owner?.id,
+            commentable_type: 'task',
+        },
         preserveState: true,
         replace: true,
         preserveScroll: true,
-        onSuccess: () => {
-            commentForm.reset();
-            router.visit(route('tasks.show', { task: props.owner?.id }), {
-                replace: false,
-                only: ['comments']
-            });
+        hooks: {
+            success: () => {
+                commentForm.reset();
+                router.get(route('tasks.show', { task: props.owner?.id }), {
+                    replace: false,
+                    only: ['comments']
+                });
+            }
         }
     });
 };
@@ -61,11 +64,11 @@ function __VLS_template() {
     __VLS_elementAsFunction(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({ ...{ class: ("mt-2 flex justify-end") }, });
     __VLS_elementAsFunction(__VLS_intrinsicElements.button, __VLS_intrinsicElements.button)({ ...{ onClick: (__VLS_ctx.addComment) }, disabled: ((!__VLS_ctx.commentForm.isDirty)), type: ("button"), ...{ class: ("inline-flex items-center rounded-md border border-transparent disabled:bg-slate-400 disabled:cursor-not-allowed bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2") }, });
     for (const [comment] of __VLS_getVForSourceType((__VLS_ctx.comments))) {
+        const __VLS_0 = __VLS_resolvedLocalAndGlobalComponents.CComment;
+        /** @type { [typeof __VLS_components.CComment, ] } */
         // @ts-ignore
-        [CComment,];
-        // @ts-ignore
-        const __VLS_0 = __VLS_asFunctionalComponent(CComment, new CComment({ key: ((comment.id)), comment: ((comment)), }));
-        const __VLS_1 = __VLS_0({ key: ((comment.id)), comment: ((comment)), }, ...__VLS_functionalComponentArgsRest(__VLS_0));
+        const __VLS_1 = __VLS_asFunctionalComponent(__VLS_0, new __VLS_0({ key: ((comment.id)), comment: ((comment)), }));
+        const __VLS_2 = __VLS_1({ key: ((comment.id)), comment: ((comment)), }, ...__VLS_functionalComponentArgsRest(__VLS_1));
     }
     __VLS_styleScopedClasses['space-y-4'];
     __VLS_styleScopedClasses['mt-2'];
@@ -113,7 +116,6 @@ function __VLS_template() {
 const __VLS_self = (await import('vue')).defineComponent({
     setup() {
         return {
-            CComment: CComment,
             comments: comments,
             commentForm: commentForm,
             addComment: addComment,

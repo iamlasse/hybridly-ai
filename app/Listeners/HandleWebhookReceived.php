@@ -4,6 +4,7 @@ namespace App\Listeners;
 
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
+use Laravel\Cashier\Events\WebhookReceived;
 
 class HandleWebhookReceived
 {
@@ -18,8 +19,10 @@ class HandleWebhookReceived
     /**
      * Handle the event.
      */
-    public function handle(object $event): void
+    public function handle(WebhookReceived $event): void
     {
-        //
+        $payload = $event->payload;
+
+        ds($payload);
     }
 }

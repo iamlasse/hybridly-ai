@@ -1,9 +1,10 @@
 /// <reference types=".vue-global-types/vue_3.5_false.d.ts" />
-import { ref } from 'vue';
+import { ref } from "vue";
+import PrimaryButton from "../components/PrimaryButton.vue";
 const { defineProps, defineSlots, defineEmits, defineExpose, defineModel, defineOptions, withDefaults, } = await import('vue');
 let __VLS_typeProps;
 const props = defineProps();
-const user = useProperty('security.user');
+const user = useProperty("security.user");
 const showCreateProjectModal = ref(false);
 const openCreateProjectModal = () => {
     showCreateProjectModal.value = true;
@@ -43,47 +44,47 @@ function __VLS_template() {
     }
     __VLS_elementAsFunction(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({ ...{ class: ("p-6 flex justify-between items-center mb-4") }, });
     __VLS_elementAsFunction(__VLS_intrinsicElements.h1, __VLS_intrinsicElements.h1)({ ...{ class: ("text-2xl font-semibold") }, });
-    const __VLS_6 = __VLS_resolvedLocalAndGlobalComponents.PrimaryButton;
-    /** @type { [typeof __VLS_components.PrimaryButton, typeof __VLS_components.PrimaryButton, ] } */
     // @ts-ignore
-    const __VLS_7 = __VLS_asFunctionalComponent(__VLS_6, new __VLS_6({ ...{ 'onClick': {} }, ...{ class: ("disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-slate-500 disabled:bg-slate-500") }, disabled: ((!__VLS_ctx.canCreateMoreProjects)), }));
-    const __VLS_8 = __VLS_7({ ...{ 'onClick': {} }, ...{ class: ("disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-slate-500 disabled:bg-slate-500") }, disabled: ((!__VLS_ctx.canCreateMoreProjects)), }, ...__VLS_functionalComponentArgsRest(__VLS_7));
-    let __VLS_12;
-    const __VLS_13 = {
+    [PrimaryButton, PrimaryButton,];
+    // @ts-ignore
+    const __VLS_6 = __VLS_asFunctionalComponent(PrimaryButton, new PrimaryButton({ ...{ 'onClick': {} }, ...{ class: ("disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-slate-500 disabled:bg-slate-500") }, disabled: ((!__VLS_ctx.canCreateMoreProjects)), }));
+    const __VLS_7 = __VLS_6({ ...{ 'onClick': {} }, ...{ class: ("disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-slate-500 disabled:bg-slate-500") }, disabled: ((!__VLS_ctx.canCreateMoreProjects)), }, ...__VLS_functionalComponentArgsRest(__VLS_6));
+    let __VLS_11;
+    const __VLS_12 = {
         onClick: (__VLS_ctx.openCreateProjectModal)
     };
+    let __VLS_8;
     let __VLS_9;
-    let __VLS_10;
-    __VLS_nonNullable(__VLS_11.slots).default;
-    const __VLS_11 = __VLS_pickFunctionalComponentCtx(__VLS_6, __VLS_8);
+    __VLS_nonNullable(__VLS_10.slots).default;
+    const __VLS_10 = __VLS_pickFunctionalComponentCtx(PrimaryButton, __VLS_7);
     __VLS_elementAsFunction(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({ ...{ class: ("p-6 flex flex-col gap-6") }, });
-    const __VLS_14 = __VLS_resolvedLocalAndGlobalComponents.ProjectList;
+    const __VLS_13 = __VLS_resolvedLocalAndGlobalComponents.ProjectList;
     /** @type { [typeof __VLS_components.ProjectList, ] } */
     // @ts-ignore
-    const __VLS_15 = __VLS_asFunctionalComponent(__VLS_14, new __VLS_14({ projects: ((__VLS_ctx.projects)), }));
-    const __VLS_16 = __VLS_15({ projects: ((__VLS_ctx.projects)), }, ...__VLS_functionalComponentArgsRest(__VLS_15));
-    const __VLS_20 = __VLS_resolvedLocalAndGlobalComponents.ProjectList;
+    const __VLS_14 = __VLS_asFunctionalComponent(__VLS_13, new __VLS_13({ projects: ((__VLS_ctx.projects.data)), }));
+    const __VLS_15 = __VLS_14({ projects: ((__VLS_ctx.projects.data)), }, ...__VLS_functionalComponentArgsRest(__VLS_14));
+    const __VLS_19 = __VLS_resolvedLocalAndGlobalComponents.ProjectList;
     /** @type { [typeof __VLS_components.ProjectList, typeof __VLS_components.ProjectList, ] } */
     // @ts-ignore
-    const __VLS_21 = __VLS_asFunctionalComponent(__VLS_20, new __VLS_20({ projects: ((__VLS_ctx.collaborating_projects)), }));
-    const __VLS_22 = __VLS_21({ projects: ((__VLS_ctx.collaborating_projects)), }, ...__VLS_functionalComponentArgsRest(__VLS_21));
+    const __VLS_20 = __VLS_asFunctionalComponent(__VLS_19, new __VLS_19({ projects: ((__VLS_ctx.collaborating_projects.data)), }));
+    const __VLS_21 = __VLS_20({ projects: ((__VLS_ctx.collaborating_projects.data)), }, ...__VLS_functionalComponentArgsRest(__VLS_20));
     __VLS_elementAsFunction(__VLS_intrinsicElements.template, __VLS_intrinsicElements.template)({});
     {
-        const { title: __VLS_thisSlot } = __VLS_nonNullable(__VLS_25.slots);
+        const { title: __VLS_thisSlot } = __VLS_nonNullable(__VLS_24.slots);
     }
-    const __VLS_25 = __VLS_pickFunctionalComponentCtx(__VLS_20, __VLS_22);
-    const __VLS_26 = __VLS_resolvedLocalAndGlobalComponents.CreateProjectModal;
+    const __VLS_24 = __VLS_pickFunctionalComponentCtx(__VLS_19, __VLS_21);
+    const __VLS_25 = __VLS_resolvedLocalAndGlobalComponents.CreateProjectModal;
     /** @type { [typeof __VLS_components.CreateProjectModal, ] } */
     // @ts-ignore
-    const __VLS_27 = __VLS_asFunctionalComponent(__VLS_26, new __VLS_26({ ...{ 'onClose': {} }, modelValue: ((__VLS_ctx.showCreateProjectModal)), }));
-    const __VLS_28 = __VLS_27({ ...{ 'onClose': {} }, modelValue: ((__VLS_ctx.showCreateProjectModal)), }, ...__VLS_functionalComponentArgsRest(__VLS_27));
-    let __VLS_32;
-    const __VLS_33 = {
+    const __VLS_26 = __VLS_asFunctionalComponent(__VLS_25, new __VLS_25({ ...{ 'onClose': {} }, modelValue: ((__VLS_ctx.showCreateProjectModal)), }));
+    const __VLS_27 = __VLS_26({ ...{ 'onClose': {} }, modelValue: ((__VLS_ctx.showCreateProjectModal)), }, ...__VLS_functionalComponentArgsRest(__VLS_26));
+    let __VLS_31;
+    const __VLS_32 = {
         onClose: (__VLS_ctx.closeCreateProjectModal)
     };
+    let __VLS_28;
     let __VLS_29;
-    let __VLS_30;
-    const __VLS_31 = __VLS_pickFunctionalComponentCtx(__VLS_26, __VLS_28);
+    const __VLS_30 = __VLS_pickFunctionalComponentCtx(__VLS_25, __VLS_27);
     __VLS_styleScopedClasses['bg-yellow-50'];
     __VLS_styleScopedClasses['border'];
     __VLS_styleScopedClasses['border-yellow-200'];
@@ -129,6 +130,7 @@ function __VLS_template() {
 const __VLS_self = (await import('vue')).defineComponent({
     setup() {
         return {
+            PrimaryButton: PrimaryButton,
             user: user,
             showCreateProjectModal: showCreateProjectModal,
             openCreateProjectModal: openCreateProjectModal,

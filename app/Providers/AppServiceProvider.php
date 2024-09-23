@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Listeners\HandleWebhookReceived;
 use App\Models\Comment;
 use App\Models\Project;
 use App\Models\Task;
@@ -12,8 +13,10 @@ use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Foundation\Console\CliDumper;
 use Illuminate\Foundation\Http\HtmlDumper;
 use Illuminate\Support\Facades\Date;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\ServiceProvider;
+use Laravel\Cashier\Events\WebhookReceived;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -44,5 +47,10 @@ class AppServiceProvider extends ServiceProvider
             'comment' => Comment::class,
             'project' => Project::class,
         ]);
+
+        Event::listen(
+            WebhookReceived::class,
+            HandleWebhookReceived::class
+        );
     }
 }

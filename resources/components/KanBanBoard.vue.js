@@ -1,4 +1,6 @@
+/// <reference types=".vue-global-types/vue_3.5_false.d.ts" />
 import draggable from 'vuedraggable';
+import { Button } from '@/components/ui/button';
 const { defineProps, defineSlots, defineEmits, defineExpose, defineModel, defineOptions, withDefaults, } = await import('vue');
 let __VLS_typeProps;
 const props = defineProps();
@@ -129,7 +131,7 @@ function cancelAddTask(column) {
     column.showAddTask = false;
     column.newTaskName = '';
 }
-const maxTasksPerStage = ref(user.is_premium ? Infinity : 5);
+const maxTasksPerStage = ref(user.value?.is_premium ? Infinity : 5);
 function addTask(column) {
     if (!column.newTaskName.trim())
         return;
@@ -181,6 +183,7 @@ function deleteStage(column) {
         pendingColumn.tasks = [...pendingColumn.tasks, ...column.tasks];
         // Emit event to parent component to handle the stage deletion and task reassignment
         emit('deleteStage', {
+            column,
             stageId: column.id,
             tasksToReassign: column.tasks.map((task) => task.id)
         });
@@ -331,46 +334,58 @@ function __VLS_template() {
             const __VLS_39 = __VLS_pickFunctionalComponentCtx(__VLS_34, __VLS_36);
         }
         else {
-            __VLS_elementAsFunction(__VLS_intrinsicElements.button, __VLS_intrinsicElements.button)({ ...{ onClick: (...[$event]) => {
-                        if (!(!((column.showAddTask))))
-                            return;
-                        __VLS_ctx.showAddTaskCard(column);
-                    } }, ...{ class: ("w-full text-center hover:bg-slate-200 rounded-md p-2 text-gray-500 hover:text-gray-700 text-sm") }, });
+            const __VLS_42 = __VLS_resolvedLocalAndGlobalComponents.Button;
+            /** @type { [typeof __VLS_components.Button, typeof __VLS_components.Button, ] } */
+            // @ts-ignore
+            const __VLS_43 = __VLS_asFunctionalComponent(__VLS_42, new __VLS_42({ ...{ 'onClick': {} }, variant: ("primary"), ...{ class: ("w-full") }, }));
+            const __VLS_44 = __VLS_43({ ...{ 'onClick': {} }, variant: ("primary"), ...{ class: ("w-full") }, }, ...__VLS_functionalComponentArgsRest(__VLS_43));
+            let __VLS_48;
+            const __VLS_49 = {
+                onClick: (...[$event]) => {
+                    if (!(!((column.showAddTask))))
+                        return;
+                    __VLS_ctx.showAddTaskCard(column);
+                }
+            };
+            let __VLS_45;
+            let __VLS_46;
+            __VLS_nonNullable(__VLS_47.slots).default;
+            const __VLS_47 = __VLS_pickFunctionalComponentCtx(__VLS_42, __VLS_44);
         }
     }
     const __VLS_5 = __VLS_pickFunctionalComponentCtx(__VLS_0, __VLS_2);
     __VLS_elementAsFunction(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({ ...{ class: ("kanban-column-new flex-shrink-0 w-64 bg-gray-100 p-4 mr-4 rounded") }, });
     if (!__VLS_ctx.showAddColumnForm) {
-        const __VLS_42 = __VLS_resolvedLocalAndGlobalComponents.PrimaryButton;
-        /** @type { [typeof __VLS_components.PrimaryButton, typeof __VLS_components.primaryButton, typeof __VLS_components.PrimaryButton, typeof __VLS_components.primaryButton, ] } */
+        const __VLS_50 = __VLS_resolvedLocalAndGlobalComponents.Button;
+        /** @type { [typeof __VLS_components.Button, typeof __VLS_components.Button, ] } */
         // @ts-ignore
-        const __VLS_43 = __VLS_asFunctionalComponent(__VLS_42, new __VLS_42({ ...{ 'onClick': {} }, ...{ class: ("block w-full justify-center bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-2 px-4 rounded") }, }));
-        const __VLS_44 = __VLS_43({ ...{ 'onClick': {} }, ...{ class: ("block w-full justify-center bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-2 px-4 rounded") }, }, ...__VLS_functionalComponentArgsRest(__VLS_43));
-        let __VLS_48;
-        const __VLS_49 = {
+        const __VLS_51 = __VLS_asFunctionalComponent(__VLS_50, new __VLS_50({ ...{ 'onClick': {} }, ...{ class: ("block w-full justify-center") }, variant: ("secondary"), }));
+        const __VLS_52 = __VLS_51({ ...{ 'onClick': {} }, ...{ class: ("block w-full justify-center") }, variant: ("secondary"), }, ...__VLS_functionalComponentArgsRest(__VLS_51));
+        let __VLS_56;
+        const __VLS_57 = {
             onClick: (...[$event]) => {
                 if (!((!__VLS_ctx.showAddColumnForm)))
                     return;
                 __VLS_ctx.showAddColumnForm = true;
             }
         };
-        let __VLS_45;
-        let __VLS_46;
-        __VLS_nonNullable(__VLS_47.slots).default;
-        const __VLS_47 = __VLS_pickFunctionalComponentCtx(__VLS_42, __VLS_44);
+        let __VLS_53;
+        let __VLS_54;
+        __VLS_nonNullable(__VLS_55.slots).default;
+        const __VLS_55 = __VLS_pickFunctionalComponentCtx(__VLS_50, __VLS_52);
     }
     else {
         __VLS_elementAsFunction(__VLS_intrinsicElements.form, __VLS_intrinsicElements.form)({ ...{ onSubmit: (__VLS_ctx.addColumn) }, ...{ class: ("bg-white p-4 rounded shadow") }, });
         __VLS_elementAsFunction(__VLS_intrinsicElements.input, __VLS_intrinsicElements.input)({ ...{ onKeydown: (__VLS_ctx.cancelAddColumn) }, value: ((__VLS_ctx.addColumnForm.fields.name)), type: ("text"), placeholder: ("Enter column name"), ...{ class: ("w-full mb-2 p-2 border rounded") }, ref: ("newColumnInput"), });
         // @ts-ignore navigation for `const newColumnInput = ref()`
         __VLS_ctx.newColumnInput;
-        const __VLS_50 = __VLS_resolvedLocalAndGlobalComponents.PrimaryButton;
-        /** @type { [typeof __VLS_components.PrimaryButton, typeof __VLS_components.primaryButton, typeof __VLS_components.PrimaryButton, typeof __VLS_components.primaryButton, ] } */
+        const __VLS_58 = __VLS_resolvedLocalAndGlobalComponents.Button;
+        /** @type { [typeof __VLS_components.Button, typeof __VLS_components.Button, ] } */
         // @ts-ignore
-        const __VLS_51 = __VLS_asFunctionalComponent(__VLS_50, new __VLS_50({ type: ("submit"), ...{ class: ("w-full bg-blue-500 justify-center hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded") }, }));
-        const __VLS_52 = __VLS_51({ type: ("submit"), ...{ class: ("w-full bg-blue-500 justify-center hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded") }, }, ...__VLS_functionalComponentArgsRest(__VLS_51));
-        __VLS_nonNullable(__VLS_55.slots).default;
-        const __VLS_55 = __VLS_pickFunctionalComponentCtx(__VLS_50, __VLS_52);
+        const __VLS_59 = __VLS_asFunctionalComponent(__VLS_58, new __VLS_58({ type: ("submit"), ...{ class: ("w-full") }, }));
+        const __VLS_60 = __VLS_59({ type: ("submit"), ...{ class: ("w-full") }, }, ...__VLS_functionalComponentArgsRest(__VLS_59));
+        __VLS_nonNullable(__VLS_63.slots).default;
+        const __VLS_63 = __VLS_pickFunctionalComponentCtx(__VLS_58, __VLS_60);
     }
     __VLS_styleScopedClasses['kanban-board'];
     __VLS_styleScopedClasses['h-full'];
@@ -431,13 +446,6 @@ function __VLS_template() {
     __VLS_styleScopedClasses['bg-blue-500'];
     __VLS_styleScopedClasses['hover:bg-blue-600'];
     __VLS_styleScopedClasses['w-full'];
-    __VLS_styleScopedClasses['text-center'];
-    __VLS_styleScopedClasses['hover:bg-slate-200'];
-    __VLS_styleScopedClasses['rounded-md'];
-    __VLS_styleScopedClasses['p-2'];
-    __VLS_styleScopedClasses['text-gray-500'];
-    __VLS_styleScopedClasses['hover:text-gray-700'];
-    __VLS_styleScopedClasses['text-sm'];
     __VLS_styleScopedClasses['kanban-column-new'];
     __VLS_styleScopedClasses['flex-shrink-0'];
     __VLS_styleScopedClasses['w-64'];
@@ -448,13 +456,6 @@ function __VLS_template() {
     __VLS_styleScopedClasses['block'];
     __VLS_styleScopedClasses['w-full'];
     __VLS_styleScopedClasses['justify-center'];
-    __VLS_styleScopedClasses['bg-gray-300'];
-    __VLS_styleScopedClasses['hover:bg-gray-400'];
-    __VLS_styleScopedClasses['text-gray-800'];
-    __VLS_styleScopedClasses['font-semibold'];
-    __VLS_styleScopedClasses['py-2'];
-    __VLS_styleScopedClasses['px-4'];
-    __VLS_styleScopedClasses['rounded'];
     __VLS_styleScopedClasses['bg-white'];
     __VLS_styleScopedClasses['p-4'];
     __VLS_styleScopedClasses['rounded'];
@@ -465,14 +466,6 @@ function __VLS_template() {
     __VLS_styleScopedClasses['border'];
     __VLS_styleScopedClasses['rounded'];
     __VLS_styleScopedClasses['w-full'];
-    __VLS_styleScopedClasses['bg-blue-500'];
-    __VLS_styleScopedClasses['justify-center'];
-    __VLS_styleScopedClasses['hover:bg-blue-600'];
-    __VLS_styleScopedClasses['text-white'];
-    __VLS_styleScopedClasses['font-semibold'];
-    __VLS_styleScopedClasses['py-2'];
-    __VLS_styleScopedClasses['px-4'];
-    __VLS_styleScopedClasses['rounded'];
     var __VLS_slots;
     var __VLS_inheritedAttrs;
     const __VLS_refs = {
@@ -491,6 +484,7 @@ const __VLS_self = (await import('vue')).defineComponent({
     setup() {
         return {
             draggable: draggable,
+            Button: Button,
             showAddColumnForm: showAddColumnForm,
             newColumnInput: newColumnInput,
             newTaskInput: newTaskInput,

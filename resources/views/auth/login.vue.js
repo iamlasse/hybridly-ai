@@ -32,80 +32,73 @@ function __VLS_template() {
     let __VLS_directives;
     let __VLS_styleScopedClasses;
     let __VLS_resolvedLocalAndGlobalComponents;
-    const __VLS_0 = __VLS_resolvedLocalAndGlobalComponents.GuestLayout;
-    /** @type { [typeof __VLS_components.GuestLayout, typeof __VLS_components.GuestLayout, ] } */
-    // @ts-ignore
-    const __VLS_1 = __VLS_asFunctionalComponent(__VLS_0, new __VLS_0({}));
-    const __VLS_2 = __VLS_1({}, ...__VLS_functionalComponentArgsRest(__VLS_1));
-    const __VLS_6 = __VLS_resolvedLocalAndGlobalComponents.Head;
+    const __VLS_0 = __VLS_resolvedLocalAndGlobalComponents.Head;
     /** @type { [typeof __VLS_components.Head, ] } */
     // @ts-ignore
-    const __VLS_7 = __VLS_asFunctionalComponent(__VLS_6, new __VLS_6({ title: ("Log in"), }));
-    const __VLS_8 = __VLS_7({ title: ("Log in"), }, ...__VLS_functionalComponentArgsRest(__VLS_7));
+    const __VLS_1 = __VLS_asFunctionalComponent(__VLS_0, new __VLS_0({ title: ("Log in"), }));
+    const __VLS_2 = __VLS_1({ title: ("Log in"), }, ...__VLS_functionalComponentArgsRest(__VLS_1));
     if (__VLS_ctx.status) {
         __VLS_elementAsFunction(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({ ...{ class: ("mb-4 font-medium text-sm text-green-600") }, });
         (__VLS_ctx.status);
     }
     __VLS_elementAsFunction(__VLS_intrinsicElements.form, __VLS_intrinsicElements.form)({ ...{ onSubmit: (__VLS_ctx.submit) }, });
     __VLS_elementAsFunction(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({});
-    const __VLS_12 = __VLS_resolvedLocalAndGlobalComponents.InputLabel;
+    const __VLS_6 = __VLS_resolvedLocalAndGlobalComponents.InputLabel;
     /** @type { [typeof __VLS_components.InputLabel, ] } */
     // @ts-ignore
-    const __VLS_13 = __VLS_asFunctionalComponent(__VLS_12, new __VLS_12({ for: ("email"), value: ("Email"), }));
-    const __VLS_14 = __VLS_13({ for: ("email"), value: ("Email"), }, ...__VLS_functionalComponentArgsRest(__VLS_13));
-    const __VLS_18 = __VLS_resolvedLocalAndGlobalComponents.TextInput;
+    const __VLS_7 = __VLS_asFunctionalComponent(__VLS_6, new __VLS_6({ for: ("email"), value: ("Email"), }));
+    const __VLS_8 = __VLS_7({ for: ("email"), value: ("Email"), }, ...__VLS_functionalComponentArgsRest(__VLS_7));
+    const __VLS_12 = __VLS_resolvedLocalAndGlobalComponents.TextInput;
     /** @type { [typeof __VLS_components.TextInput, ] } */
     // @ts-ignore
-    const __VLS_19 = __VLS_asFunctionalComponent(__VLS_18, new __VLS_18({ id: ("email"), type: ("email"), ...{ class: ("mt-1 block w-full") }, modelValue: ((__VLS_ctx.form.fields.email)), required: (true), autofocus: (true), autocomplete: ("username"), }));
-    const __VLS_20 = __VLS_19({ id: ("email"), type: ("email"), ...{ class: ("mt-1 block w-full") }, modelValue: ((__VLS_ctx.form.fields.email)), required: (true), autofocus: (true), autocomplete: ("username"), }, ...__VLS_functionalComponentArgsRest(__VLS_19));
-    const __VLS_24 = __VLS_resolvedLocalAndGlobalComponents.InputError;
+    const __VLS_13 = __VLS_asFunctionalComponent(__VLS_12, new __VLS_12({ id: ("email"), type: ("email"), ...{ class: ("mt-1 block w-full") }, modelValue: ((__VLS_ctx.form.fields.email)), required: (true), autofocus: (true), autocomplete: ("username"), }));
+    const __VLS_14 = __VLS_13({ id: ("email"), type: ("email"), ...{ class: ("mt-1 block w-full") }, modelValue: ((__VLS_ctx.form.fields.email)), required: (true), autofocus: (true), autocomplete: ("username"), }, ...__VLS_functionalComponentArgsRest(__VLS_13));
+    const __VLS_18 = __VLS_resolvedLocalAndGlobalComponents.InputError;
     /** @type { [typeof __VLS_components.InputError, ] } */
     // @ts-ignore
-    const __VLS_25 = __VLS_asFunctionalComponent(__VLS_24, new __VLS_24({ ...{ class: ("mt-2") }, message: ((__VLS_ctx.form.errors.email)), }));
-    const __VLS_26 = __VLS_25({ ...{ class: ("mt-2") }, message: ((__VLS_ctx.form.errors.email)), }, ...__VLS_functionalComponentArgsRest(__VLS_25));
+    const __VLS_19 = __VLS_asFunctionalComponent(__VLS_18, new __VLS_18({ ...{ class: ("mt-2") }, message: ((__VLS_ctx.form.errors.email)), }));
+    const __VLS_20 = __VLS_19({ ...{ class: ("mt-2") }, message: ((__VLS_ctx.form.errors.email)), }, ...__VLS_functionalComponentArgsRest(__VLS_19));
     __VLS_elementAsFunction(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({ ...{ class: ("mt-4") }, });
-    const __VLS_30 = __VLS_resolvedLocalAndGlobalComponents.InputLabel;
+    const __VLS_24 = __VLS_resolvedLocalAndGlobalComponents.InputLabel;
     /** @type { [typeof __VLS_components.InputLabel, ] } */
     // @ts-ignore
-    const __VLS_31 = __VLS_asFunctionalComponent(__VLS_30, new __VLS_30({ for: ("password"), value: ("Password"), }));
-    const __VLS_32 = __VLS_31({ for: ("password"), value: ("Password"), }, ...__VLS_functionalComponentArgsRest(__VLS_31));
-    const __VLS_36 = __VLS_resolvedLocalAndGlobalComponents.TextInput;
+    const __VLS_25 = __VLS_asFunctionalComponent(__VLS_24, new __VLS_24({ for: ("password"), value: ("Password"), }));
+    const __VLS_26 = __VLS_25({ for: ("password"), value: ("Password"), }, ...__VLS_functionalComponentArgsRest(__VLS_25));
+    const __VLS_30 = __VLS_resolvedLocalAndGlobalComponents.TextInput;
     /** @type { [typeof __VLS_components.TextInput, ] } */
     // @ts-ignore
-    const __VLS_37 = __VLS_asFunctionalComponent(__VLS_36, new __VLS_36({ id: ("password"), type: ("password"), ...{ class: ("mt-1 block w-full") }, modelValue: ((__VLS_ctx.form.fields.password)), required: (true), autocomplete: ("current-password"), }));
-    const __VLS_38 = __VLS_37({ id: ("password"), type: ("password"), ...{ class: ("mt-1 block w-full") }, modelValue: ((__VLS_ctx.form.fields.password)), required: (true), autocomplete: ("current-password"), }, ...__VLS_functionalComponentArgsRest(__VLS_37));
-    const __VLS_42 = __VLS_resolvedLocalAndGlobalComponents.InputError;
+    const __VLS_31 = __VLS_asFunctionalComponent(__VLS_30, new __VLS_30({ id: ("password"), type: ("password"), ...{ class: ("mt-1 block w-full") }, modelValue: ((__VLS_ctx.form.fields.password)), required: (true), autocomplete: ("current-password"), }));
+    const __VLS_32 = __VLS_31({ id: ("password"), type: ("password"), ...{ class: ("mt-1 block w-full") }, modelValue: ((__VLS_ctx.form.fields.password)), required: (true), autocomplete: ("current-password"), }, ...__VLS_functionalComponentArgsRest(__VLS_31));
+    const __VLS_36 = __VLS_resolvedLocalAndGlobalComponents.InputError;
     /** @type { [typeof __VLS_components.InputError, ] } */
     // @ts-ignore
-    const __VLS_43 = __VLS_asFunctionalComponent(__VLS_42, new __VLS_42({ ...{ class: ("mt-2") }, message: ((__VLS_ctx.form.errors.password)), }));
-    const __VLS_44 = __VLS_43({ ...{ class: ("mt-2") }, message: ((__VLS_ctx.form.errors.password)), }, ...__VLS_functionalComponentArgsRest(__VLS_43));
+    const __VLS_37 = __VLS_asFunctionalComponent(__VLS_36, new __VLS_36({ ...{ class: ("mt-2") }, message: ((__VLS_ctx.form.errors.password)), }));
+    const __VLS_38 = __VLS_37({ ...{ class: ("mt-2") }, message: ((__VLS_ctx.form.errors.password)), }, ...__VLS_functionalComponentArgsRest(__VLS_37));
     __VLS_elementAsFunction(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({ ...{ class: ("block mt-4") }, });
     __VLS_elementAsFunction(__VLS_intrinsicElements.label, __VLS_intrinsicElements.label)({ ...{ class: ("flex items-center") }, });
-    const __VLS_48 = __VLS_resolvedLocalAndGlobalComponents.Checkbox;
+    const __VLS_42 = __VLS_resolvedLocalAndGlobalComponents.Checkbox;
     /** @type { [typeof __VLS_components.Checkbox, ] } */
     // @ts-ignore
-    const __VLS_49 = __VLS_asFunctionalComponent(__VLS_48, new __VLS_48({ name: ("remember"), checked: ((__VLS_ctx.form.fields.remember)), }));
-    const __VLS_50 = __VLS_49({ name: ("remember"), checked: ((__VLS_ctx.form.fields.remember)), }, ...__VLS_functionalComponentArgsRest(__VLS_49));
+    const __VLS_43 = __VLS_asFunctionalComponent(__VLS_42, new __VLS_42({ name: ("remember"), checked: ((__VLS_ctx.form.fields.remember)), }));
+    const __VLS_44 = __VLS_43({ name: ("remember"), checked: ((__VLS_ctx.form.fields.remember)), }, ...__VLS_functionalComponentArgsRest(__VLS_43));
     __VLS_elementAsFunction(__VLS_intrinsicElements.span, __VLS_intrinsicElements.span)({ ...{ class: ("ms-2 text-sm text-gray-600 dark:text-gray-400") }, });
     __VLS_elementAsFunction(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({ ...{ class: ("flex items-center justify-end mt-4") }, });
     if (__VLS_ctx.canResetPassword) {
-        const __VLS_54 = __VLS_resolvedLocalAndGlobalComponents.Link;
+        const __VLS_48 = __VLS_resolvedLocalAndGlobalComponents.Link;
         /** @type { [typeof __VLS_components.Link, typeof __VLS_components.Link, ] } */
         // @ts-ignore
-        const __VLS_55 = __VLS_asFunctionalComponent(__VLS_54, new __VLS_54({ href: ((__VLS_ctx.route('password.request'))), ...{ class: ("underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800") }, }));
-        const __VLS_56 = __VLS_55({ href: ((__VLS_ctx.route('password.request'))), ...{ class: ("underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800") }, }, ...__VLS_functionalComponentArgsRest(__VLS_55));
-        __VLS_nonNullable(__VLS_59.slots).default;
-        const __VLS_59 = __VLS_pickFunctionalComponentCtx(__VLS_54, __VLS_56);
+        const __VLS_49 = __VLS_asFunctionalComponent(__VLS_48, new __VLS_48({ href: ((__VLS_ctx.route('password.request'))), ...{ class: ("underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800") }, }));
+        const __VLS_50 = __VLS_49({ href: ((__VLS_ctx.route('password.request'))), ...{ class: ("underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800") }, }, ...__VLS_functionalComponentArgsRest(__VLS_49));
+        __VLS_nonNullable(__VLS_53.slots).default;
+        const __VLS_53 = __VLS_pickFunctionalComponentCtx(__VLS_48, __VLS_50);
     }
-    const __VLS_60 = __VLS_resolvedLocalAndGlobalComponents.PrimaryButton;
+    const __VLS_54 = __VLS_resolvedLocalAndGlobalComponents.PrimaryButton;
     /** @type { [typeof __VLS_components.PrimaryButton, typeof __VLS_components.PrimaryButton, ] } */
     // @ts-ignore
-    const __VLS_61 = __VLS_asFunctionalComponent(__VLS_60, new __VLS_60({ ...{ class: ("ms-4") }, ...{ class: (({ 'opacity-25': __VLS_ctx.form.processing })) }, disabled: ((__VLS_ctx.form.processing)), }));
-    const __VLS_62 = __VLS_61({ ...{ class: ("ms-4") }, ...{ class: (({ 'opacity-25': __VLS_ctx.form.processing })) }, disabled: ((__VLS_ctx.form.processing)), }, ...__VLS_functionalComponentArgsRest(__VLS_61));
-    __VLS_nonNullable(__VLS_65.slots).default;
-    const __VLS_65 = __VLS_pickFunctionalComponentCtx(__VLS_60, __VLS_62);
-    __VLS_nonNullable(__VLS_5.slots).default;
-    const __VLS_5 = __VLS_pickFunctionalComponentCtx(__VLS_0, __VLS_2);
+    const __VLS_55 = __VLS_asFunctionalComponent(__VLS_54, new __VLS_54({ ...{ class: ("ms-4") }, ...{ class: (({ 'opacity-25': __VLS_ctx.form.processing })) }, disabled: ((__VLS_ctx.form.processing)), }));
+    const __VLS_56 = __VLS_55({ ...{ class: ("ms-4") }, ...{ class: (({ 'opacity-25': __VLS_ctx.form.processing })) }, disabled: ((__VLS_ctx.form.processing)), }, ...__VLS_functionalComponentArgsRest(__VLS_55));
+    __VLS_nonNullable(__VLS_59.slots).default;
+    const __VLS_59 = __VLS_pickFunctionalComponentCtx(__VLS_54, __VLS_56);
     __VLS_styleScopedClasses['mb-4'];
     __VLS_styleScopedClasses['font-medium'];
     __VLS_styleScopedClasses['text-sm'];

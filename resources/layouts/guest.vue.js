@@ -1,4 +1,5 @@
 /// <reference types=".vue-global-types/vue_3.5_false.d.ts" />
+import ApplicationLogo from '@/components/ApplicationLogo.vue';
 const { defineProps, defineSlots, defineEmits, defineExpose, defineModel, defineOptions, withDefaults, } = await import('vue');
 const __VLS_fnComponent = (await import('vue')).defineComponent({});
 ;
@@ -25,15 +26,15 @@ function __VLS_template() {
     // @ts-ignore
     const __VLS_1 = __VLS_asFunctionalComponent(__VLS_0, new __VLS_0({ href: ("/"), }));
     const __VLS_2 = __VLS_1({ href: ("/"), }, ...__VLS_functionalComponentArgsRest(__VLS_1));
-    const __VLS_6 = __VLS_resolvedLocalAndGlobalComponents.ApplicationLogo;
-    /** @type { [typeof __VLS_components.ApplicationLogo, ] } */
     // @ts-ignore
-    const __VLS_7 = __VLS_asFunctionalComponent(__VLS_6, new __VLS_6({ ...{ class: ("w-20 h-20 fill-current text-white") }, }));
-    const __VLS_8 = __VLS_7({ ...{ class: ("w-20 h-20 fill-current text-white") }, }, ...__VLS_functionalComponentArgsRest(__VLS_7));
+    [ApplicationLogo,];
+    // @ts-ignore
+    const __VLS_6 = __VLS_asFunctionalComponent(ApplicationLogo, new ApplicationLogo({ ...{ class: ("w-20 h-20 fill-current text-white") }, }));
+    const __VLS_7 = __VLS_6({ ...{ class: ("w-20 h-20 fill-current text-white") }, }, ...__VLS_functionalComponentArgsRest(__VLS_6));
     __VLS_nonNullable(__VLS_5.slots).default;
     const __VLS_5 = __VLS_pickFunctionalComponentCtx(__VLS_0, __VLS_2);
     __VLS_elementAsFunction(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({ ...{ class: ("w-full  sm:max-w-md mt-6 px-6 py-4 bg-white dark:bg-gray-800 shadow-md overflow-hidden sm:rounded-lg") }, });
-    var __VLS_12 = {};
+    var __VLS_11 = {};
     __VLS_styleScopedClasses['min-h-screen'];
     __VLS_styleScopedClasses['bg-indigo-600'];
     __VLS_styleScopedClasses['flex'];
@@ -70,7 +71,9 @@ function __VLS_template() {
 ;
 const __VLS_self = (await import('vue')).defineComponent({
     setup() {
-        return {};
+        return {
+            ApplicationLogo: ApplicationLogo,
+        };
     },
 });
 const __VLS_component = (await import('vue')).defineComponent({

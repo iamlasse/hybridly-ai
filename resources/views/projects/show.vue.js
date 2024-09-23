@@ -1,15 +1,8 @@
 /// <reference types=".vue-global-types/vue_3.5_false.d.ts" />
 import { ref, computed } from "vue";
 import { can } from "hybridly";
+import { SelectContent, SelectValue, SelectItem, SelectTrigger, SelectLabel, Select, } from "@/components/ui/select";
 const { defineProps, defineSlots, defineEmits, defineExpose, defineModel, defineOptions, withDefaults, } = await import('vue');
-// import {
-//   SelectContent,
-//   SelectValue,
-//   SelectItem,
-//   SelectTrigger,
-//   SelectLabel,
-//   Select,
-// } from "@/components/ui/select";
 let __VLS_typeProps;
 const props = defineProps();
 const user = useProperty("security.user");
@@ -158,7 +151,8 @@ function selectTask(task) {
     isPanelOpen.value = true;
 }
 // Handle stage deletion
-function deleteStage({ stageId, tasksToReassign, }) {
+function deleteStage({ column, stageId, tasksToReassign, }) {
+    ;
     const pendingStage = localProject.value.stages.find((stage) => stage?.name.toLowerCase() === "pending");
     if (!pendingStage) {
         return;
@@ -167,11 +161,24 @@ function deleteStage({ stageId, tasksToReassign, }) {
     router.delete(route("projects.stages.destroy", {
         project: localProject.value.id,
         stage: stageId,
+        column: column,
         tasks: tasksToReassign,
     }), {
         preserveState: false,
         preserveScroll: true,
         preserveUrl: true,
+        hooks: {
+            success: () => {
+                router.post(route('projects.stages.updateOrder', { project: localProject.value }), {
+                    data: {
+                        columns: localProject.value.stages.map((column, index) => ({
+                            id: column.id,
+                            order: index
+                        }))
+                    }
+                });
+            }
+        },
         data: {
             tasksToReassign,
             newStatus: pendingStage.slug,
@@ -430,6 +437,12 @@ function __VLS_template() {
 const __VLS_self = (await import('vue')).defineComponent({
     setup() {
         return {
+            SelectContent: SelectContent,
+            SelectValue: SelectValue,
+            SelectItem: SelectItem,
+            SelectTrigger: SelectTrigger,
+            SelectLabel: SelectLabel,
+            Select: Select,
             user: user,
             canAddCollaborators: canAddCollaborators,
             localProject: localProject,

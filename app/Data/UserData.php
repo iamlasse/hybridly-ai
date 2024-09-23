@@ -13,7 +13,7 @@ final class UserData extends Data
         public readonly int $id,
         public readonly string $name,
         public readonly string $email,
-        public readonly bool $is_premium,
+        public readonly bool $is_premium = false,
         public readonly ?string $avatar,
         public readonly ?Subscription $activeSubscription,
         public readonly ?CarbonInterface $email_verified_at,

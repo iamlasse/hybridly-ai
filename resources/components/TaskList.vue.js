@@ -1,12 +1,8 @@
-import { ref } from 'vue';
-import TaskFlyoutPanel from './TaskFlyoutPanel.vue';
+/// <reference types=".vue-global-types/vue_3.5_false.d.ts" />
+import { ref } from "vue";
 const { defineProps, defineSlots, defineEmits, defineExpose, defineModel, defineOptions, withDefaults, } = await import('vue');
-const props = defineProps({
-    tasks: {
-        type: Array,
-        required: true,
-    },
-});
+let __VLS_typeProps;
+const props = defineProps();
 const selectedTask = ref(null);
 const isPanelOpen = ref(false);
 const selectTask = (task) => {
@@ -16,19 +12,19 @@ const selectTask = (task) => {
 const closePanel = () => {
     isPanelOpen.value = false;
 };
-const statusColors = {
-    'todo': 'bg-gray-100 text-gray-800',
-    'in-progress': 'bg-blue-100 text-blue-800',
-    'done': 'bg-green-100 text-green-800',
+const statusColors = (index) => {
+    switch (index) {
+        case "todo":
+            return "bg-gray-100 text-gray-800";
+        case "in-progress":
+            return "bg-blue-100 text-blue-800";
+        case "done":
+            return "bg-green-100 text-green-800";
+        default:
+            return "";
+    }
 };
-const __VLS_fnComponent = (await import('vue')).defineComponent({
-    props: {
-        tasks: {
-            type: Array,
-            required: true,
-        },
-    },
-});
+const __VLS_fnComponent = (await import('vue')).defineComponent({});
 ;
 let __VLS_functionalComponentProps;
 function __VLS_template() {
@@ -54,21 +50,9 @@ function __VLS_template() {
                 } }, key: ((index)), ...{ class: ("cursor-pointer hover:bg-gray-100 p-2 rounded flex items-center space-x-2") }, });
         __VLS_elementAsFunction(__VLS_intrinsicElements.span, __VLS_intrinsicElements.span)({});
         (task.title);
-        __VLS_elementAsFunction(__VLS_intrinsicElements.span, __VLS_intrinsicElements.span)({ ...{ class: ("inline-flex items-center rounded px-2 py-0.5 text-xs font-medium") }, ...{ class: ((__VLS_ctx.statusColors[task.status])) }, });
+        __VLS_elementAsFunction(__VLS_intrinsicElements.span, __VLS_intrinsicElements.span)({ ...{ class: ("inline-flex items-center rounded px-2 py-0.5 text-xs font-medium") }, ...{ class: ((__VLS_ctx.statusColors(task.status))) }, });
         (task.status);
     }
-    // @ts-ignore
-    [TaskFlyoutPanel,];
-    // @ts-ignore
-    const __VLS_0 = __VLS_asFunctionalComponent(TaskFlyoutPanel, new TaskFlyoutPanel({ ...{ 'onClose': {} }, task: ((__VLS_ctx.selectedTask)), isOpen: ((__VLS_ctx.isPanelOpen)), }));
-    const __VLS_1 = __VLS_0({ ...{ 'onClose': {} }, task: ((__VLS_ctx.selectedTask)), isOpen: ((__VLS_ctx.isPanelOpen)), }, ...__VLS_functionalComponentArgsRest(__VLS_0));
-    let __VLS_5;
-    const __VLS_6 = {
-        onClose: (__VLS_ctx.closePanel)
-    };
-    let __VLS_2;
-    let __VLS_3;
-    const __VLS_4 = __VLS_pickFunctionalComponentCtx(TaskFlyoutPanel, __VLS_1);
     __VLS_styleScopedClasses['relative'];
     __VLS_styleScopedClasses['space-y-4'];
     __VLS_styleScopedClasses['cursor-pointer'];
@@ -99,31 +83,17 @@ function __VLS_template() {
 const __VLS_self = (await import('vue')).defineComponent({
     setup() {
         return {
-            TaskFlyoutPanel: TaskFlyoutPanel,
-            selectedTask: selectedTask,
-            isPanelOpen: isPanelOpen,
             selectTask: selectTask,
-            closePanel: closePanel,
             statusColors: statusColors,
         };
     },
-    props: {
-        tasks: {
-            type: Array,
-            required: true,
-        },
-    },
+    __typeProps: {},
 });
 export default (await import('vue')).defineComponent({
     setup() {
         return {};
     },
-    props: {
-        tasks: {
-            type: Array,
-            required: true,
-        },
-    },
+    __typeProps: {},
 });
 ;
 //# sourceMappingURL=TaskList.vue.js.map

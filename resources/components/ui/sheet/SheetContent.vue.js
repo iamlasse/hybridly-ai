@@ -1,3 +1,4 @@
+/// <reference types=".vue-global-types/vue_3.5_false.d.ts" />
 import { computed } from 'vue';
 import { DialogClose, DialogContent, DialogOverlay, DialogPortal, useForwardPropsEmits, } from 'radix-vue';
 import { Cross2Icon } from '@radix-icons/vue';

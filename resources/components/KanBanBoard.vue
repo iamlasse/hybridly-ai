@@ -1,69 +1,3 @@
-<template>
-    <div class="kanban-board h-full px-4 flex overflow-x-auto text-slate-500" @click=" handleOutsideClick ">
-        <draggable v-model=" computedColumns " :animation=" 200 " ghost-class="ghost-column" handle=".column-handle"
-            @change=" onColumnDragChange " item-key="id" class="flex">
-            <template #item=" { element: column } ">
-                <div class="kanban-column flex-shrink-0 w-64 bg-gray-100 p-4 mr-4 rounded flex flex-col">
-                    <div class="flex justify-between items-center mb-4 column-handle cursor-move">
-                        <h3 class="text-lg text-gray-800 font-semibold">{{ column.name }}</h3>
-                        <span class="group">
-                            <button @click.stop="deleteStage( column )"
-                                class="text-red-500 hover:text-red-700 opacity-0 group-hover:opacity-100 transition duration-300">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
-                                    stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                </svg>
-                            </button>
-                        </span>
-                    </div>
-
-                    <div class="flex-grow overflow-y-auto">
-                        <draggable v-model=" column.tasks " :group=" { name: 'tasks', pull: true, put: true } "
-                            ghost-class="ghost" @change=" ( e ) => onDragChange( e, column ) "
-                            class="flex flex-col gap-2" item-key="id">
-                            <template #item=" { element } ">
-                                <TaskCard :task=" element " :selected=" element.id === selectedTask?.id "
-                                    @select-task=" selectTask " />
-                            </template>
-                        </draggable>
-                    </div>
-
-                    <div class="mt-4">
-                        <div v-if=" column.showAddTask " class="add-task-card bg-white shadow-sm p-1" @click.stop>
-                            <TextInput v-model=" column.newTaskName " type="text" placeholder="Write a task name"
-                                class="w-full mb-2 border-0 active:border-0 ring-0 active:ring-0 focus:ring-0 shadow-none "
-                                @keyup.enter="addTask( column )" @keyup.esc="cancelAddTask( column )"
-                                ref="newTaskInput" />
-                            <div class="flex justify-end">
-                                <button @click="cancelAddTask( column )" class="text-gray-500 mr-2">Cancel</button>
-                                <PrimaryButton @click="addTask( column )" class="bg-blue-500 hover:bg-blue-600">
-                                    Add
-                                </PrimaryButton>
-                            </div>
-                        </div>
-                        <Button variant="primary" v-else @click.stop="showAddTaskCard( column )" class="w-full">
-                            + Add task
-                        </Button>
-                    </div>
-                </div>
-            </template>
-        </draggable>
-        <div class="kanban-column-new flex-shrink-0 w-64 bg-gray-100 p-4 mr-4 rounded">
-            <Button v-if=" !showAddColumnForm " @click=" showAddColumnForm = true" class="block w-full justify-center"
-                variant="secondary">+
-                Add Column</Button>
-            <form v-else @submit.prevent=" addColumn " class="bg-white p-4 rounded shadow">
-                <input v-model=" addColumnForm.fields.name " type="text" placeholder="Enter column name"
-                    class="w-full mb-2 p-2 border rounded" ref="newColumnInput" @keydown.esc=" cancelAddColumn ">
-                <Button type="submit" class="w-full">
-                    Save Column
-                </Button>
-            </form>
-        </div>
-    </div>
-</template>
-
 <script setup lang="ts">
 import draggable from 'vuedraggable';
 import type { Column, Task } from '@/types';
@@ -73,7 +7,9 @@ const props = defineProps<{
     projectId: number;
 }>();
 
-const user = useProperty( 'security.user' );
+const user = useProperty<
+    App.Data.UserData
+>( 'security.user' );
 
 const emit = defineEmits( [ 'updateTasks', 'addTask', 'addColumn', 'deleteStage', 'updateColumns' ] );
 
@@ -247,7 +183,7 @@ function cancelAddTask ( column: any )
     column.newTaskName = '';
 }
 
-const maxTasksPerStage = ref( user.is_premium ? Infinity : 5 );
+const maxTasksPerStage = ref<number>( user.value?.is_premium ? Infinity : 5 );
 
 
 function addTask ( column: Column & any )
@@ -352,6 +288,72 @@ watchEffect( () =>
     }
 } );
 </script>
+
+<template>
+    <div class="kanban-board h-full px-4 flex overflow-x-auto text-slate-500" @click=" handleOutsideClick ">
+        <draggable v-model=" computedColumns " :animation=" 200 " ghost-class="ghost-column" handle=".column-handle"
+            @change=" onColumnDragChange " item-key="id" class="flex">
+            <template #item=" { element: column } ">
+                <div class="kanban-column flex-shrink-0 w-64 bg-gray-100 p-4 mr-4 rounded flex flex-col">
+                    <div class="flex justify-between items-center mb-4 column-handle cursor-move">
+                        <h3 class="text-lg text-gray-800 font-semibold">{{ column.name }}</h3>
+                        <span class="group">
+                            <button @click.stop="deleteStage( column )"
+                                class="text-red-500 hover:text-red-700 opacity-0 group-hover:opacity-100 transition duration-300">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                                    stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                </svg>
+                            </button>
+                        </span>
+                    </div>
+
+                    <div class="flex-grow overflow-y-auto">
+                        <draggable v-model=" column.tasks " :group=" { name: 'tasks', pull: true, put: true } "
+                            ghost-class="ghost" @change=" ( e ) => onDragChange( e, column ) "
+                            class="flex flex-col gap-2" item-key="id">
+                            <template #item=" { element } ">
+                                <TaskCard :task=" element " :selected=" element.id === selectedTask?.id "
+                                    @select-task=" selectTask " />
+                            </template>
+                        </draggable>
+                    </div>
+
+                    <div class="mt-4">
+                        <div v-if=" column.showAddTask " class="add-task-card bg-white shadow-sm p-1" @click.stop>
+                            <TextInput v-model=" column.newTaskName " type="text" placeholder="Write a task name"
+                                class="w-full mb-2 border-0 active:border-0 ring-0 active:ring-0 focus:ring-0 shadow-none "
+                                @keyup.enter="addTask( column )" @keyup.esc="cancelAddTask( column )"
+                                ref="newTaskInput" />
+                            <div class="flex justify-end">
+                                <button @click="cancelAddTask( column )" class="text-gray-500 mr-2">Cancel</button>
+                                <PrimaryButton @click="addTask( column )" class="bg-blue-500 hover:bg-blue-600">
+                                    Add
+                                </PrimaryButton>
+                            </div>
+                        </div>
+                        <Button variant="primary" v-else @click.stop="showAddTaskCard( column )" class="w-full">
+                            + Add task
+                        </Button>
+                    </div>
+                </div>
+            </template>
+        </draggable>
+        <div class="kanban-column-new flex-shrink-0 w-64 bg-gray-100 p-4 mr-4 rounded">
+            <Button v-if=" !showAddColumnForm " @click=" showAddColumnForm = true" class="block w-full justify-center"
+                variant="secondary">+
+                Add Column</Button>
+            <form v-else @submit.prevent=" addColumn " class="bg-white p-4 rounded shadow">
+                <input v-model=" addColumnForm.fields.name " type="text" placeholder="Enter column name"
+                    class="w-full mb-2 p-2 border rounded" ref="newColumnInput" @keydown.esc=" cancelAddColumn ">
+                <Button type="submit" class="w-full">
+                    Save Column
+                </Button>
+            </form>
+        </div>
+    </div>
+</template>
 
 <style scoped>
 .ghost {
