@@ -57,7 +57,7 @@ class TasksController extends Controller
     {
         return view('Tasks.Show', [
             'task' => $task->load(['comments.user']),
-            'comments' => fn () => $task->comments,
+            'comments' => fn() => $task->comments,
         ])
             ->base('projects.show', $task->project, force: true, keep: false);
     }
@@ -67,6 +67,7 @@ class TasksController extends Controller
         $request->validate([
             'status' => 'sometimes|string|in:todo,in-progress,review,complete',
             'order' => 'sometimes|integer',
+            'title' => ['sometimes', 'string']
         ]);
 
         $updateData = [];
@@ -94,6 +95,18 @@ class TasksController extends Controller
         $task->update($updateData);
 
         return back();
+    }
+
+    public function updateTask(Request $request, Task $task)
+    {
+        $data = $request->validate([
+            'title' => ['sometimes', 'string'],
+            'description' => ['sometimes', 'string'],
+        ]);
+
+        $task->update($data);
+
+        return back()->with('success', 'Task updated');
     }
 
     public function bulkUpdate(Request $request, Project $project)

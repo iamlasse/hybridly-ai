@@ -152,7 +152,6 @@ function selectTask(task) {
 }
 // Handle stage deletion
 function deleteStage({ column, stageId, tasksToReassign, }) {
-    ;
     const pendingStage = localProject.value.stages.find((stage) => stage?.name.toLowerCase() === "pending");
     if (!pendingStage) {
         return;
@@ -169,15 +168,17 @@ function deleteStage({ column, stageId, tasksToReassign, }) {
         preserveUrl: true,
         hooks: {
             success: () => {
-                router.post(route('projects.stages.updateOrder', { project: localProject.value }), {
+                router.post(route("projects.stages.updateOrder", {
+                    project: localProject.value,
+                }), {
                     data: {
                         columns: localProject.value.stages.map((column, index) => ({
                             id: column.id,
-                            order: index
-                        }))
-                    }
+                            order: index,
+                        })),
+                    },
                 });
-            }
+            },
         },
         data: {
             tasksToReassign,
@@ -203,6 +204,7 @@ function __VLS_template() {
     let __VLS_directives;
     let __VLS_styleScopedClasses;
     let __VLS_resolvedLocalAndGlobalComponents;
+    __VLS_elementAsFunction(__VLS_intrinsicElements.section, __VLS_intrinsicElements.section)({ ...{ class: ("h-[calc(100vh)]") }, });
     __VLS_elementAsFunction(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({ ...{ class: ("hidden") }, });
     (__VLS_ctx.project);
     __VLS_elementAsFunction(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({ ...{ class: ("bg-gradient-to-b from-indigo-800 via-pink-500 to-indigo-200 h-full overflow-scroll pb-12 dark:from-gray-800 dark:to-gray-900") }, });
@@ -352,6 +354,7 @@ function __VLS_template() {
     }
     const __VLS_36 = __VLS_pickFunctionalComponentCtx(__VLS_31, __VLS_33);
     __VLS_styleScopedClasses[''];
+    __VLS_styleScopedClasses['h-[calc(100vh)]'];
     __VLS_styleScopedClasses['hidden'];
     __VLS_styleScopedClasses['bg-gradient-to-b'];
     __VLS_styleScopedClasses['from-indigo-800'];

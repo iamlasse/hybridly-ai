@@ -20,7 +20,7 @@ class Project extends Model
 
     public function tasks(): HasMany
     {
-        return $this->hasMany(Task::class);
+        return $this->hasMany(Task::class)->whereNull('parent_id');
     }
 
     public function stages(): MorphMany

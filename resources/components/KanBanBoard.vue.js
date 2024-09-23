@@ -1,29 +1,35 @@
 /// <reference types=".vue-global-types/vue_3.5_false.d.ts" />
-import draggable from 'vuedraggable';
-import { Button } from '@/components/ui/button';
+import draggable from "vuedraggable";
+import { Button } from "@/components/ui/button";
 const { defineProps, defineSlots, defineEmits, defineExpose, defineModel, defineOptions, withDefaults, } = await import('vue');
 let __VLS_typeProps;
 const props = defineProps();
-const user = useProperty('security.user');
-const emit = defineEmits(['updateTasks', 'addTask', 'addColumn', 'deleteStage', 'updateColumns']);
+const user = useProperty("security.user");
+const emit = defineEmits([
+    "updateTasks",
+    "addTask",
+    "addColumn",
+    "deleteStage",
+    "updateColumns",
+]);
 const localColumns = ref([]);
 const showAddColumnForm = ref(false);
-const newColumnName = ref('');
+const newColumnName = ref("");
 const newColumnInput = ref(null);
 const newTaskInput = ref(null);
 watchEffect(() => {
     localColumns.value = JSON.parse(JSON.stringify(props.columns)).map((column, index) => ({
         ...column,
-        newTaskName: '',
+        newTaskName: "",
         showAddTask: false,
-        order: index
+        order: index,
     }));
 });
 const computedColumns = computed({
     get: () => localColumns.value,
     set: (value) => {
         localColumns.value = value;
-    }
+    },
 });
 const onDragChange = (event, column) => {
     if (event.added || event.moved) {
@@ -42,50 +48,50 @@ function updateTasksOrder() {
             updatedTasks.push({
                 id: task.id,
                 status: column.id,
-                order: index
+                order: index,
             });
         });
     });
-    emit('updateTasks', updatedTasks);
+    emit("updateTasks", updatedTasks);
 }
 function updateColumnsOrder() {
     const updatedColumns = computedColumns.value.map((column, index) => ({
         id: column.id,
-        order: index
+        order: index,
     }));
     console.log(updatedColumns);
-    router.post(route('projects.stages.updateOrder', { project: props.projectId }), {
+    router.post(route("projects.stages.updateOrder", { project: props.projectId }), {
         data: {
-            columns: updatedColumns
+            columns: updatedColumns,
         },
         preserveState: true,
-        preserveScroll: true
+        preserveScroll: true,
     });
 }
 const addColumnForm = useForm({
-    method: 'post',
-    url: route('projects.stages.store', { project: props.projectId }),
+    method: "post",
+    url: route("projects.stages.store", { project: props.projectId }),
     replace: false,
     preserveUrl: true,
     fields: {
-        name: '',
+        name: "",
         projectId: props.projectId,
-    }
+    },
 });
 async function addColumn() {
     try {
         addColumnForm.submit();
     }
     catch (error) {
-        console.error('Error adding column:', error);
+        console.error("Error adding column:", error);
     }
 }
 function cancelAddColumn() {
     showAddColumnForm.value = false;
-    newColumnName.value = '';
+    newColumnName.value = "";
 }
 function handleKeyUp(event) {
-    if (event.key === 'Escape') {
+    if (event.key === "Escape") {
         const activeColumn = localColumns.value.find((column) => column.showAddTask);
         if (activeColumn) {
             cancelAddTask(activeColumn);
@@ -102,16 +108,16 @@ function selectTask(task) {
     //     selectedTask.value = null;
     //     return;
     // }
-    console.log('select task', task?.id);
+    console.log("select task", task?.id);
     selectedTask.value = task;
     // //   emit('selectTask', task);
-    router.get(route('tasks.show', { task: task.id }), {
+    router.get(route("tasks.show", { task: task.id }), {
         preserveScroll: true,
         hooks: {
             success: () => {
-                console.log('success');
-            }
-        }
+                console.log("success");
+            },
+        },
     });
 }
 function showAddTaskCard(column) {
@@ -129,28 +135,28 @@ function showAddTaskCard(column) {
 }
 function cancelAddTask(column) {
     column.showAddTask = false;
-    column.newTaskName = '';
+    column.newTaskName = "";
 }
 const maxTasksPerStage = ref(user.value?.is_premium ? Infinity : 5);
 function addTask(column) {
     if (!column.newTaskName.trim())
         return;
     if (column.tasks.length >= maxTasksPerStage.value) {
-        alert('Your account only allows you to add up to 5 tasks per stage. Please upgrade to add more.');
+        alert("Your account only allows you to add up to 5 tasks per stage. Please upgrade to add more.");
         return;
     }
-    emit('addTask', {
+    emit("addTask", {
         name: column.newTaskName,
-        description: '',
+        description: "",
         status: column.id,
-        projectId: props.projectId
+        projectId: props.projectId,
     });
-    column.newTaskName = '';
+    column.newTaskName = "";
     column.showAddTask = false;
 }
 function handleOutsideClick(event) {
     const target = event.target;
-    if (!target.closest('.add-task-card') && !target.closest('button')) {
+    if (!target.closest(".add-task-card") && !target.closest("button")) {
         localColumns.value.forEach((column) => {
             if (column.showAddTask) {
                 cancelAddTask(column);
@@ -160,21 +166,21 @@ function handleOutsideClick(event) {
 }
 function handleOutsideClickTaskCard(event) {
     const target = event.target;
-    if (!target.closest('.task-card')) {
+    if (!target.closest(".task-card")) {
         selectedTask.value = null;
     }
 }
 // Handle click outside task card, set selected task to null
 onMounted(() => {
-    document.addEventListener('click', handleOutsideClickTaskCard);
+    document.addEventListener("click", handleOutsideClickTaskCard);
 });
 onUnmounted(() => {
-    document.removeEventListener('click', handleOutsideClickTaskCard);
+    document.removeEventListener("click", handleOutsideClickTaskCard);
 });
 function deleteStage(column) {
-    console.log('Delete stage clicked:', column.name);
+    console.log("Delete stage clicked:", column.name);
     if (confirm(`Are you sure you want to delete the "${column.name}" stage? All tasks in this stage will be moved to 'Pending'.`)) {
-        const pendingColumn = localColumns.value.find((col) => col.name.toLowerCase() === 'pending');
+        const pendingColumn = localColumns.value.find((col) => col.name.toLowerCase() === "pending");
         if (!pendingColumn) {
             alert("Error: 'Pending' column not found. Please ensure there's a 'Pending' column before deleting stages.");
             return;
@@ -182,18 +188,18 @@ function deleteStage(column) {
         // Move tasks to pending
         pendingColumn.tasks = [...pendingColumn.tasks, ...column.tasks];
         // Emit event to parent component to handle the stage deletion and task reassignment
-        emit('deleteStage', {
+        emit("deleteStage", {
             column,
             stageId: column.id,
-            tasksToReassign: column.tasks.map((task) => task.id)
+            tasksToReassign: column.tasks.map((task) => task.id),
         });
     }
 }
 onMounted(() => {
-    document.addEventListener('keyup', handleKeyUp);
+    document.addEventListener("keyup", handleKeyUp);
 });
 onUnmounted(() => {
-    document.removeEventListener('keyup', handleKeyUp);
+    document.removeEventListener("keyup", handleKeyUp);
 });
 watchEffect(() => {
     if (showAddColumnForm.value) {
@@ -224,7 +230,7 @@ function __VLS_template() {
     // CSS variable injection 
     // CSS variable injection end 
     let __VLS_resolvedLocalAndGlobalComponents;
-    __VLS_elementAsFunction(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({ ...{ onClick: (__VLS_ctx.handleOutsideClick) }, ...{ class: ("kanban-board h-full px-4 flex overflow-x-auto text-slate-500") }, });
+    __VLS_elementAsFunction(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({ ...{ onClick: (__VLS_ctx.handleOutsideClick) }, ...{ class: ("kanban-board h-full sm:pb-12 px-4 flex overflow-x-auto text-slate-500") }, });
     const __VLS_0 = __VLS_resolvedLocalAndGlobalComponents.draggable;
     /** @type { [typeof __VLS_components.Draggable, typeof __VLS_components.draggable, typeof __VLS_components.Draggable, typeof __VLS_components.draggable, ] } */
     // @ts-ignore
@@ -286,8 +292,8 @@ function __VLS_template() {
             const __VLS_24 = __VLS_resolvedLocalAndGlobalComponents.TextInput;
             /** @type { [typeof __VLS_components.TextInput, ] } */
             // @ts-ignore
-            const __VLS_25 = __VLS_asFunctionalComponent(__VLS_24, new __VLS_24({ ...{ 'onKeyup': {} }, ...{ 'onKeyup': {} }, modelValue: ((column.newTaskName)), type: ("text"), placeholder: ("Write a task name"), ...{ class: ("w-full mb-2 border-0 active:border-0 ring-0 active:ring-0 focus:ring-0 shadow-none ") }, ref: ("newTaskInput"), }));
-            const __VLS_26 = __VLS_25({ ...{ 'onKeyup': {} }, ...{ 'onKeyup': {} }, modelValue: ((column.newTaskName)), type: ("text"), placeholder: ("Write a task name"), ...{ class: ("w-full mb-2 border-0 active:border-0 ring-0 active:ring-0 focus:ring-0 shadow-none ") }, ref: ("newTaskInput"), }, ...__VLS_functionalComponentArgsRest(__VLS_25));
+            const __VLS_25 = __VLS_asFunctionalComponent(__VLS_24, new __VLS_24({ ...{ 'onKeyup': {} }, ...{ 'onKeyup': {} }, modelValue: ((column.newTaskName)), type: ("text"), placeholder: ("Write a task name"), ...{ class: ("w-full mb-2 border-0 active:border-0 ring-0 active:ring-0 focus:ring-0 shadow-none") }, ref: ("newTaskInput"), }));
+            const __VLS_26 = __VLS_25({ ...{ 'onKeyup': {} }, ...{ 'onKeyup': {} }, modelValue: ((column.newTaskName)), type: ("text"), placeholder: ("Write a task name"), ...{ class: ("w-full mb-2 border-0 active:border-0 ring-0 active:ring-0 focus:ring-0 shadow-none") }, ref: ("newTaskInput"), }, ...__VLS_functionalComponentArgsRest(__VLS_25));
             // @ts-ignore navigation for `const newTaskInput = ref()`
             __VLS_ctx.newTaskInput;
             var __VLS_30 = {};
@@ -376,7 +382,7 @@ function __VLS_template() {
     }
     else {
         __VLS_elementAsFunction(__VLS_intrinsicElements.form, __VLS_intrinsicElements.form)({ ...{ onSubmit: (__VLS_ctx.addColumn) }, ...{ class: ("bg-white p-4 rounded shadow") }, });
-        __VLS_elementAsFunction(__VLS_intrinsicElements.input, __VLS_intrinsicElements.input)({ ...{ onKeydown: (__VLS_ctx.cancelAddColumn) }, value: ((__VLS_ctx.addColumnForm.fields.name)), type: ("text"), placeholder: ("Enter column name"), ...{ class: ("w-full mb-2 p-2 border rounded") }, ref: ("newColumnInput"), });
+        __VLS_elementAsFunction(__VLS_intrinsicElements.input)({ ...{ onKeydown: (__VLS_ctx.cancelAddColumn) }, value: ((__VLS_ctx.addColumnForm.fields.name)), type: ("text"), placeholder: ("Enter column name"), ...{ class: ("w-full mb-2 p-2 border rounded") }, ref: ("newColumnInput"), });
         // @ts-ignore navigation for `const newColumnInput = ref()`
         __VLS_ctx.newColumnInput;
         const __VLS_58 = __VLS_resolvedLocalAndGlobalComponents.Button;
@@ -389,6 +395,7 @@ function __VLS_template() {
     }
     __VLS_styleScopedClasses['kanban-board'];
     __VLS_styleScopedClasses['h-full'];
+    __VLS_styleScopedClasses['sm:pb-12'];
     __VLS_styleScopedClasses['px-4'];
     __VLS_styleScopedClasses['flex'];
     __VLS_styleScopedClasses['overflow-x-auto'];

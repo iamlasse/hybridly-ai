@@ -12,8 +12,6 @@ export default defineConfig( {
         },
     },
     plugins: [
-        hybridly( {
-
-        } ),
+        hybridly(),
     ],
 } );

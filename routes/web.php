@@ -69,6 +69,8 @@ Route::put('/projects/{project}/tasks/{task:id}', [TasksController::class, 'upda
     ->middleware(['auth:sanctum'])
     ->name('projects.tasks.update');
 
+Route::put('/tasks/{task:id}', [TasksController::class, 'updateTask'])->name('tasks.update');
+
 Route::put('/projects/{project}/collaborators', [ProjectController::class, 'addCollaborator'])
     ->middleware(['auth:sanctum'])
     ->name('projects.collaborators.store');

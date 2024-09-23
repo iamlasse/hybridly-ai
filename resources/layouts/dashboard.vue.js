@@ -1,11 +1,11 @@
 /// <reference types=".vue-global-types/vue_3.5_false.d.ts" />
-import { ref } from 'vue';
+import { ref } from "vue";
 const { defineProps, defineSlots, defineEmits, defineExpose, defineModel, defineOptions, withDefaults, } = await import('vue');
-const sortBy = ref('Date');
+const sortBy = ref("Date");
 function logout() {
     // router.post( route( 'logout' ) );
 }
-const user = useProperty('security.user');
+const user = useProperty("security.user");
 const __VLS_fnComponent = (await import('vue')).defineComponent({});
 ;
 let __VLS_functionalComponentProps;
@@ -23,10 +23,8 @@ function __VLS_template() {
     };
     let __VLS_directives;
     let __VLS_styleScopedClasses;
-    // CSS variable injection 
-    // CSS variable injection end 
     let __VLS_resolvedLocalAndGlobalComponents;
-    __VLS_elementAsFunction(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({ ...{ class: ("min-h-screen flex bg-gradient-to-br from-gray-800 to-gray-700 ") }, });
+    __VLS_elementAsFunction(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({ ...{ class: ("min-h-screen flex bg-gradient-to-br from-gray-800 to-gray-700") }, });
     __VLS_elementAsFunction(__VLS_intrinsicElements.aside, __VLS_intrinsicElements.aside)({ ...{ class: ("w-64 p-6 flex flex-col bg-gray-900 text-white") }, });
     __VLS_elementAsFunction(__VLS_intrinsicElements.nav, __VLS_intrinsicElements.nav)({ ...{ class: ("flex-grow") }, });
     __VLS_elementAsFunction(__VLS_intrinsicElements.ul, __VLS_intrinsicElements.ul)({ ...{ class: ("space-y-2") }, });
@@ -44,13 +42,14 @@ function __VLS_template() {
     if (__VLS_ctx.user) {
         __VLS_elementAsFunction(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({ ...{ class: ("mt-auto") }, });
         __VLS_elementAsFunction(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({ ...{ class: ("bg-gray-800 rounded-lg p-4") }, });
-        __VLS_elementAsFunction(__VLS_intrinsicElements.img)({ src: ((__VLS_ctx.user.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(__VLS_ctx.user.name)}`)), alt: ((__VLS_ctx.user.name)), ...{ class: ("h-12 w-12 rounded-full mb-2 mx-auto") }, });
+        __VLS_elementAsFunction(__VLS_intrinsicElements.img)({ src: ((__VLS_ctx.user.avatar ||
+                `https://ui-avatars.com/api/?name=${encodeURIComponent(__VLS_ctx.user.name)}`)), alt: ((__VLS_ctx.user.name)), ...{ class: ("h-12 w-12 rounded-full mb-2 mx-auto") }, });
         __VLS_elementAsFunction(__VLS_intrinsicElements.h3, __VLS_intrinsicElements.h3)({ ...{ class: ("text-lg font-semibold text-center") }, });
         (__VLS_ctx.user.name);
         __VLS_elementAsFunction(__VLS_intrinsicElements.p, __VLS_intrinsicElements.p)({ ...{ class: ("text-sm text-gray-400 text-center") }, });
         (__VLS_ctx.user.email);
         __VLS_elementAsFunction(__VLS_intrinsicElements.p, __VLS_intrinsicElements.p)({ ...{ class: ("text-xs text-gray-400 text-center mt-1") }, });
-        (__VLS_ctx.user.is_premium ? 'Premium' : 'Free');
+        (__VLS_ctx.user.is_premium ? "Premium" : "Free");
     }
     const __VLS_6 = __VLS_resolvedLocalAndGlobalComponents.RouterLink;
     /** @type { [typeof __VLS_components.RouterLink, typeof __VLS_components.routerLink, typeof __VLS_components.RouterLink, typeof __VLS_components.routerLink, ] } */
