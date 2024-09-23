@@ -11,9 +11,9 @@ const user = useProperty( 'security.user' );
 </script>
 
 <template>
-    <div class="min-h-screen flex bg-gradient-to-br from-gray-800 to-gray-700 text-white">
+    <div class="min-h-screen flex bg-gradient-to-br from-gray-800 to-gray-700 ">
         <!-- Sidebar -->
-        <aside class="w-64 p-6 flex flex-col bg-gray-900">
+        <aside class="w-64 p-6 flex flex-col bg-gray-900 text-white">
             <!-- User Profile -->
             <!-- <div class="mb-8">
                 <img :src=" user.avatar || 'https://ui-avatars.com/api/?name=' + encodeURIComponent( user.name ) "
@@ -36,7 +36,7 @@ const user = useProperty( 'security.user' );
                             Dashboard
                         </router-link>
                     </li>
-                    <li>
+                    <!-- <li>
                         <router-link :href=" route( 'dashboard' ) "
                             class="flex items-center p-2 rounded hover:bg-gray-800">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" viewBox="0 0 20 20"
@@ -46,24 +46,12 @@ const user = useProperty( 'security.user' );
                             </svg>
                             Sent
                         </router-link>
-                    </li>
-                    <li>
-                        <router-link :href=" route( 'billing.show' ) "
-                            class="flex items-center p-2 rounded hover:bg-gray-800">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" viewBox="0 0 20 20"
-                                fill="currentColor">
-                                <path fill-rule="evenodd"
-                                    d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4zm6 4a2 2 0 100-4 2 2 0 000 4z"
-                                    clip-rule="evenodd" />
-                            </svg>
-                            Billing
-                        </router-link>
-                    </li>
+                    </li> -->
                 </ul>
             </nav>
 
             <!-- User Details -->
-            <div class="mt-auto">
+            <div class="mt-auto" v-if="user">
                 <div class="bg-gray-800 rounded-lg p-4">
                     <img :src=" user.avatar || `https://ui-avatars.com/api/?name=${ encodeURIComponent( user.name ) }` "
                         :alt=" user.name " class="h-12 w-12 rounded-full mb-2 mx-auto" />
@@ -86,8 +74,17 @@ const user = useProperty( 'security.user' );
                     </div>
                 </div>
             </div> -->
-            <router-link :href=" route( 'logout' ) " method="post" as="button"
-                class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 mt-3 px-4 rounded" preserve-scroll>
+            <router-link :href=" route( 'billing.show' ) " class="inline-flex cursor-pointer justify-center mt-2 items-center p-2 rounded hover:bg-gray-800" as="primary-button">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd"
+                        d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4zm6 4a2 2 0 100-4 2 2 0 000 4z"
+                        clip-rule="evenodd" />
+                </svg>
+                Billing
+            </router-link>
+            <router-link :href=" route( 'logout' ) " method="post" as="primary-button"
+                class="bg-red-500 hover:bg-red-700 cursor-pointer justify-center inline-flex text-white font-bold py-2 mt-3 px-4 rounded"
+                preserve-scroll>
                 Logout
             </router-link>
         </aside>

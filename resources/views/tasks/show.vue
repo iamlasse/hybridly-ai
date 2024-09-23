@@ -1,13 +1,10 @@
 <script setup lang="ts">
-import Dialog from '@/components/rdialog.vue';
 import type { Comment, Task } from '@/types';
-import
-    {
-    Button
-} from '@/components/ui/button'
+import CComment from '@/components/CComment.vue';
+import Dialog from '@/components/rdialog.vue';
 const props = defineProps<{
     task: Task;
-    comments: Comment[]
+    comments: Comment[];
 }>();
 
 const commentForm = useForm( {
@@ -28,7 +25,7 @@ const onSubmit = () =>
 {
     commentForm.submitWith( {
         preserveState: false
-    });
+    } );
 };
 </script>
 
@@ -40,7 +37,8 @@ const onSubmit = () =>
         <div class="grid grid-rows-[1fr_auto] h-[calc(100%-48px)] overflow-y-scroll p-6">
 
             <div class="comments pb-4">
-                <CComment v-for="     comment in comments     " :key=" comment.id " :comment=" comment " />
+                <CComment v-for="               comment in comments               " :key=" comment.id "
+                    :comment=" comment " />
             </div>
             <div class="bg-slate-100 border-t -mr-6 -ml-6  sticky bottom-0">
                 <div class="   ">
@@ -50,7 +48,7 @@ const onSubmit = () =>
                                 v-model=" commentForm.fields.body " />
                             <div class="actions flex justify-between items-center">
                                 <p class="text-sm">Add comment</p>
-                                <Button size="sm" type="submit">Submit</Button>
+                                <primary-button size="sm" type="submit">Submit</primary-button>
                             </div>
                         </div>
                     </form>

@@ -1,6 +1,15 @@
+<script setup lang="ts">
+const props = defineProps( {
+    comment: {
+        type: Object,
+        required: true,
+    },
+} );
+</script>
+
 <template>
     <div class="flex items-start">
-        <img :src="comment.user?.profile_photo_url" :alt="comment.user?.name" class="w-12 h-12 rounded-full mr-4">
+        <img :src=" comment.user?.profile_photo_url " :alt=" comment.user?.name " class="w-12 h-12 rounded-full mr-4">
         <div class="flex-1">
             <div class="text-sm">
                 <span class="font-bold">{{ comment.user.name }}</span>
@@ -10,12 +19,3 @@
         </div>
     </div>
 </template>
-
-<script setup lang="ts">
-const props = defineProps({
-    comment: {
-        type: Object,
-        required: true,
-    },
-});
-</script>

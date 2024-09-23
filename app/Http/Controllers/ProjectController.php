@@ -78,6 +78,7 @@ class ProjectController extends Controller
             'tasks' => function ($query) {
                 $query->withCount('comments')->orderBy('status')->orderBy('order');
             },
+            'user'
         ]));
 
         return hybridly('Projects.Show', [
@@ -145,23 +146,34 @@ class ProjectController extends Controller
         return back()->with('success', 'Stage added successfully.');
     }
 
-    public function destroyStage(Project $project, Stage $stage)
+    public function destroyStage(Request $request, Project $project, Stage $stage)
     {
-        DB::transaction(function () use ($project, $stage) {
+        DB::transaction(function () use ($project, $stage, $request) {
+            // $order = data_get($request, 'column.order');
             $project->stages()->where('slug', $stage->slug)->delete();
 
             $project->tasks()->where('status', $stage->slug)->update(['status' => 'pending']);
         });
 
-        return back()->with('success', 'Stage deleted successfully.');
+        return hybridly(properties: [
+            'project' => $project->fresh()->loadMissing(['stages']),
+        ]);
     }
 
     public function updateStagesOrder(Request $request, Project $project)
     {
-        collect($request->columns)->each(function ($column) use ($project) {
+        $this->updateStageOrder($project, $request->columns);
+
+        return hybridly(properties: [
+            'project' => $project->fresh()->loadMissing(['stages', 'tasks']),
+        ]);
+    }
+
+    private function updateStageOrder(Project $project, $columns)
+    {
+        ds($columns);
+        collect($columns)->each(function ($column) use ($project) {
             $project->stages()->where('slug', $column['id'])->update(['order' => $column['order'] + 1]);
         });
-
-        return back()->with('success', 'Stages order updated successfully.');
     }
 }

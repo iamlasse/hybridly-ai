@@ -37,6 +37,7 @@ export type Task = {
     created_at: string;
     updated_at: string;
     comments: Comment[]
+    order: number;
 }
 
 export interface Stage {

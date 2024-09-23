@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import type { Project } from '@/types';
+import PrimaryButton from '../components/PrimaryButton.vue';
 
 const props = defineProps<{
     projects: Project | Project[],
@@ -26,15 +27,16 @@ const closeCreateProjectModal = () =>
 
 <template layout="dashboard">
     <section>
-        <div v-if=" !user.is_premium " class="bg-yellow-50 border border-yellow-200 text-yellow-800 p-4 my-6 mx-4 rounded-lg shadow-sm"
-        role="alert">
-        <p class="text-sm">Want to unlock more features?
-            <router-link :href="route('upgrade.show')"
-                class="font-medium text-yellow-700 underline hover:text-yellow-800 transition-colors duration-200">
-                Upgrade to premium
-            </router-link>
-        </p>
-    </div>
+        <div v-if=" !user?.is_premium "
+            class="bg-yellow-50 border border-yellow-200 text-yellow-800 p-4 my-6 mx-4 rounded-lg shadow-sm"
+            role="alert">
+            <p class="text-sm">Want to unlock more features?
+                <router-link :href=" route( 'upgrade.show' ) "
+                    class="font-medium text-yellow-700 underline hover:text-yellow-800 transition-colors duration-200">
+                    Upgrade to premium
+                </router-link>
+            </p>
+        </div>
         <div class="p-6 flex justify-between items-center mb-4">
             <h1 class="text-2xl font-semibold"></h1>
             <PrimaryButton

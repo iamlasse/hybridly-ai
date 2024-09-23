@@ -42,25 +42,23 @@
                                 </PrimaryButton>
                             </div>
                         </div>
-                        <button v-else @click.stop="showAddTaskCard( column )"
-                            class="w-full text-center hover:bg-slate-200 rounded-md p-2 text-gray-500 hover:text-gray-700 text-sm">
+                        <Button variant="primary" v-else @click.stop="showAddTaskCard( column )" class="w-full">
                             + Add task
-                        </button>
+                        </Button>
                     </div>
                 </div>
             </template>
         </draggable>
         <div class="kanban-column-new flex-shrink-0 w-64 bg-gray-100 p-4 mr-4 rounded">
-            <button v-if=" !showAddColumnForm " @click="showAddColumnForm = true"
-                class="block w-full bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-2 px-4 rounded">+ Add
-                Column</button>
+            <Button v-if=" !showAddColumnForm " @click=" showAddColumnForm = true" class="block w-full justify-center"
+                variant="secondary">+
+                Add Column</Button>
             <form v-else @submit.prevent=" addColumn " class="bg-white p-4 rounded shadow">
                 <input v-model=" addColumnForm.fields.name " type="text" placeholder="Enter column name"
                     class="w-full mb-2 p-2 border rounded" ref="newColumnInput" @keydown.esc=" cancelAddColumn ">
-                <button type="submit"
-                    class="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded">
+                <Button type="submit" class="w-full">
                     Save Column
-                </button>
+                </Button>
             </form>
         </div>
     </div>
@@ -68,11 +66,14 @@
 
 <script setup lang="ts">
 import draggable from 'vuedraggable';
-import type { Column } from '@/types';
+import type { Column, Task } from '@/types';
+import { Button } from '@/components/ui/button';
 const props = defineProps<{
     columns: Object[];
     projectId: number;
 }>();
+
+const user = useProperty( 'security.user' );
 
 const emit = defineEmits( [ 'updateTasks', 'addTask', 'addColumn', 'deleteStage', 'updateColumns' ] );
 
@@ -157,6 +158,8 @@ function updateColumnsOrder ()
 const addColumnForm = useForm( {
     method: 'post',
     url: route( 'projects.stages.store', { project: props.projectId } ),
+    replace: false,
+    preserveUrl: true,
     fields: {
         name: '',
         projectId: props.projectId,
@@ -184,7 +187,7 @@ function handleKeyUp ( event: KeyboardEvent )
 {
     if ( event.key === 'Escape' )
     {
-        const activeColumn = localColumns.value.find( column => column.showAddTask );
+        const activeColumn = localColumns.value.find( ( column: any ) => column.showAddTask );
         if ( activeColumn )
         {
             cancelAddTask( activeColumn );
@@ -218,9 +221,9 @@ function selectTask ( task: App.Data.TaskData )
             }
         }
     } );
-} function showAddTaskCard ( column: Column )
+} function showAddTaskCard ( column: Column & any )
 {
-    localColumns.value.forEach( col =>
+    localColumns.value.forEach( ( col: any ) =>
     {
         if ( col.id !== column.id )
         {
@@ -238,23 +241,16 @@ function selectTask ( task: App.Data.TaskData )
     } );
 }
 
-function cancelAddTask ( column: Column )
+function cancelAddTask ( column: any )
 {
     column.showAddTask = false;
     column.newTaskName = '';
 }
 
-const user = ref( null );
-const maxTasksPerStage = ref( 5 );
+const maxTasksPerStage = ref( user.is_premium ? Infinity : 5 );
 
-onMounted( async () =>
-{
-    const response = await fetch( '/api/user' );
-    user.value = await response.json();
-    maxTasksPerStage.value = user.value.is_premium ? Infinity : 5;
-} );
 
-function addTask ( column: Column )
+function addTask ( column: Column & any )
 {
     if ( !column.newTaskName.trim() ) return;
 
@@ -280,7 +276,7 @@ function handleOutsideClick ( event: MouseEvent )
     const target = event.target as HTMLElement;
     if ( !target.closest( '.add-task-card' ) && !target.closest( 'button' ) )
     {
-        localColumns.value.forEach( column =>
+        localColumns.value.forEach( ( column: any ) =>
         {
             if ( column.showAddTask )
             {
@@ -309,12 +305,12 @@ onUnmounted( () =>
     document.removeEventListener( 'click', handleOutsideClickTaskCard );
 } );
 
-function deleteStage ( column: Column )
+function deleteStage ( column: Column & any )
 {
     console.log( 'Delete stage clicked:', column.name );
     if ( confirm( `Are you sure you want to delete the "${ column.name }" stage? All tasks in this stage will be moved to 'Pending'.` ) )
     {
-        const pendingColumn = localColumns.value.find( col => col.name.toLowerCase() === 'pending' );
+        const pendingColumn = localColumns.value.find( ( col: any ) => col.name.toLowerCase() === 'pending' );
         if ( !pendingColumn )
         {
             alert( "Error: 'Pending' column not found. Please ensure there's a 'Pending' column before deleting stages." );
@@ -326,8 +322,9 @@ function deleteStage ( column: Column )
 
         // Emit event to parent component to handle the stage deletion and task reassignment
         emit( 'deleteStage', {
+            column,
             stageId: column.id,
-            tasksToReassign: column.tasks.map( task => task.id )
+            tasksToReassign: column.tasks.map( ( task: Task ) => task.id )
         } );
     }
 }

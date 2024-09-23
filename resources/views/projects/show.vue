@@ -1,63 +1,36 @@
 <script setup lang="ts">
-import { ref, computed, App } from 'vue';
-import { can } from 'hybridly';
+import { ref, computed } from "vue";
+import { can } from "hybridly";
+import { Task } from "~/resources/types";
 
 import
 {
-    Select,
     SelectContent,
-    SelectGroup,
-    SelectItem,
-    SelectLabel,
-    SelectTrigger,
     SelectValue,
-} from '@/components/ui/select';
-
-// import { Task } from '@/types';
+    SelectItem,
+    SelectTrigger,
+    SelectLabel,
+    Select,
+} from "@/components/ui/select";
 
 const props = defineProps<{
     project: App.Data.ProjectData;
     users: App.Data.UserData[];
 }>();
 
-const user = useProperty( 'security.user' );
+const user = useProperty( "security.user" );
 
-const { is_premium } = user;
-
-const canAddCollaborators = can( props.project, 'addCollaborators' );
-
+const canAddCollaborators = can( props.project, "addCollaborators" );
 
 const localProject = computed( () => props.project );
 
 // New state for selected task and panel visibility
-const selectedTask = ref<Task | null>( null );
+const selectedTask = ref<App.Data.TaskData | null>( null );
 const isPanelOpen = ref( false );
 
-function addNewTask ( columnId: string )
-{
-    const form = newTaskForms.value.find( f => f.columnId === columnId );
-    if ( form.name.trim() === '' ) return;
-
-    console.log( form, columnId );
-
-    // router.put( route( 'projects.tasks.store', { project: localProject.value.id } ), {
-    //     data: {
-    //         name: form.name,
-    //         status: columnId
-    //     },
-    //     onSuccess: () =>
-    //     {
-    //         form.name = '';
-    //     },
-    //     preserveState: true,
-    //     preserveScroll: true,
-    // } );
-}
-
-
 const projectForm = useForm( {
-    method: 'PUT',
-    url: route( 'projects.update', { project: localProject.value.id } ),
+    method: "PUT",
+    url: route( "projects.update", { project: localProject.value.id } ),
     fields: {
         name: localProject.value.name,
         description: localProject.value.description,
@@ -66,18 +39,18 @@ const projectForm = useForm( {
 
 const showModal = ref( false );
 const form = useForm( {
-    method: 'post',
-    url: route( 'projects.tasks.store', { project: localProject.value.id } ),
+    method: "post",
+    url: route( "projects.tasks.store", { project: localProject.value.id } ),
     fields: {
-        name: ''
-    }
+        name: "",
+    },
 } );
 
 const editTitle = ref( false );
 const editDescription = ref( false );
 
 const statusDropdownOpen = ref( false );
-const availableStatuses = [ 'active', 'completed', 'on_hold' ];
+const availableStatuses = [ "active", "completed", "on_hold" ];
 
 const showCollaboratorModal = ref( false );
 
@@ -96,83 +69,71 @@ function closeModal ()
     showModal.value = false;
 }
 
-function ProjectStatus ( status )
+function ProjectStatus ( status: string )
 {
-    return availableStatuses.includes( status ) ? status : 'unknown';
+    return availableStatuses.includes( status ) ? status : "unknown";
 }
 
-function addTask ( task )
+function addTask (
+    task: App.Data.TaskData & { name: string; projectId: number; }
+)
 {
-    const { name,
-        description,
-        status,
-        projectId } = task;
-    router.put( route( 'projects.tasks.store', { project: projectId } ), {
+    const { name, description, status, projectId } = task;
+    router.put( route( "projects.tasks.store", { project: projectId } ), {
         data: {
             name,
             description,
             status,
-            projectId
+            projectId,
         },
         preserveScroll: true,
         preserveState: false,
-        onSuccess: () =>
-        {
-            form.reset( 'name' );
-            closeModal();
+        preserveUrl: true,
+        hooks: {
+            success: () =>
+            {
+                form.reset();
+            },
         },
     } );
 }
 
 function updateProjectStatus ( status: string )
 {
-    router.put( route( 'projects.update-status', localProject.value.id ), { status }, {
+    router.put( route( "projects.update-status", localProject.value.id ), {
+        data: { status },
         preserveScroll: true,
         preserveState: true,
-        onSuccess: () =>
-        {
-            statusDropdownOpen.value = false;
+        preserveUrl: true,
+        hooks: {
+            success: () =>
+            {
+                statusDropdownOpen.value = false;
+            },
         },
     } );
 }
 
-// const collaboratorForm = useForm( {
-//     method: 'put',
-//     url: route( 'projects.collaborators.store', { project: localProject.value.id } ),
-//     updateInitials: true,
-//     fields: {
-//         user_id: '',
-//     },
-//     key: 'collaborators',
-//     hooks: {
-//         success: () =>
-//         {
-//             closeCollaboratorModal()
-//             collaboratorForm.clearErrors()
-//             collaboratorForm.reset()
-//             router.reload( { only: [ 'users' ] } )
-//         }
-//     }
-// } );
-
 const collaboratorForm = useForm( {
-    method: 'PUT',
-    url: route( 'projects.collaborators.store', { project: localProject.value.id } ),
+    method: "PUT",
+    url: route( "projects.collaborators.store", {
+        project: localProject.value.id,
+    } ),
     fields: {
-        user_id: ''
+        user_id: "",
     },
     hooks: {
         success: ( payload: any, context: any ) =>
         {
-            console.log( 'collaborator added', payload, context );
+            console.log( "collaborator added", payload, context );
             // router.reload( { only: [ 'users' ] } )
             closeCollaboratorModal();
         },
         fail: ( context: any ) =>
         {
-            console.log( 'fail', context );
-        }
-    }
+            console.log( "fail", context );
+        },
+    },
 } );
 
 function addCollaborator ()
@@ -190,37 +151,37 @@ function closeCollaboratorModal ()
     showCollaboratorModal.value = false;
 }
 
-
-
 const columns = computed( () =>
 {
-    return props.project.stages.map( stage => ( {
+    return props.project.stages.map( ( stage: any ) => ( {
         id: stage.slug,
         name: stage.name,
     } ) );
 } );
 
-const newTaskForms = ref( columns.value.map( column => ( {
-    columnId: column.id,
-    name: '',
-} ) ) );
+const newTaskForms = ref(
+    columns.value.map( ( column: any ) => ( {
+        columnId: column.id,
+        name: "",
+    } ) )
+);
 
 const renderColumns = computed( () =>
 {
-    return columns.value.map( column => ( {
+    return columns.value.map( ( column: any ) => ( {
         ...column,
         tasks: localProject.value.tasks
-            .filter( task => task.status === column.id )
-            .sort( ( a, b ) => a.order - b.order ),
+            ?.filter( ( task: App.Data.TaskData ) => task.status === column.id )
+            .sort( ( a: App.Data.TaskData, b: App.Data.TaskData ) => a.order - b.order ),
     } ) );
 } );
 
-function updateTasks ( updatedTasks )
+function updateTasks ( updatedTasks: any )
 {
     // Update local state
-    updatedTasks.forEach( updatedTask =>
+    updatedTasks.forEach( ( updatedTask: Task ) =>
     {
-        const task = localProject.value.tasks.find( t => t.id === updatedTask.id );
+        const task = localProject.value.tasks?.find( ( t ) => t.id === updatedTask.id );
         if ( task )
         {
             task.status = updatedTask.status;
@@ -229,21 +190,27 @@ function updateTasks ( updatedTasks )
     } );
 
     // Sort tasks within each column
-    renderColumns.value.forEach( column =>
+    renderColumns.value.forEach( ( column: { tasks: Task[]; } ) =>
     {
         column.tasks.sort( ( a, b ) => a.order - b.order );
     } );
 
     // Send update to server
-    router.put( route( 'projects.tasks.bulk-update', { project: localProject.value.id } ), {
-        data: { tasks: updatedTasks },
-        preserveState: true,
-        preserveScroll: true,
-    } );
+    router.put(
+        route( "projects.tasks.bulk-update", { project: localProject.value.id } ),
+        {
+            preserveState: true,
+            preserveScroll: true,
+            preserveUrl: true,
+            data: {
+                tasks: updatedTasks,
+            },
+        }
+    );
 }
 
 // New function to handle task selection
-function selectTask ( task )
+function selectTask ( task: App.Data.TaskData )
 {
     selectedTask.value = task;
     isPanelOpen.value = true;
@@ -251,18 +218,24 @@ function selectTask ( task )
 
 interface Stage
 {
-    name: string,
+    name: string;
     slug: string;
 }
 
 // Handle stage deletion
-function deleteStage ( { stageId, tasksToReassign }: {
-    stageId: string,
-    tasksToReassign: number[],
+function deleteStage ( {
+    column,
+    stageId,
+    tasksToReassign,
+}: {
+    column: any;
+    stageId: string;
+    tasksToReassign: App.Data.TaskData[];
 } )
 {
+    ;
     const pendingStage = localProject.value.stages.find(
-        ( stage: Stage | undefined ) => stage?.name.toLowerCase() === 'pending'
+        ( stage: Stage | undefined ) => stage?.name.toLowerCase() === "pending"
     );
 
     if ( !pendingStage )
@@ -272,14 +245,29 @@ function deleteStage ( { stageId, tasksToReassign }: {
 
     // Send update to server
     router.delete(
-        route( 'projects.stages.destroy', {
+        route( "projects.stages.destroy", {
             project: localProject.value.id,
             stage: stageId,
+            column: column,
             tasks: tasksToReassign,
         } ),
         {
             preserveState: false,
             preserveScroll: true,
+            preserveUrl: true,
+            hooks: {
+                success: () =>
+                {
+                    router.post( route( 'projects.stages.updateOrder', { project: localProject.value } ), {
+                        data: {
+                            columns: localProject.value.stages.map( ( column: any, index: any ) => ( {
+                                id: column.id,
+                                order: index
+                            } ) )
+                        }
+                    } );
+                }
+            },
             data: {
                 tasksToReassign,
                 newStatus: pendingStage.slug,
@@ -290,20 +278,21 @@ function deleteStage ( { stageId, tasksToReassign }: {
 </script>
 
 <template layout="dashboard">
-
     <div class="hidden">{{ project }}</div>
 
     <div
         class="bg-gradient-to-b from-indigo-800 via-pink-500 to-indigo-200 h-full overflow-scroll pb-12 dark:from-gray-800 dark:to-gray-900">
-        <div v-if=" !user.is_premium " class="bg-yellow-50 border border-yellow-200 text-yellow-800 p-4 my-6 mx-4 rounded-lg shadow-sm"
-        role="alert">
-        <p class="text-sm">Want to unlock more features? 
-            <router-link href="/upgrade"
-                class="font-medium text-yellow-700 underline hover:text-yellow-800 transition-colors duration-200">
-                Upgrade to premium
-            </router-link>
-        </p>
-    </div>
+        <div v-if=" !user?.is_premium "
+            class="bg-yellow-50 border border-yellow-200 text-yellow-800 p-4 my-6 mx-4 rounded-lg shadow-sm"
+            role="alert">
+            <p class="text-sm">
+                Want to unlock more features?
+                <router-link href="/upgrade"
+                    class="font-medium text-yellow-700 underline hover:text-yellow-800 transition-colors duration-200">
+                    Upgrade to premium
+                </router-link>
+            </p>
+        </div>
         <header class="flex items-center justify-end">
             <TeamMembers :collaborators=" localProject.collaborators ">
                 <template #form>
@@ -319,35 +308,14 @@ function deleteStage ( { stageId, tasksToReassign }: {
             @select-task=" selectTask " @add-task=" addTask " @delete-stage=" deleteStage " />
     </div>
 
-
-    <Modal v-model=" showModal ">
-        <template #title>
-            <h3 class="text-2xl font-bold text-indigo-600 dark:text-indigo-400">Add New Task to Project</h3>
-        </template>
-        <form @submit.prevent=" addTask " class="mt-4">
-            <div class="mb-4">
-                <InputLabel for="taskName" value="Task Name"
-                    class="text-base font-medium text-gray-700 dark:text-gray-300" />
-                <TextInput id="taskName" v-model=" form.name " @change="form.validate( 'name' )" type="text"
-                    class="w-full mt-1 text-base border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-                    placeholder="Enter the name of the new task" />
-                <InputError v-if=" form.errors.name " :message=" form.errors.name " class="mt-1 text-xs text-red-600" />
-            </div>
-            <div class="flex justify-end mt-6">
-                <PrimaryButton :disabled=" form.processing "
-                    class="transition duration-300 ease-in-out transform hover:scale-105 text-sm px-4 py-2 bg-gradient-to-r from-indigo-400 to-indigo-600 hover:from-indigo-500 hover:to-indigo-700">
-                    Add Task</PrimaryButton>
-            </div>
-        </form>
-    </Modal>
-
     <!-- Add Collaborator Modal -->
     <Modal v-model=" showCollaboratorModal ">
         <template #title>
-            <h3 class="text-2xl font-bold text-indigo-600 dark:text-indigo-400">Add Collaborator to Project</h3>
+            <h3 class="text-2xl font-bold text-indigo-600 dark:text-indigo-400">
+                Add Collaborator to Project
+            </h3>
         </template>
         <form @submit.prevent=" addCollaborator " class="mt-4">
-
             <div class="mb-4 text-slate-500">
                 <Select v-model=" collaboratorForm.fields.user_id " @update:model-value="collaboratorForm.clearErrors()"
                     class="w-full">
@@ -356,8 +324,8 @@ function deleteStage ( { stageId, tasksToReassign }: {
                     </SelectTrigger>
                     <SelectContent>
                         <SelectLabel>Users</SelectLabel>
-                        <SelectItem class="" v-for="                           user in users                           "
-                            :key=" user.id " :value=" user.id?.toString() ">
+                        <SelectItem class="" v-for="                  user in users                  " :key=" user.id "
+                            :value=" user.id.toString() ">
                             {{ user.name }}
                         </SelectItem>
                     </SelectContent>
@@ -368,13 +336,12 @@ function deleteStage ( { stageId, tasksToReassign }: {
         </form>
         <template #footer>
             <div class="flex justify-end mt-6">
-                <PrimaryButton @click=" addCollaborator " type="submit"
-                    :disabled=" collaboratorForm.processing || !collaboratorForm.fields.user_id "
+                <PrimaryButton @click=" addCollaborator " type="submit" :disabled=" collaboratorForm.processing || !collaboratorForm.fields.user_id
+                    "
                     class="transition disabled:opacity-50 duration-300 ease-in-out transform text-sm px-4 py-2 bg-gradient-to-r from-indigo-400 to-indigo-600 hover:from-indigo-500 hover:to-indigo-700">
                     Add Collaborator
                 </PrimaryButton>
             </div>
         </template>
     </Modal>
-
 </template>

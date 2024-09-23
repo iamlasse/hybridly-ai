@@ -45,8 +45,20 @@ class User extends Authenticatable
     public function activeSubscription(): Attribute
     {
         return Attribute::make(
-            get: fn () => $this->subscriptions()->where('type', 'premium')->where('stripe_status', 'active')->first(),
+            get: fn() => $this->subscriptions()->where('type', 'premium')->where('stripe_status', 'active')->first(),
         );
+    }
+
+    public function onGracePeriod(): Attribute
+    {
+        return Attribute::make(
+            get: fn() => $this->subscription('premium')->onGracePeriod()
+        );
+    }
+
+    public function resume()
+    {
+        return $this->subscription('premium')->resume();
     }
 
     public function updatePremiumStatus()
@@ -59,7 +71,8 @@ class User extends Authenticatable
         $this->saveQuietly();
     }
 
-    public function updatePlan(string $plan){
+    public function updatePlan(string $plan)
+    {
         $this->is_premium = $plan === 'premium';
         $this->saveQuietly();
     }

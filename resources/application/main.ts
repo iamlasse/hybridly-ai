@@ -1,21 +1,21 @@
-import { initializeHybridly } from 'virtual:hybridly/config'
-import { createHead, useHead } from '@unhead/vue'
+import { initializeHybridly } from 'virtual:hybridly/config';
+import { createHead, useHead } from '@unhead/vue';
 import { OhVueIcon, addIcons } from "oh-vue-icons";
 import { FaTasks, OiCommentDiscussion, BiXLg } from "oh-vue-icons/icons";
-import './tailwind.css'
+import './tailwind.css';
 
-addIcons( FaTasks, OiCommentDiscussion, BiXLg );
+addIcons( FaTasks, OiCommentDiscussion, );
 initializeHybridly( {
-    devTools: true,
+    devtools: true,
     viewTransition: false,
-	enhanceVue: (vue) => {
-		const head = createHead();
-		head.push({
-			titleTemplate: (title) => title ? `${title} — Hybridly` : 'Hybridly',
-		});
+    enhanceVue: ( vue ) =>
+    {
+        const head = createHead();
+        head.push( {
+            titleTemplate: ( title ) => title ? `${ title } — Hybridly` : 'Hybridly',
+        } );
         vue
             .use( head )
             .component( 'VIcon', OhVueIcon );
-        vue.viewTransitions = false
-	},
-})
+    },
+} );

@@ -33,7 +33,7 @@ class AppServiceProvider extends ServiceProvider
         HtmlDumper::dontIncludeSource();
         CliDumper::dontIncludeSource();
         Validator::excludeUnvalidatedArrayKeys();
-        Model::shouldBeStrict();
+        // Model::shouldBeStrict();
         Model::unguard();
 
         Date::use(CarbonImmutable::class);

@@ -1,10 +1,9 @@
 <script setup lang="ts">
-import Dialog from '@/components/sdialog.vue'
 
-const props = defineProps({
-    task: Object,
-    comments: Array
-} )
+const props = defineProps<{
+    task: App.Data.TaskData;
+    comments: any;
+}>(  )
 
 const commentForm = useForm( {
     method: 'POST',
@@ -29,7 +28,7 @@ const onSubmit = () => {
         <div>
             {{ task.title }}
             <ul>
-                <li class="truncate" v-for=" comment in comments " :key="comment.id">{{ comment.body }}</li>
+                <li class="truncate" v-for=" (comment) in comments " :key="comment.id">{{ comment.body }}</li>
             </ul>
 </div>
 </Dialog>

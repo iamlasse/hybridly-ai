@@ -21,6 +21,7 @@ class TaskData extends DataResource
         public readonly ?Collection $comments,
         #[MapName('comments_count')]
         #[MapOutputName('comments_count')]
-        public readonly ?int $commentsCount
+        public readonly ?int $commentsCount,
+        public int $order
     ) {}
 }
