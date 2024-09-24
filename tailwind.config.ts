@@ -15,6 +15,9 @@ export default {
             },
         },
         extend: {
+            fontSize: {
+                xxs: '10px'
+            },
             borderWidth: {
                 6: '6px',
             },
