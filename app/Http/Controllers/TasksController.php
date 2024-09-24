@@ -115,11 +115,9 @@ class TasksController extends Controller
 
         if ($subtasks = data_get($data,'subtasks')) {
             collect($subtasks)->each(function ($value, $key) use ($task) {
-                $task->subTasks()->create(['title' => $value, 'project_id' => $task->project_id]);
+                $task->subTasks()->create(['title' => $value]);
             });
         }
-
-        ds('here', $data);
 
         $task->update($data->only('title', 'description')->toArray());
 
@@ -146,5 +144,20 @@ class TasksController extends Controller
         });
 
         return back();
+    }
+
+    public function destroy(Task $task)
+    {
+        $task->delete();
+
+        return back()->with('success','Task deleted');
+
+        // try {
+        //     $subtask->delete();
+        //     return response()->json(['message' => 'Subtask deleted successfully']);
+        // } catch (\Exception $e) {
+        //     \Log::error('Failed to delete subtask: ' . $e->getMessage());
+        //     return response()->json(['error' => 'Failed to delete subtask'], 500);
+        // }
     }
 }

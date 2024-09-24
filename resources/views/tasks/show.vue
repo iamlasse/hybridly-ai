@@ -130,6 +130,24 @@ const handleUpdate = ( id, data = {}, cb = () => { } ) =>
 };
 
 const showSubtasks = ref( false );
+
+const deleteSubtask = (subtaskId) => {
+    if (confirm("Are you sure you want to delete this subtask?")) {
+        router.delete(route('tasks.destroy', { task: subtaskId }), {
+            preserveState: false,
+            preserveScroll: true,
+            hooks: {
+                success: () => {
+                    router.reload( { only: [ 'sub_tasks', 'task', 'comments'] });
+                },
+                error: (error) => {
+                    console.error('Failed to delete subtask:', error);
+                    alert('Failed to delete subtask. Please try again.');
+                },
+            },
+        });
+    }
+};
 </script>
 
 <template>
@@ -187,12 +205,15 @@ const showSubtasks = ref( false );
                             <div v-if=" subtasks.length > 0 || showSubtasks ">
                                 <h4 class="font-semibold text-sm">Subtasks:</h4>
                                 <ul class="mt-2">
-                                    <li v-for="( subtask, index) in subtasks" :key=" index "
-                                        class="flex items-center mb-2">
-
-                                        <TextInput v-model=" subtask.title "
-                                            @update:modelValue=" ( modelValue ) => debouncedUpdateTask( { id: subtask.id, title: modelValue } ) "
-                                            :data-index=" index " class="border rounded px-2 py-1 mr-2 flex-grow" />
+                                    <li v-for="(subtask, index) in subtasks" :key="index"
+                                        class="flex items-center mb-2 group">
+                                        <TextInput v-model="subtask.title"
+                                            @update:modelValue="(modelValue) => debouncedUpdateTask({ id: subtask.id, title: modelValue })"
+                                            :data-index="index" class="border rounded px-2 py-1 mr-2 flex-grow" />
+                                        <Button size="xs" variant="ghost" class="opacity-0 group-hover:opacity-100 transition-opacity"
+                                            @click="deleteSubtask(subtask.id)">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </Button>
                                     </li>
                                     <li class="flex items-center">
                                         <TextInput v-model=" newSubtask "
