@@ -18,7 +18,7 @@ class TaskFactory extends Factory
     {
         return [
             'title' => fake()->words(3, true),
-            'description' => fake()->text(),
+            'description' => '',
             'project_id' => \App\Models\Project::factory(),
             'completed' => fake()->boolean(),
         ];

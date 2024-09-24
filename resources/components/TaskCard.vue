@@ -1,5 +1,9 @@
 <script lang="ts" setup>
 import Vue from 'vue';
+import { computed } from 'vue';
+import { generateHTML } from '@tiptap/vue-3';
+import StarterKit from '@tiptap/starter-kit';
+
 const $props = defineProps<{
     task: App.Data.TaskData,
     selected: Boolean,
@@ -21,6 +25,13 @@ function getStatusClass ( status: string ): string
             return 'bg-gray-100 text-gray-800';
     }
 }
+
+const parsedDescription = computed( () =>
+{
+    if ( !$props.task.description ) return '';
+    const descriptionObj = JSON.parse( $props.task.description );
+    return generateHTML( descriptionObj, [ StarterKit ] );
+} );
 </script>
 
 <template>
@@ -30,7 +41,7 @@ function getStatusClass ( status: string ): string
             @click.stop="$emit( 'selectTask', task )">
             <h4 class="font-medium mb-2">{{ task.title }}</h4>
             <div class="flex-grow">
-                <p class="text-sm text-gray-600 line-clamp-2">{{ task.description }}</p>
+                <div class="text-sm text-gray-600 line-clamp-2" v-html=" parsedDescription "></div>
             </div>
             <div class="mt-2 flex justify-between items-center">
                 <div class="flex gap-1 items-center">

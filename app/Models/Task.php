@@ -17,6 +17,11 @@ class Task extends Model
 
     protected $guarded = [];
 
+    protected $casts = [
+        'description' => 'json',
+        'subtasks' => 'json'
+    ];
+
     public function project(): BelongsTo
     {
         return $this->belongsTo(Project::class);
@@ -24,7 +29,7 @@ class Task extends Model
 
     public function subTasks(): HasMany
     {
-        return $this->hasMany(Task::class)->where('parent_id', $this->id);
+        return $this->hasMany(Task::class, 'parent_id')->orderBy('created_at');
     }
 
     public function comments(): MorphMany

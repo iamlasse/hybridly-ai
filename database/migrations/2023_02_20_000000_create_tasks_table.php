@@ -14,7 +14,7 @@ class CreateTasksTable extends Migration
             $table->id();
             $table->string('title');
             $table->foreignIdFor(Task::class, 'parent_id')->nullable();
-            $table->text('description')->nullable();
+            $table->json('description')->nullable();
             $table->boolean('completed')->default(false);
             $table->datetime('completed_at')->default(now());
             $table->foreignIdFor(Project::class);

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Data\TaskData;
 use App\Models\Project;
 use App\Models\Task;
 use Illuminate\Http\RedirectResponse;
@@ -55,9 +56,11 @@ class TasksController extends Controller
 
     public function show(Task $task)
     {
+        $task->loadMissing(['comments.user', 'subTasks']);
         return view('Tasks.Show', [
-            'task' => $task->load(['comments.user']),
+            'task' => $task,
             'comments' => fn() => $task->comments,
+            'sub_tasks' => $task->subTasks()->select('id', 'title')->get()
         ])
             ->base('projects.show', $task->project, force: true, keep: false);
     }
@@ -99,14 +102,28 @@ class TasksController extends Controller
 
     public function updateTask(Request $request, Task $task)
     {
-        $data = $request->validate([
-            'title' => ['sometimes', 'string'],
-            'description' => ['sometimes', 'string'],
-        ]);
+        $data = collect($request->validate([
+            'title' => ['nullable', 'string'],
+            'description' => ['nullable', 'string'],
+            'subtasks' => ['nullable', 'array'],
+        ]));
 
-        $task->update($data);
 
-        return back()->with('success', 'Task updated');
+        // if (isset($data['description'])) {
+        //     $data['description'] = json_decode($data['description']);
+        // }
+
+        if ($subtasks = data_get($data,'subtasks')) {
+            collect($subtasks)->each(function ($value, $key) use ($task) {
+                $task->subTasks()->create(['title' => $value, 'project_id' => $task->project_id]);
+            });
+        }
+
+        ds('here', $data);
+
+        $task->update($data->only('title', 'description')->toArray());
+
+        return back()->with('success','Task updated');
     }
 
     public function bulkUpdate(Request $request, Project $project)

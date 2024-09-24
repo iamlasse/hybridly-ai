@@ -1,28 +1,33 @@
 <script setup lang="ts">
 import
-    {
-        Sheet,
-        SheetClose,
-        SheetContent,
-        SheetDescription,
-        SheetFooter,
-        SheetHeader,
-        SheetTitle,
-        SheetTrigger,
-    } from '@/components/ui/sheet'
-    const { show, close, unmount } = useDialog()
+{
+    Sheet,
+    SheetClose,
+    SheetContent,
+    SheetDescription,
+    SheetFooter,
+    SheetHeader,
+    SheetTitle,
+    SheetTrigger,
+} from '@/components/ui/sheet';
+const { show, close, unmount } = useDialog();
 
 const handleAfterLeave = () =>
 {
-    console.log( 'after leave' )
-    unmount()
-}
+    console.log( 'after leave' );
+    unmount();
+};
+
+defineOptions( {
+    inheritAttrs: false
+} );
 </script>
 
 <template>
-    <Sheet v-model:open="show" @update:open="close">
+    <Sheet v-model:open=" show " @update:open=" close " v-bind=" $attrs ">
         <SheetContent class="p-0" @interact-outside=" close " @escape-key-down=" close " @pointer-down-outside=" close "
             @after-leave=" handleAfterLeave ">
+            {{ $attrs }}
             <!-- <SheetHeader>
                 <SheetTitle>
                     <slot name="title" />

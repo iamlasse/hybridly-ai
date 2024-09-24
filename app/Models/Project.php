@@ -18,6 +18,10 @@ class Project extends Model
 
     protected $guarded = [];
 
+    protected $casts = [
+        'description' => 'json',
+    ];
+
     public function tasks(): HasMany
     {
         return $this->hasMany(Task::class)->whereNull('parent_id');

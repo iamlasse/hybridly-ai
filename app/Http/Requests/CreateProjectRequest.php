@@ -11,7 +11,7 @@ class CreateProjectRequest extends FormRequest
     {
         return [
             'name' => ['required', 'string'],
-            'description' => ['sometimes', 'string'],
+            'description' => ['nullable', 'string'],
             'status' => ['nullable', 'string'],
             'collaborators' => ['array'],
         ];

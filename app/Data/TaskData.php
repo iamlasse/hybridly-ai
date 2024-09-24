@@ -2,6 +2,7 @@
 
 namespace App\Data;
 
+use App\Models\Task;
 use Hybridly\Support\Data\DataResource;
 use Illuminate\Database\Eloquent\Collection;
 use Spatie\LaravelData\Attributes\MapName;
@@ -19,6 +20,8 @@ class TaskData extends DataResource
         public readonly ?string $status,
         public readonly ?ProjectData $project,
         public readonly ?Collection $comments,
+        #[MapOutputName('sub_tasks')]
+        public readonly ?Collection $subTasks,
         #[MapName('comments_count')]
         #[MapOutputName('comments_count')]
         public readonly ?int $commentsCount,

@@ -33,6 +33,7 @@ class ProjectController extends Controller
 
     public function store(CreateProjectRequest $request): RedirectResponse
     {
+        ds($request->all());
         $user = $request->user();
         $projectCount = $user->projects()->count();
 
@@ -42,7 +43,7 @@ class ProjectController extends Controller
 
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'description' => 'nullable|string',
+            'description' => 'nullable|json',
             'status' => 'nullable|string|in:active,completed,on_hold',
         ]);
 
@@ -91,7 +92,7 @@ class ProjectController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'description' => 'nullable|string',
+            'description' => 'nullable|json',
             'status' => 'sometimes|string|in:active,completed,on_hold',
         ]);
 

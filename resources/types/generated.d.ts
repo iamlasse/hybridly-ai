@@ -26,6 +26,7 @@ slug: string | null;
 status: string | null;
 project: App.Data.ProjectData | null;
 comments: any | null;
+sub_tasks: Array<App.Data.TaskData> | null;
 comments_count: number | null;
 order: number;
 };

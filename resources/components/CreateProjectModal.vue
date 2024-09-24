@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 
+import TipTapEditor from '@/components/TipTapEditor.vue'
+
 const show = defineModel( { default: false, required: true } );
 
 const emit = defineEmits( [ 'close' ] );
@@ -11,20 +13,37 @@ const form = useForm( {
     fields: {
         name: '',
         description: '',
+    },
+    preserveScroll: true,
+    hooks: {
+        fail: (context) =>
+        {
+            console.log(context)
+        }
+    },
+    validationRules: {
+        name: 'required',
     }
 } );
 
-const closeModal = () =>
-{
+const closeModal = () => {
     form.reset();
+    // editor.value?.commands.setContent('');
     emit( 'close' );
 };
 
-const createProject = async () =>
-{
+const createProject = async () => {
     await form.submitWith( {
-        preserveScroll: true,
-    } );
+        transform: () =>
+        {
+            console.log( 'transfom data', form.fields )
+
+            return {
+                ...form.fields,
+                description: JSON.stringify(form.fields.description)
+            }
+        }
+    });
 
     closeModal();
 };
@@ -51,8 +70,9 @@ const createProject = async () =>
 
                 <div>
                     <InputLabel for="description" value="Description" />
-                    <TextInput id="description" type="text" class="mt-1 block w-full"
-                        v-model=" form.fields.description " />
+                    <TipTapEditor v-model="form.fields.description" class="
+                        mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md
+                        shadow-sm" />
                     <InputError :message=" form.errors.description " class="mt-2" />
                 </div>
 
