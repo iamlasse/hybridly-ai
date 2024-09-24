@@ -101,11 +101,18 @@ const createSubTask = ( task, cb = () => { } ) =>
 const updateTask = ( taskInformation ) =>
 {
     const { description = null, title = null, id = null } = taskInformation;
+    const data = {}
 
-    handleUpdate( id, {
-        title: title ?? props.task.title,
-        description: description ? JSON.stringify( description ) : null,
-    } );
+    if ( description )
+    {
+        data[ 'description' ] = JSON.stringify( description )
+    }
+
+    if ( title )
+    {
+        data['title'] = title
+    }
+    handleUpdate( id, data);
 
 };
 
