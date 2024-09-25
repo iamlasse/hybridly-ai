@@ -2,7 +2,7 @@
 
 namespace App\Data;
 
-use App\Models\Task;
+use DateTimeInterface;
 use Hybridly\Support\Data\DataResource;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Carbon;
@@ -19,6 +19,8 @@ class TaskData extends DataResource
         public readonly ?string $description,
         public readonly ?string $slug,
         public readonly ?string $status,
+        #[MapOutputName('due_date')]
+        public DateTimeInterface|string|null $due_date,
         public bool $completed,
         public ?Carbon $completed_at,
         public readonly ?ProjectData $project,

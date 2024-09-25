@@ -107,6 +107,7 @@ class TasksController extends Controller
             'title' => ['nullable', 'string'],
             'description' => ['nullable', 'string'],
             'subtasks' => ['nullable', 'array'],
+            'due_date' => ['nullable', 'date'],
         ]));
 
 
@@ -120,7 +121,7 @@ class TasksController extends Controller
             });
         }
 
-        $task->update($data->only('title', 'description')->toArray());
+        $task->update($data->only('title', 'description', 'due_date')->toArray());
 
         return back()->with('success', 'Task updated');
     }

@@ -24,6 +24,7 @@ title: string;
 description: string | null;
 slug: string | null;
 status: string | null;
+due_date: any | null;
 completed: boolean;
 completed_at: any | null;
 project: App.Data.ProjectData | null;

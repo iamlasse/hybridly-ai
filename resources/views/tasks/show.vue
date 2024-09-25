@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue';
+import VueDatePicker from '@vuepic/vue-datepicker';
+import '@vuepic/vue-datepicker/dist/main.css';
 import type { Comment, Task } from "@/types";
 import { useDebounceFn } from '@vueuse/core';
 import { useIntersectionObserver, useElementVisibility } from '@vueuse/core';
@@ -8,6 +10,7 @@ import CommentItem from '@/components/Comment.vue';
 import { Button } from '@/components/ui/button';
 import TextInput from '@/components/TextInput.vue';
 import TiptapEditor from '@/components/TiptapEditor.vue';
+import { ref as vueRef } from 'vue';
 import { BiCheckCircle, BiCircle } from "oh-vue-icons/icons";
 
 const props = defineProps<{
@@ -18,6 +21,14 @@ const props = defineProps<{
 
 
 const debouncedUpdateTask = useDebounceFn( ( task ) => updateTask( task ), 500 ); // Adjust
+
+const updateDueDate = ( newDate ) =>
+{
+    console.log(newDate)
+    debouncedUpdateTask({ id: props.task.id, due_date: newDate ? newDate.toISOString().split('T')[0] : null });
+};
+
+const taskDueDate = ref(props.task.due_date)
 
 const subtasks = computed( () => props.sub_tasks || [] );
 const newSubtask = ref( '' );
@@ -101,7 +112,7 @@ const createSubTask = ( task, cb = () => { } ) =>
 
 const updateTask = ( taskInformation ) =>
 {
-    const { description = null, title = null, id = null } = taskInformation;
+    const { description = null, title = null, id = null, due_date = null } = taskInformation;
     const data = {};
 
     if ( description )
@@ -113,6 +124,12 @@ const updateTask = ( taskInformation ) =>
     {
         data[ 'title' ] = title;
     }
+
+    if ( due_date )
+    {
+        data['due_date'] = due_date
+    }
+
     handleUpdate( id, data );
 
 };
@@ -227,8 +244,11 @@ onUnmounted( () =>
                         <li>
                             <h4 class="font-semibold text-sm">Assignee:</h4>
                         </li>
-                        <li>
-                            <h4 class="font-semibold text-sm">Due date:</h4>
+                        <li class="flex gap-2 items-center">
+                            <h4 class="font-semibold text-sm flex-grow flex-shrink-0">Due date:
+                            </h4>
+                            <VueDatePicker format="MM/dd/yyyy" :enable-time-picker=" false " v-model="task.due_date"
+                                @update:model-value=" (modelValue) => updateDueDate(modelValue)" />
                         </li>
                         <li>
                             <h4 class="font-semibold text-sm">Projects:</h4>
@@ -267,8 +287,7 @@ onUnmounted( () =>
                                             :class=" { 'bg-gray-200 !text-gray-400': subtask.completed } " />
                                     </li>
                                     <li class="flex items-center">
-                                        <v-icon name="bi-check-circle"
-                                        class="mr-2"    ></v-icon>
+                                        <v-icon name="bi-check-circle" class="mr-2"></v-icon>
                                         <TextInput v-model=" newSubtask "
                                             @keydown=" ( e ) => handleKeySubtaskDown( e, subtasks.length ) "
                                             :data-index=" subtasks.length " placeholder="Enter new subtask"

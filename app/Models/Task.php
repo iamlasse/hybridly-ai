@@ -21,6 +21,7 @@ class Task extends Model
         'description' => 'json',
         'subtasks' => 'json',
         'completed_at' => 'datetime',
+        'due_date' => 'date',
     ];
 
     public function project(): BelongsTo

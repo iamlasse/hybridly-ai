@@ -5,8 +5,9 @@ import ApplicationLogo from '@/components/ApplicationLogo.vue';
 <template>
     <div class="min-h-screen bg-indigo-600 flex flex-col sm:justify-center items-center pt-6 sm:pt-0  dark:bg-gray-900">
         <div>
-            <router-link href="/">
-                <ApplicationLogo class="w-20 h-20 fill-current text-white" />
+            <router-link href="/" class="flex items-center gap-2">
+                <ApplicationLogo class="w-20 h-20 fill-current text-indigo-100" />
+                <h1 class="text-white font-bold">TaskFlow Pro</h1>
             </router-link>
         </div>
 
