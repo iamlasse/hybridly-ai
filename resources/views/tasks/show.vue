@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, onMounted, onUnmounted } from 'vue';
 import type { Comment, Task } from "@/types";
 import { useDebounceFn } from '@vueuse/core';
 import { useIntersectionObserver, useElementVisibility } from '@vueuse/core';
@@ -139,22 +139,44 @@ const handleUpdate = ( id, data = {}, cb = () => { } ) =>
 const showSubtasks = ref( false );
 
 const deleteSubtask = (subtaskId) => {
-    if (confirm("Are you sure you want to delete this subtask?")) {
-        router.delete(route('tasks.destroy', { task: subtaskId }), {
-            preserveState: false,
-            preserveScroll: true,
-            hooks: {
-                success: () => {
-                    router.reload( { only: [ 'sub_tasks', 'task', 'comments'] });
-                },
-                error: (error) => {
-                    console.error('Failed to delete subtask:', error);
-                    alert('Failed to delete subtask. Please try again.');
-                },
+    router.delete(route('tasks.destroy', { task: subtaskId }), {
+        preserveState: false,
+        preserveScroll: true,
+        hooks: {
+            success: () => {
+                router.reload( { only: [ 'sub_tasks', 'task', 'comments'] });
             },
-        });
-    }
+            error: (error) => {
+                console.error('Failed to delete subtask:', error);
+                alert('Failed to delete subtask. Please try again.');
+            },
+        },
+    });
 };
+
+const contextMenu = ref({ show: false, x: 0, y: 0, subtaskId: null });
+
+const showContextMenu = (event: MouseEvent, subtaskId: number) => {
+    event.preventDefault();
+    contextMenu.value = {
+        show: true,
+        x: event.clientX,
+        y: event.clientY,
+        subtaskId,
+    };
+};
+
+const hideContextMenu = () => {
+    contextMenu.value.show = false;
+};
+
+onMounted(() => {
+    document.addEventListener('click', hideContextMenu);
+});
+
+onUnmounted(() => {
+    document.removeEventListener('click', hideContextMenu);
+});
 </script>
 
 <template>
@@ -204,7 +226,8 @@ const deleteSubtask = (subtaskId) => {
                         <li>
                             <div class="">
                                 <InputLabel value="Description" class="ml-2 mb-1" />
-                                <TiptapEditor :model-value="task.description" @update:model-value=" modelValue => debouncedUpdateTask({id: task.id, description: modelValue})"
+                                <TiptapEditor :model-value="task.description"
+                                    @update:model-value=" modelValue => debouncedUpdateTask({id: task.id, description: modelValue})"
                                     class="w-full" />
                             </div>
                         </li>
@@ -213,14 +236,11 @@ const deleteSubtask = (subtaskId) => {
                                 <h4 class="font-semibold text-sm">Subtasks:</h4>
                                 <ul class="mt-2">
                                     <li v-for="(subtask, index) in subtasks" :key="index"
-                                        class="flex items-center mb-2 group">
+                                        class="flex items-center mb-2 group"
+                                        @contextmenu="showContextMenu($event, subtask.id)">
                                         <TextInput v-model="subtask.title"
                                             @update:modelValue="(modelValue) => debouncedUpdateTask({ id: subtask.id, title: modelValue })"
                                             :data-index="index" class="border rounded px-2 py-1 mr-2 flex-grow" />
-                                        <Button size="xs" variant="ghost" class="opacity-0 group-hover:opacity-100 transition-opacity"
-                                            @click="deleteSubtask(subtask.id)">
-                                            <i class="fas fa-trash-alt"></i>
-                                        </Button>
                                     </li>
                                     <li class="flex items-center">
                                         <TextInput v-model=" newSubtask "
@@ -229,6 +249,21 @@ const deleteSubtask = (subtaskId) => {
                                             class="border rounded px-2 py-1 mr-2 flex-grow" />
                                     </li>
                                 </ul>
+                                <div v-if="contextMenu.show"
+                                    :style="{ position: 'fixed', top: `${contextMenu.y}px`, left: `${contextMenu.x}px` }"
+                                    class="bg-white shadow-md rounded-md p-2 w-72  z-50">
+
+                                    <Button variant="ghost" size="xs" @click="deleteSubtask(contextMenu.subtaskId)"
+                                        class=" w-full flex gap-2 text-left justify-start">
+                                        <v-icon name="bi-trash-fill"></v-icon>
+                                        Delete task
+                                    </Button>
+                                    <!-- <Button size="xs" variant="ghost"
+                                        class="opacity-0 group-hover:opacity-100 transition-opacity"
+                                        @click="deleteSubtask( subtask.id )">
+                                    </Button> -->
+
+                                </div>
                             </div>
                             <Button v-else size="sm" @click="showSubtasks = true">+ Add subtasks</Button>
                         </li>
