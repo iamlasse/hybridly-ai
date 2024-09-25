@@ -15,12 +15,11 @@ use Illuminate\Foundation\Http\Middleware\HandlePrecognitiveRequests;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-    return hybridly('welcome', [
+    return hybridly('LandingPage', [
         'canLogin' => Route::has('login'),
         'canRegister' => Route::has('register'),
         'laravelVersion' => Application::VERSION,
         'phpVersion' => phpversion(),
-        'projects' => Project::get(),
     ]);
 })->name('home');
 
