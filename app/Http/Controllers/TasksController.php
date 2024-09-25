@@ -107,7 +107,7 @@ class TasksController extends Controller
             'title' => ['nullable', 'string'],
             'description' => ['nullable', 'string'],
             'subtasks' => ['nullable', 'array'],
-            'due_date' => ['sometimes', 'date'],
+            'due_date' => ['nullable', 'date'],
         ]));
 
         if ($subtasks = data_get($data, 'subtasks')) {
@@ -120,7 +120,7 @@ class TasksController extends Controller
 
         // Handle due_date separately
         if ($request->has('due_date')) {
-            $updateData['due_date'] = $request->input('due_date') ?? null;
+            $updateData['due_date'] = $request->input('due_date') === false ? null : $request->input('due_date');
         }
 
         $task->update($updateData);

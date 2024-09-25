@@ -24,7 +24,7 @@ const debouncedUpdateTask = useDebounceFn( ( task ) => updateTask( task ), 500 )
 
 const updateDueDate = (newDate) => {
     console.log(newDate);
-    debouncedUpdateTask({ id: props.task.id, due_date: newDate ? newDate.toISOString().split('T')[0] : false });
+    debouncedUpdateTask({ id: props.task.id, due_date: newDate ? newDate.toISOString().split('T')[0] : null });
 };
 
 const taskDueDate = ref(props.task.due_date)
