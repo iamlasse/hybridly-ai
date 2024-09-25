@@ -22,7 +22,7 @@ class TaskData extends DataResource
         #[MapOutputName('due_date')]
         public DateTimeInterface|string|null $due_date,
         public bool $completed,
-        public ?Carbon $completed_at,
+        public ?DateTimeInterface $completed_at,
         public readonly ?ProjectData $project,
         public readonly ?Collection $comments,
         #[MapOutputName('sub_tasks')]

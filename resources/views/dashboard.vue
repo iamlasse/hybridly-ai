@@ -23,11 +23,11 @@ const closeCreateProjectModal = () => {
 </script>
 
 <template layout="dashboard">
-  <section class="bg-gradient-to-b from-blue-50 to-white min-h-screen">
+  <section class="bg-gray-50 min-h-screen">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div
         v-if="!user?.is_premium"
-        class="bg-gradient-to-r from-yellow-100 to-yellow-50 border-l-4 border-yellow-400 p-4 mb-8 rounded-r-lg shadow-md"
+        class="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-8"
         role="alert"
       >
         <div class="flex items-center">
@@ -37,11 +37,11 @@ const closeCreateProjectModal = () => {
             </svg>
           </div>
           <div class="ml-3">
-            <p class="text-sm text-yellow-800">
+            <p class="text-sm text-yellow-700">
               Want to unlock more features?
               <router-link
                 :href="route('upgrade.show')"
-                class="font-medium text-yellow-700 underline hover:text-yellow-800 transition-colors duration-200"
+                class="font-medium text-yellow-800 underline hover:text-yellow-900"
               >
                 Upgrade to premium
               </router-link>
@@ -50,9 +50,9 @@ const closeCreateProjectModal = () => {
         </div>
       </div>
       <div class="flex justify-between items-center mb-8">
-        <h1 class="text-3xl font-bold text-gray-900">Dashboard</h1>
+        <h1 class="text-2xl font-semibold text-gray-800">Dashboard</h1>
         <PrimaryButton
-          class="disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-blue-500 disabled:bg-blue-500 shadow-md hover:shadow-lg transition-all duration-200"
+          class="disabled:opacity-50 disabled:cursor-not-allowed"
           @click="openCreateProjectModal"
           :disabled="!canCreateMoreProjects"
         >

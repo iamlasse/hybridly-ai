@@ -201,6 +201,18 @@ const toggleSubtaskCompletion = ( subtaskId: number ) =>
     } );
 };
 
+const toggleMainTaskCompletion = () => {
+    router.post( route( 'tasks.toggle-completion', { task: props.task.id } ), {
+        preserveState: false,
+        preserveScroll: true,
+        hooks: {
+            success: () => {
+                router.reload({ only: ['task'] });
+            },
+        },
+    } );
+};
+
 onMounted( () =>
 {
     document.addEventListener( 'click', hideContextMenu );
@@ -217,7 +229,10 @@ onUnmounted( () =>
         <template #title>
             <header class="">
                 <div v-if=" targetIsVisible " class="flex items-center justify-between">
-                    <Button size="sm">Mark Complete</Button>
+                    <Button size="sm" :variant=" task.completed ? 'secondary' : 'outline'" @click="toggleMainTaskCompletion">
+                        <v-icon :name=" !task.completed ? 'bi-check-circle' : 'io-close-circle-outline'" class="mr-1"></v-icon>
+                        {{ task.completed ? 'Mark Incomplete' : 'Mark Complete' }}
+                    </Button>
                     <div class="actions ml-auto">
 
                     </div>
