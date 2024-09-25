@@ -104,3 +104,7 @@ Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.up
 Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
 require __DIR__ . '/auth.php';
+
+Route::post('/tasks/{task:id}/complete', [TasksController::class, 'completeSubtask'])
+    ->name('tasks.complete')
+    ->middleware(['auth']);

@@ -19,7 +19,8 @@ class Task extends Model
 
     protected $casts = [
         'description' => 'json',
-        'subtasks' => 'json'
+        'subtasks' => 'json',
+        'completed_at' => 'datetime',
     ];
 
     public function project(): BelongsTo

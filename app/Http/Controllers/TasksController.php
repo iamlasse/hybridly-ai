@@ -7,6 +7,7 @@ use App\Models\Project;
 use App\Models\Task;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 use function Hybridly\view;
@@ -113,7 +114,7 @@ class TasksController extends Controller
         //     $data['description'] = json_decode($data['description']);
         // }
 
-        if ($subtasks = data_get($data,'subtasks')) {
+        if ($subtasks = data_get($data, 'subtasks')) {
             collect($subtasks)->each(function ($value, $key) use ($task) {
                 $task->subTasks()->create(['title' => $value]);
             });
@@ -121,7 +122,7 @@ class TasksController extends Controller
 
         $task->update($data->only('title', 'description')->toArray());
 
-        return back()->with('success','Task updated');
+        return back()->with('success', 'Task updated');
     }
 
     public function bulkUpdate(Request $request, Project $project)
@@ -150,14 +151,20 @@ class TasksController extends Controller
     {
         $task->delete();
 
-        return back()->with('success','Task deleted');
+        return back()->with('success', 'Task deleted');
+    }
 
-        // try {
-        //     $subtask->delete();
-        //     return response()->json(['message' => 'Subtask deleted successfully']);
-        // } catch (\Exception $e) {
-        //     \Log::error('Failed to delete subtask: ' . $e->getMessage());
-        //     return response()->json(['error' => 'Failed to delete subtask'], 500);
-        // }
+    public function completeSubtask(Request $request, Task $task)
+    {
+        // Check if the authenticated user owns the task
+        if ($task->project->user_id !== Auth::id()) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
+        // Complete the subtask
+        $task->completed_at = now();
+        $task->save();
+
+        return back()->with('success', 'Task completed successfully');
     }
 }
