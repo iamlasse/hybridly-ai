@@ -42,7 +42,11 @@ const initEditor = () => {
     extensions: [
         Color.configure( { types: [ TextStyle.name, ListItem.name ] } ),
         TextStyle.configure( { types: [ ListItem.name ] } ),
-        Underline,
+          Underline.configure( {
+              HTMLAttributes: {
+                  class: 'text-underline',
+              },
+        }),
         TextAlign.configure({
             types: ['heading', 'paragraph'],
         }),
@@ -77,103 +81,40 @@ const toggleUnderline = () => editor.value?.chain().focus().toggleUnderline().ru
 </script>
 
 <template>
-    <div v-if=" editor " class="border p-2 rounded-md">
-        <div class="control-group">
-            <div class="flex gap-2 flex-wrap">
-                <Button size="xs" class="text-xxs" :variant=" editor.isActive( 'bold' )  ? 'primary': 'secondary'"
-                    @click="editor.chain().focus().toggleBold().run()"
-                    :disabled=" !editor.can().chain().focus().toggleBold().run() ">
-                    Bold
-                </Button>
-                <Button size="xs" class="text-xxs" :variant=" editor.isActive( 'italic' ) ? 'primary' : 'secondary' "
-                    @click="editor.chain().focus().toggleItalic().run()"
-                    :disabled=" !editor.can().chain().focus().toggleItalic().run() "
-                    >
-                    Italic
-                </Button>
-                <Button size="xs" variant="secondary" @click="editor.chain().focus().toggleStrike().run()"
-                    :disabled=" !editor.can().chain().focus().toggleStrike().run() "
-                    :class=" { 'bg-indigo-500 text-white': editor.isActive( 'strike' ) } ">
-                    Strike
-                </Button>
-                <Button size="xs" variant="secondary" @click="editor.chain().focus().toggleCode().run()"
-                    :disabled=" !editor.can().chain().focus().toggleCode().run() "
-                    :class=" { 'bg-indigo-500 text-white': editor.isActive( 'code' ) } ">
-                    Code
-                </Button>
-                <Button size="xs" variant="secondary" @click="editor.chain().focus().unsetAllMarks().run()">
-                    CL
-                </Button>
-                <Button size="xs" variant="secondary" @click="editor.chain().focus().clearNodes().run()">
-                    Clear nodes
-                </Button>
-                <Button size="xs" variant="secondary" @click="editor.chain().focus().setParagraph().run()"
-                    :class=" { 'is-active': editor.isActive( 'paragraph' ) } ">
-                    Paragraph
-                </Button>
-                <Button size="xs" variant="secondary"
-                    @click="editor.chain().focus().toggleHeading( { level: 1 } ).run()"
-                    :class=" { 'is-active': editor.isActive( 'heading', { level: 1 } ) } ">
-                    H1
-                </Button>
-                <Button size="xs" variant="secondary"
-                    @click="editor.chain().focus().toggleHeading( { level: 2 } ).run()"
-                    :class=" { '!bg-green-500': editor.isActive( 'bold', { level: 2 } ) } ">
-                    H2
-                </Button>
-                <Button size="xs" variant="secondary"
-                    @click="editor.chain().focus().toggleHeading( { level: 3 } ).run()"
-                    :class=" { 'is-active': editor.isActive( 'heading', { level: 3 } ) } ">
-                    H3
-                </Button>
-                <Button size="xs" variant="secondary"
-                    @click="editor.chain().focus().toggleHeading( { level: 4 } ).run()"
-                    :class=" { 'is-active': editor.isActive( 'heading', { level: 4 } ) } ">
-                    H4
-                </Button>
-                <Button size="xs" variant="secondary"
-                    @click="editor.chain().focus().toggleHeading( { level: 5 } ).run()"
-                    :class=" { 'is-active': editor.isActive( 'heading', { level: 5 } ) } ">
-                    H5
-                </Button>
-                <Button size="xs" variant="secondary"
-                    @click="editor.chain().focus().toggleHeading( { level: 6 } ).run()"
-                    :class=" { 'is-active': editor.isActive( 'heading', { level: 6 } ) } ">
-                    H6
-                </Button>
-                <Button size="xs" variant="secondary" @click="editor.chain().focus().toggleBulletList().run()"
-                    :class=" { 'is-active': editor.isActive( 'bulletList' ) } ">
-                    Bullet list
-                </Button>
-                <Button size="xs" variant="secondary" @click="editor.chain().focus().toggleOrderedList().run()"
-                    :class=" { 'bg-green-500': editor.isActive( 'orderedList' ) } ">
-                    Ordered list
-                </Button>
-                <Button size="xs" variant="secondary" @click="editor.chain().focus().toggleCodeBlock().run()"
-                    :class=" { 'is-active': editor.isActive( 'codeBlock' ) } ">
-                    Code block
-                </Button>
-                <Button size="xs" variant="secondary" @click="editor.chain().focus().toggleBlockquote().run()"
-                    :class=" { 'is-active': editor.isActive( 'blockquote' ) } ">
-                    Blockquote
-                </Button>
-                <Button size="xs" variant="secondary" @click="editor.chain().focus().setHorizontalRule().run()">
-                    Horizontal rule
-                </Button>
-                <Button size="xs" variant="secondary" @click="editor.chain().focus().setHardBreak().run()">
-                    Hard break
-                </Button>
-                <Button size="xs" variant="secondary" @click="editor.chain().focus().undo().run()"
-                    :disabled=" !editor.can().chain().focus().undo().run() ">
-                    Undo
-                </Button>
-                <Button size="xs" variant="secondary" @click="editor.chain().focus().redo().run()"
-                    :disabled=" !editor.can().chain().focus().redo().run() ">
-                    Redo
-                </Button>
-            </div>
+    <div v-if="editor" class="tiptap-editor border rounded-md overflow-hidden">
+        <editor-content :editor="editor" class="p-0 min-h-[150px]" />
+        <div class="editor-menu bg-gray-100 p-2 flex flex-wrap gap-1 border-t">
+            <Button size="xxs" :variant="editor.isActive('bold') ? 'primary' : 'secondary'" @click="editor.chain().focus().toggleBold().run()" :disabled="!editor.can().chain().focus().toggleBold().run()">
+                B
+            </Button>
+            <Button size="xxs" :variant="editor.isActive('italic') ? 'primary' : 'secondary'" @click="editor.chain().focus().toggleItalic().run()" :disabled="!editor.can().chain().focus().toggleItalic().run()">
+                <span class="italic font-serif">I</span>
+            </Button>
+            <Button size="xxs" :variant="editor.isActive('underline') ? 'primary' : 'secondary'" @click="editor.chain().focus().toggleUnderline().run()" :disabled="!editor.can().chain().focus().toggleUnderline().run()">
+                U
+            </Button>
+            <!-- <Button size="xs" :variant="editor.isActive('paragraph') ? 'primary' : 'secondary'" @click="editor.chain().focus().setParagraph().run()">
+                <v-icon name="bi-text-paragraph" />
+            </Button> -->
+            <Button size="xxs" :variant="editor.isActive('heading', { level: 1 }) ? 'primary' : 'secondary'" @click="editor.chain().focus().toggleHeading({ level: 1 }).run()">
+                H1
+            </Button>
+            <Button size="xxs" :variant="editor.isActive('heading', { level: 2 }) ? 'primary' : 'secondary'" @click="editor.chain().focus().toggleHeading({ level: 2 }).run()">
+                H2
+            </Button>
+            <Button size="xxs" :variant="editor.isActive('bulletList') ? 'primary' : 'secondary'" @click="editor.chain().focus().toggleBulletList().run()">
+                UL
+            </Button>
+            <Button size="xxs" :variant="editor.isActive('orderedList') ? 'primary' : 'secondary'" @click="editor.chain().focus().toggleOrderedList().run()">
+                OL
+            </Button>
+            <Button size="xxs" variant="secondary" @click="editor.chain().focus().undo().run()" :disabled="!editor.can().chain().focus().undo().run()">
+                <v-icon name="bi-arrow-counterclockwise" />
+            </Button>
+            <Button size="xxs" variant="secondary" @click="editor.chain().focus().redo().run()" :disabled="!editor.can().chain().focus().redo().run()">
+                <v-icon name="bi-arrow-clockwise" />
+            </Button>
         </div>
-        <editor-content :editor=" editor " />
     </div>
 </template>
 
