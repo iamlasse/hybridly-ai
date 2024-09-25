@@ -200,7 +200,7 @@ onUnmounted( () =>
         <template #title>
             <header class="">
                 <div v-if=" targetIsVisible " class="flex items-center justify-between">
-                    <Button size="sm">Mark Complete {{ targetIsVisible ? 'TRUE' : 'FALSE' }}</Button>
+                    <Button size="sm">Mark Complete</Button>
                     <div class="actions ml-auto">
 
                     </div>
@@ -267,6 +267,8 @@ onUnmounted( () =>
                                             :class=" { 'bg-gray-200 !text-gray-400': subtask.completed } " />
                                     </li>
                                     <li class="flex items-center">
+                                        <v-icon name="bi-check-circle"
+                                        class="mr-2"    ></v-icon>
                                         <TextInput v-model=" newSubtask "
                                             @keydown=" ( e ) => handleKeySubtaskDown( e, subtasks.length ) "
                                             :data-index=" subtasks.length " placeholder="Enter new subtask"
