@@ -107,13 +107,8 @@ class TasksController extends Controller
             'title' => ['nullable', 'string'],
             'description' => ['nullable', 'string'],
             'subtasks' => ['nullable', 'array'],
-            'due_date' => ['nullable', 'date'],
+            'due_date' => ['sometimes', 'date'],
         ]));
-
-
-        // if (isset($data['description'])) {
-        //     $data['description'] = json_decode($data['description']);
-        // }
 
         if ($subtasks = data_get($data, 'subtasks')) {
             collect($subtasks)->each(function ($value, $key) use ($task) {
@@ -121,7 +116,14 @@ class TasksController extends Controller
             });
         }
 
-        $task->update($data->only('title', 'description', 'due_date')->toArray());
+        $updateData = $data->only('title', 'description')->toArray();
+
+        // Handle due_date separately
+        if ($request->has('due_date')) {
+            $updateData['due_date'] = $request->input('due_date') ?? null;
+        }
+
+        $task->update($updateData);
 
         return back()->with('success', 'Task updated');
     }

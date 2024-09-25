@@ -22,10 +22,9 @@ const props = defineProps<{
 
 const debouncedUpdateTask = useDebounceFn( ( task ) => updateTask( task ), 500 ); // Adjust
 
-const updateDueDate = ( newDate ) =>
-{
-    console.log(newDate)
-    debouncedUpdateTask({ id: props.task.id, due_date: newDate ? newDate.toISOString().split('T')[0] : null });
+const updateDueDate = (newDate) => {
+    console.log(newDate);
+    debouncedUpdateTask({ id: props.task.id, due_date: newDate ? newDate.toISOString().split('T')[0] : false });
 };
 
 const taskDueDate = ref(props.task.due_date)
@@ -125,9 +124,9 @@ const updateTask = ( taskInformation ) =>
         data[ 'title' ] = title;
     }
 
-    if ( due_date )
+    if ( due_date !== false || due_date !== null  )
     {
-        data['due_date'] = due_date
+        data['due_date'] = due_date === false ? false : due_date
     }
 
     handleUpdate( id, data );

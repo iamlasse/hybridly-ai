@@ -3,6 +3,10 @@ import Vue from 'vue';
 import { computed } from 'vue';
 import { generateHTML } from '@tiptap/vue-3';
 import StarterKit from '@tiptap/starter-kit';
+import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
+
+dayjs.extend(relativeTime);
 
 const $props = defineProps<{
     task: App.Data.TaskData,
@@ -32,6 +36,19 @@ const parsedDescription = computed( () =>
     const descriptionObj = JSON.parse( $props.task.description );
     return generateHTML( descriptionObj, [ StarterKit ] );
 } );
+
+const formattedDueDate = computed(() => {
+    if (!$props.task.due_date) return '';
+    const dueDate = dayjs($props.task.due_date);
+    const now = dayjs();
+    const diffInDays = dueDate.diff(now, 'day');
+
+    if (diffInDays < 1 && diffInDays > -1) {
+        return dueDate.fromNow(); // "in 3 hours" or "3 hours ago"
+    } else {
+        return dueDate.format('MMM D, YYYY'); // "Apr 15, 2023"
+    }
+});
 </script>
 
 <template>
@@ -43,10 +60,16 @@ const parsedDescription = computed( () =>
             <div class="flex-grow">
                 <div class="text-sm text-gray-600 line-clamp-2" v-html=" parsedDescription "></div>
             </div>
-            <div class="mt-2 flex justify-between items-center">
-                <div class="flex gap-1 items-center">
-                    <v-icon name="oi-comment-discussion" class="text-gray-600"></v-icon>
-                    <p class="text-xs text-gray-600">{{ task.comments_count }}</p>
+            <div class="mt-2 flex items-center">
+                <div class="flex flex-1 gap-2 items-center justify-between ">
+                    <div class="flex gap-1 items-center">
+                        <v-icon name="oi-comment-discussion" class="text-gray-600"></v-icon>
+                        <p class="text-xs text-gray-600">{{ task.comments_count }}</p>
+                    </div>
+                    <div v-if="formattedDueDate" class="flex gap-1 items-center">
+                        <v-icon name="oi-calendar" class="text-gray-600"></v-icon>
+                        <p class="text-xs text-gray-600">Due: {{ formattedDueDate }}</p>
+                    </div>
                 </div>
             </div>
         </div>

@@ -45,6 +45,7 @@
         "@vuepic/vue-datepicker": "^9.0.3",
         "class-variance-authority": "^0.7.0",
         "clsx": "^2.1.1",
+        "dayjs": "^1.11.13",
         "lodash": "^4.17.21",
         "lodash-es": "^4.17.21",
         "oh-vue-icons": "1.0.0-rc3",
