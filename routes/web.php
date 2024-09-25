@@ -108,3 +108,7 @@ require __DIR__ . '/auth.php';
 Route::post('/tasks/{task:id}/complete', [TasksController::class, 'completeSubtask'])
     ->name('tasks.complete')
     ->middleware(['auth']);
+
+Route::post('/tasks/{task}/toggle-completion', [TasksController::class, 'toggleCompletion'])
+    ->name('tasks.toggle-completion')
+    ->middleware(['auth']);

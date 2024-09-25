@@ -8,6 +8,7 @@ import CommentItem from '@/components/Comment.vue';
 import { Button } from '@/components/ui/button';
 import TextInput from '@/components/TextInput.vue';
 import TiptapEditor from '@/components/TiptapEditor.vue';
+import { BiCheckCircle, BiCircle } from "oh-vue-icons/icons";
 
 const props = defineProps<{
     task: App.Data.TaskData;
@@ -175,6 +176,14 @@ const hideContextMenu = () =>
     contextMenu.value.show = false;
 };
 
+const toggleSubtaskCompletion = ( subtaskId: number ) =>
+{
+    router.post( route( 'tasks.toggle-completion', { task: subtaskId } ), {
+        preserveState: false,
+        preserveScroll: true,
+    } );
+};
+
 onMounted( () =>
 {
     document.addEventListener( 'click', hideContextMenu );
@@ -242,12 +251,20 @@ onUnmounted( () =>
                             <div v-if=" subtasks.length > 0 || showSubtasks ">
                                 <h4 class="font-semibold text-sm">Subtasks:</h4>
                                 <ul class="mt-2">
-                                    <li v-for="( subtask, index) in subtasks" :key=" index "
+                                    <li v-for="(                      subtask, index) in subtasks" :key=" index "
                                         class="flex items-center mb-2 group"
                                         @contextmenu="showContextMenu( $event, subtask.id )">
+                                        <Button @click="toggleSubtaskCompletion( subtask.id )"
+                                            class="mr-2 p-0 bg-transparent hover:bg-transparent" variant="ghost"
+                                            size="sm">
+                                            <v-icon
+                                                :name=" subtask.completed ? 'bi-check-circle-fill' : 'bi-check-circle' "
+                                                :class=" { 'text-gray-400': subtask.completed } "></v-icon>
+                                        </Button>
                                         <TextInput v-model=" subtask.title "
                                             @update:modelValue=" ( modelValue ) => debouncedUpdateTask( { id: subtask.id, title: modelValue } ) "
-                                            :data-index=" index " class="border rounded px-2 py-1 mr-2 flex-grow" />
+                                            :data-index=" index " class="border rounded px-2 py-1 mr-2 flex-grow"
+                                            :class=" { 'bg-gray-200 !text-gray-400': subtask.completed } " />
                                     </li>
                                     <li class="flex items-center">
                                         <TextInput v-model=" newSubtask "
@@ -281,7 +298,7 @@ onUnmounted( () =>
 
             <div class="comments pb-4 p-6 bg-slate-100">
                 <CommentItem
-                    v-for="                                                                                                                                                                                                                                                              comment in comments                                                                                                                                                                                                                                                              "
+                    v-for="                                                                                                                                                                                                                                                                                   comment in comments                                                                                                                                                                                                                                                                                   "
                     :key=" comment.id " :comment=" comment " />
             </div>
             <div class="bg-slate-100 border-t pb-4 sticky bottom-0">

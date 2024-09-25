@@ -61,7 +61,7 @@ class TasksController extends Controller
         return view('Tasks.Show', [
             'task' => $task,
             'comments' => fn() => $task->comments,
-            'sub_tasks' => $task->subTasks()->select('id', 'title')->get()
+            'sub_tasks' => $task->subTasks()->select(['id', 'title', 'completed', 'completed_at'])->get()
         ])
             ->base('projects.show', $task->project, force: true, keep: false);
     }
@@ -166,5 +166,19 @@ class TasksController extends Controller
         $task->save();
 
         return back()->with('success', 'Task completed successfully');
+    }
+
+    public function toggleCompletion(Task $task)
+    {
+        if ($task->completed_at) {
+            $task->completed_at = null;
+            $task->completed = false;
+        } else {
+            $task->completed_at = now();
+            $task->completed = true;
+        }
+        $task->save();
+
+        return back()->with('success', 'Task completed status updated successfully');
     }
 }
