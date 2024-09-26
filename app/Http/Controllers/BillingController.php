@@ -11,7 +11,7 @@ class BillingController extends Controller
         $user = auth()->user();
         $invoices = $user->invoices();
 
-        return hybridly('Billing.Show', [
+        return hybridly('billing.show', [
             'invoices' => $invoices,
         ]);
     }

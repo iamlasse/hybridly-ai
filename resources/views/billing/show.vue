@@ -22,6 +22,7 @@ const cancelSubscription = () =>
 
 <template layout="dashboard">
     <div class="container mx-auto px-4 py-8">
+
         <h1 class="text-3xl font-bold mb-6 text-white">Billing Management</h1>
 
         <div class="bg-white rounded-lg shadow-md p-6 mb-6">
@@ -30,8 +31,9 @@ const cancelSubscription = () =>
                 You are currently on the <span class="font-bold">{{ user?.is_premium ? 'Premium' : 'Free' }}</span>
                 plan.
             </p>
-            <p v-if=" user && user.activeSubscription && !user.activeSubscription.ends_at " class="text-sm text-gray-400">
-                Next billing date: {{ new Date( user.activeSubscription.ends_at ).toLocaleDateString() }}
+            <p v-if=" user && user.activeSubscription && !user.activeSubscription.ends_at "
+                class="text-sm text-gray-400">
+                Next billing date: {{ new Date( user.activeSubscription?.ends_at ).toLocaleDateString() }}
             </p>
 
 
@@ -58,14 +60,14 @@ const cancelSubscription = () =>
             <div v-else>
                 <h3 class="text-xl font-semibold mb-2">Upgrade to Premium</h3>
                 <p class="mb-4">Upgrade to our premium plan to unlock all features!</p>
-                <span v-if=" user && user.activeSubscription.ends_at !== null ">
+                <span v-if=" user.activeSubscription && user.activeSubscription.ends_at !== null ">
                     You have a cancelled subscription that ends at:
                     {{ new Date( user.activeSubscription.ends_at ).toDateString() }}
                 </span>
-                <a v-else :href=" route( 'upgrade.show' ) "
-                    class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded inline-block">
+                <router-link v-else :href=" route( 'upgrade.show' ) "
+                    class="bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-2 px-4 rounded inline-block">
                     Upgrade Now
-                </a>
+                </router-link>
 
             </div>
         </div>
@@ -98,5 +100,6 @@ const cancelSubscription = () =>
             </div>
             <p v-else class="text-gray-600">No billing history available.</p>
         </div>
+        <BillingPlans />
     </div>
 </template>
