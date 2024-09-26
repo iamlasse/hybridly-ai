@@ -38,4 +38,9 @@ class Task extends Model
     {
         return $this->morphMany(Comment::class, 'commentable')->latest();
     }
+
+    public function assignedTo(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'assigned_to_id');
+    }
 }

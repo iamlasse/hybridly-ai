@@ -70,6 +70,7 @@ Route::put('/projects/{project}/tasks/{task:id}', [TasksController::class, 'upda
     ->name('projects.tasks.update');
 
 Route::put('/tasks/{task:id}', [TasksController::class, 'updateTask'])->name('tasks.update');
+Route::put('/tasks/{task:id}/assign', [TasksController::class, 'assignTask'])->name('tasks.assign');
 Route::delete('/tasks/{task:id}', [TasksController::class, 'destroy'])->name('tasks.destroy');
 
 Route::put('/projects/{project}/collaborators', [ProjectController::class, 'addCollaborator'])

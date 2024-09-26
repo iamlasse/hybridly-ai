@@ -17,7 +17,23 @@ const props = defineProps<{
     task: App.Data.TaskData;
     comments: Comment[];
     sub_tasks: App.Data.TaskData[];
+    users: App.Data.UserData[];
 }>();
+
+const assignedUser = ref(props.task.assigned_to ? props.task.assigned_to.id : null);
+
+const assignUser = (userId) => {
+    router.put( route( 'tasks.assign', { task: props.task.id } ), {
+        data: {
+            user_id: userId,
+        },
+
+        preserveState: true,
+        preserveScroll: true,
+    }
+    );
+};
+
 
 
 const debouncedUpdateTask = useDebounceFn( ( task ) => updateTask( task ), 500 ); // Adjust
@@ -261,8 +277,14 @@ onUnmounted( () =>
 
                 <div class="info p-4 ">
                     <ul class="flex flex-col gap-4">
-                        <li>
-                            <h4 class="font-semibold text-sm">Assignee:</h4>
+                        <li class="flex gap-2 items-center">
+                            <h4 class="font-semibold text-sm flex-grow flex-shrink-0">Assignee:</h4>
+                            <select v-model="assignedUser" @change="assignUser($event.target.value)" class="border rounded px-2 py-1">
+                                <option value="">Unassigned</option>
+                                <option v-for="user in users" :key="user.id" :value="user.id">
+                                    {{ user.name }}
+                                </option>
+                            </select>
                         </li>
                         <li class="flex gap-2 items-center">
                             <h4 class="font-semibold text-sm flex-grow flex-shrink-0">Due date:

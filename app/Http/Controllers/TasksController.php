@@ -9,6 +9,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use App\Models\User;
 
 use function Hybridly\view;
 
@@ -57,11 +58,13 @@ class TasksController extends Controller
 
     public function show(Task $task)
     {
-        $task->loadMissing(['comments.user', 'subTasks']);
+        $task->loadMissing(['comments.user', 'subTasks', 'assignedTo']);
+        $users = User::all();
         return view('Tasks.Show', [
             'task' => $task,
             'comments' => fn() => $task->comments,
-            'sub_tasks' => $task->subTasks()->select(['id', 'title', 'completed', 'completed_at'])->get()
+            'sub_tasks' => $task->subTasks()->select(['id', 'title', 'completed', 'completed_at'])->get(),
+            'users' => $users,
         ])
             ->base('projects.show', $task->project, force: true, keep: false);
     }
@@ -108,6 +111,7 @@ class TasksController extends Controller
             'description' => ['nullable', 'string'],
             'subtasks' => ['nullable', 'array'],
             'due_date' => ['nullable', 'date'],
+            'assigned_to_id' => ['nullable', 'exists:users,id'],
         ]));
 
         if ($subtasks = data_get($data, 'subtasks')) {
@@ -116,7 +120,7 @@ class TasksController extends Controller
             });
         }
 
-        $updateData = $data->only('title', 'description')->toArray();
+        $updateData = $data->only('title', 'description', 'assigned_to_id')->toArray();
 
         // Handle due_date separately
         if ($request->has('due_date')) {
@@ -126,6 +130,17 @@ class TasksController extends Controller
         $task->update($updateData);
 
         return back()->with('success', 'Task updated');
+    }
+
+    public function assignTask(Request $request, Task $task)
+    {
+        $request->validate([
+            'user_id' => 'required|exists:users,id',
+        ]);
+
+        $task->update(['assigned_to_id' => $request->user_id]);
+
+        return back()->with('success', 'Task assigned successfully');
     }
 
     public function bulkUpdate(Request $request, Project $project)
