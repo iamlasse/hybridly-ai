@@ -7,6 +7,8 @@ defineProps<{
   phpVersion: string
 }>()
 
+const user = useProperty('security.user')
+
 const featuresSection = ref( null );
 const testimonialCarousel = ref( null );
 let currentTestimonial = ref( 0 );
@@ -174,6 +176,7 @@ onMounted( () =>
 
 <template layout="main">
     <div class="bg-white">
+
         <!-- Top navigation bar -->
         <nav class="bg-white shadow">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -191,13 +194,16 @@ onMounted( () =>
                             <h4>TaskFlow Pro</h4>
                         </div>
                     </div>
-                    <div class="flex items-center">
+                    <div v-if=" !user " class="flex items-center">
                         <router-link :href="route('login')"
                             class="text-gray-500 hover:text-gray-700 px-3 py-2 rounded-md text-sm font-medium">Sign
                             In</router-link>
                         <a href="#"
                             class="ml-4 px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700">Sign
                             Up</a>
+                    </div>
+                    <div v-else class="flex items-center">
+                        <router-link :href="route('dashboard')">Dashboard</router-link>
                     </div>
                 </div>
             </div>
@@ -252,6 +258,9 @@ onMounted( () =>
             </div>
         </section>
 
+        <div class="container py-4">
+            <TaskBoard />
+        </div>
         <!-- CTA section -->
         <section class="bg-indigo-700">
             <div class="max-w-2xl mx-auto text-center py-16 px-4 sm:py-20 sm:px-6 lg:px-8">
