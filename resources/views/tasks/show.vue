@@ -86,6 +86,8 @@ const commentForm = useForm( {
     url: route( "task.comments.store", { task: props.task } ),
     fields: {
         body: "",
+        commentable_id: props.task.id,
+        commentable_type: 'task'
     },
     hooks: {
         success: ( payload: any, context: any ) =>

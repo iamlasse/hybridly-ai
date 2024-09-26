@@ -1,47 +1,135 @@
 <template>
-  <div class="mention-list">
-    <button
-      v-for="item in props.items"
-      :key="item.id"
-      class="mention-list__item"
-      :class="{ 'mention-list__item--selected': props.selected === item }"
-      @click="selectItem(item)"
-    >
-      {{ item.name }}
-    </button>
-  </div>
+    <div class="dropdown-menu bg-white shadow-sm p-3 border">
+        <template v-if=" items.length ">
+            <button :class=" { 'bg-indigo-300/30': index === selectedIndex } " v-for="( item, index) in items" :key=" index "
+                @click="selectItem( index )">
+                {{ item.name }}
+            </button>
+        </template>
+        <div class="item" v-else>
+            No result
+        </div>
+    </div>
 </template>
 
-<script setup lang="ts">
-import { defineProps } from 'vue';
+<script>
+export default {
+    props: {
+        items: {
+            type: Array,
+            required: true,
+        },
 
-const props = defineProps(['items', 'command', 'selected']);
+        command: {
+            type: Function,
+            required: true,
+        },
+    },
+    mounted ()
+    {
 
-const selectItem = (item: any) => {
-  props.command({ id: item.id, label: item.name });
+    },
+
+    data ()
+    {
+        return {
+            selectedIndex: 0,
+        };
+    },
+
+    watch: {
+        items ()
+        {
+            this.selectedIndex = 0;
+        },
+    },
+
+    methods: {
+        onKeyDown ( { event } )
+        {
+            console.log(event.key)
+            if ( event.key === 'ArrowUp' )
+            {
+                this.upHandler();
+                return true;
+            }
+
+            if ( event.key === 'ArrowDown' )
+            {
+                console.log('OnKeyDown')
+                this.downHandler();
+                return true;
+            }
+
+            if ( event.key === 'Enter' )
+            {
+                this.enterHandler();
+                return true;
+            }
+
+            return false;
+        },
+
+        upHandler ()
+        {
+            this.selectedIndex = ( ( this.selectedIndex + this.items.length ) - 1 ) % this.items.length;
+        },
+
+        downHandler ()
+        {
+            this.selectedIndex = ( this.selectedIndex + 1 ) % this.items.length;
+        },
+
+        enterHandler ()
+        {
+            this.selectItem( this.selectedIndex );
+        },
+
+        selectItem ( index )
+        {
+            console.log('select item', index, this.selectedIndex)
+            const item = this.items[ index ];
+
+            if ( item )
+            {
+                console.log(this.command)
+                this.command( { item: item.id, label: item.name } );
+            }
+        },
+    },
 };
 </script>
 
-<style scoped>
-.mention-list {
-  padding: 0.2rem;
-  border-radius: 0.5rem;
-  background: #fff;
-  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.05), 0px 10px 20px rgba(0, 0, 0, 0.1);
-}
+<style lang="scss">
+/* Dropdown menu */
+.dropdown-menu {
+    background: var(--white);
+    border: 1px solid var(--gray-1);
+    border-radius: 0.7rem;
+    box-shadow: var(--shadow);
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+    overflow: auto;
+    padding: 0.4rem;
+    position: relative;
 
-.mention-list__item {
-  display: block;
-  width: 100%;
-  text-align: left;
-  padding: 0.2rem 0.5rem;
-  border-radius: 0.3rem;
-  cursor: pointer;
-}
+    button {
+        align-items: center;
+        background-color: transparent;
+        display: flex;
+        gap: 0.25rem;
+        text-align: left;
+        width: 100%;
 
-.mention-list__item:hover,
-.mention-list__item--selected {
-  background-color: #e2e8f0;
+        &:hover,
+        &:hover.is-selected {
+            background-color: var(--gray-3);
+        }
+
+        &.is-selected {
+            background-color: var(--gray-2);
+        }
+    }
 }
 </style>
-

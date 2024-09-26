@@ -3,6 +3,7 @@
 
 
 use App\Http\Controllers\BillingController;
+use App\Http\Controllers\CommentController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProjectController;
@@ -84,14 +85,7 @@ Route::post('/projects/{project}/stages/update-order', [ProjectController::class
 Route::get('/tasks', [TasksController::class, 'index'])->middleware(['auth:sanctum'])->name('tasks.index');
 Route::get('/tasks/{task}', [TasksController::class, 'show'])->middleware(['auth:sanctum'])->name('tasks.show');
 
-Route::post('/task/{task:id}/comment', function (Task $task) {
-    $task->comments()->create([
-        'user_id' => auth()->id() ?? 1,
-        'body' => request('body'),
-    ]);
-
-    return back();
-})->name('task.comments.store');
+Route::post('/task/{task:id}/comment', [CommentController::class, 'store'])->name('task.comments.store');
 
 Route::middleware(['auth:sanctum'])->as('upgrade.')->group(function () {
     Route::get('/upgrade/options', [UpgradeController::class, 'show'])->name('show');
