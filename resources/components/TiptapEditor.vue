@@ -108,18 +108,6 @@ const toggleUnderline = () => editor.value?.chain().focus().toggleUnderline().ru
         <editor-content :editor="editor" class="p-0 min-h-[150px]" />
         <div class="editor-menu bg-gray-100 p-2 flex flex-wrap gap-1 border-t">
             <!-- Existing buttons -->
-            <DropdownMenu v-if="mentionUsers.length > 0">
-                <DropdownMenuTrigger>
-                    <Button size="xxs" variant="secondary">
-                        @
-                    </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent>
-                    <DropdownMenuItem v-for="user in mentionUsers" :key="user.id" @click="insertMention(user)">
-                        {{ user.name }}
-                    </DropdownMenuItem>
-                </DropdownMenuContent>
-            </DropdownMenu>
             <Button size="xxs" :variant="editor.isActive('bold') ? 'primary' : 'secondary'" @click="editor.chain().focus().toggleBold().run()" :disabled="!editor.can().chain().focus().toggleBold().run()">
                 B
             </Button>
