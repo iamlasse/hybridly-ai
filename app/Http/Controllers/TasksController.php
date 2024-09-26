@@ -58,7 +58,7 @@ class TasksController extends Controller
 
     public function show(Task $task)
     {
-        $task->loadMissing(['comments.user', 'subTasks', 'assignedTo']);
+        $task->loadMissing(['comments.user', 'subTasks', 'assignedTo', 'dependencies']);
         $users = User::all();
         return view('Tasks.Show', [
             'task' => $task,
@@ -198,5 +198,27 @@ class TasksController extends Controller
         $task->save();
 
         return back()->with('success', 'Task completed status updated successfully');
+    }
+
+    public function addDependency(Request $request, Task $task)
+    {
+        $request->validate([
+            'dependency_id' => 'required|exists:tasks,id',
+        ]);
+
+        $task->dependencies()->attach($request->dependency_id);
+
+        return back()->with('success', 'Dependency added successfully');
+    }
+
+    public function removeDependency(Request $request, Task $task)
+    {
+        $request->validate([
+            'dependency_id' => 'required|exists:tasks,id',
+        ]);
+
+        $task->dependencies()->detach($request->dependency_id);
+
+        return back()->with('success', 'Dependency removed successfully');
     }
 }

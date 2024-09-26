@@ -32,6 +32,8 @@ class TaskData extends DataResource
         public readonly ?int $commentsCount,
         public int $order,
         #[MapOutputName('assigned_to')]
-        public readonly ?UserData $assignedTo
+        public readonly ?UserData $assignedTo,
+        #[MapOutputName('dependencies')]
+        public readonly ?Collection $dependencies
     ) {}
 }

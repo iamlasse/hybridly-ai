@@ -19,11 +19,10 @@ const props = defineProps<{
     comments: Comment[];
     sub_tasks: App.Data.TaskData[];
     users: App.Data.UserData[];
+    project: App.Data.ProjectData;
 }>();
 
 const assignedUser = ref(props.task.assigned_to ? props.task.assigned_to.id.toString() : '');
-
-console.log(assignedUser);
 
 const assignUser = (userId) => {
     assignedUser.value = userId;
@@ -234,6 +233,36 @@ const toggleMainTaskCompletion = () => {
     } );
 };
 
+const newDependency = ref( '' );
+
+const addDependency = ( dependencyId ) =>
+{
+    router.post( route( 'tasks.add-dependency', { task: props.task.id } ), {
+        dependency_id: dependencyId,
+    }, {
+        preserveState: false,
+        preserveScroll: true,
+    } );
+};
+
+const removeDependency = ( dependencyId ) =>
+{
+    router.post( route( 'tasks.remove-dependency', { task: props.task.id } ), {
+        dependency_id: dependencyId,
+    }, {
+        preserveState: false,
+        preserveScroll: true,
+    } );
+};
+
+const availableTasks = computed(() => {
+    // Filter out tasks that are already dependencies and the current task
+    return props.project?.tasks?.filter(t =>
+        t.id !== props.task.id &&
+        !props.task.dependencies?.some(d => d.id === t.id)
+    ) || [];
+});
+
 onMounted( () =>
 {
     document.addEventListener( 'click', hideContextMenu );
@@ -303,6 +332,24 @@ onUnmounted( () =>
                         </li>
                         <li>
                             <h4 class="font-semibold text-sm">Dependencies:</h4>
+                            <ul v-if="task.dependencies && task.dependencies.length > 0">
+                                <li v-for="dependency in task.dependencies" :key="dependency.id">
+                                    {{ dependency.title }}
+                                    <Button @click="removeDependency(dependency.id)" size="xs" variant="ghost">
+                                        Remove
+                                    </Button>
+                                </li>
+                            </ul>
+                            <Select v-model="newDependency" @update:model-value="addDependency">
+                                <SelectTrigger class="w-full">
+                                    <SelectValue placeholder="Add dependency" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem v-for="availableTask in availableTasks" :key="availableTask.id" :value="availableTask.id.toString()">
+                                        {{ availableTask.title }}
+                                    </SelectItem>
+                                </SelectContent>
+                            </Select>
                         </li>
                         <li>
                             <h4 class="font-semibold text-sm">Fields:</h4>
