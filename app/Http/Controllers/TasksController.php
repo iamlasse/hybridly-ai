@@ -206,13 +206,43 @@ class TasksController extends Controller
     public function addDependency(Request $request, Task $task)
     {
         $data = $request->validate([
-            'dependency_id' => ['required','string','exists:tasks,id', Rule::in($task->project->tasks->pluck('id'))],
+            'dependency_id' => ['required', 'exists:tasks,id', Rule::in($task->project->tasks->pluck('id'))],
         ]);
 
-        ds($task->dependencies, $request->all(), $data);
-        $task->dependencies()->syncWithoutDetaching($request->dependency_id);
+        // Prevent adding the task as its own dependency
+        if ($data['dependency_id'] == $task->id) {
+            return back()->with('error', 'A task cannot depend on itself.');
+        }
+
+        // Prevent circular dependencies
+        if ($this->wouldCreateCircularDependency($task, $data['dependency_id'])) {
+            return back()->with('error', 'Adding this dependency would create a circular reference.');
+        }
+
+        $task->dependencies()->syncWithoutDetaching($data['dependency_id']);
 
         return back()->with('success', 'Dependency added successfully');
+    }
+
+    private function wouldCreateCircularDependency(Task $task, $newDependencyId, $visited = [])
+    {
+        if (in_array($task->id, $visited)) {
+            return true;
+        }
+
+        $visited[] = $task->id;
+
+        if ($task->id == $newDependencyId) {
+            return true;
+        }
+
+        foreach ($task->dependencies as $dependency) {
+            if ($this->wouldCreateCircularDependency($dependency, $newDependencyId, $visited)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public function removeDependency(Request $request, Task $task)
