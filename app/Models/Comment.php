@@ -12,7 +12,7 @@ class Comment extends Model
 {
     protected $fillable = ['body', 'commentable_id', 'commentable_type'];
 
-    protected $appends = ['readable_created_time'];
+    protected $appends = ['readable_created_time', 'formatted_body'];
 
     public function commentable()
     {
@@ -28,6 +28,24 @@ class Comment extends Model
     {
         return Attribute::make(
             get: fn () => $this->created_at->diffForHumans()
+        );
+    }
+
+    public function formattedBody(): Attribute
+    {
+        return Attribute::make(
+            get: function () {
+                return preg_replace_callback(
+                    '/\[@(\w+)\]\(user:\/\/(\d+)\)/',
+                    function ($matches) {
+                        $user = User::find($matches[2]);
+                        return $user
+                            ? '<a href="/users/' . $user->id . '" class="mention">@' . $user->name . '</a>'
+                            : '@' . $matches[1];
+                    },
+                    $this->body
+                );
+            }
         );
     }
 }

@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { Editor, EditorContent } from '@tiptap/vue-3'
+import { Editor, EditorContent, VueRenderer } from '@tiptap/vue-3'
 import StarterKit from '@tiptap/starter-kit'
-import { ref, watch, onMounted, onBeforeUnmount } from 'vue'
+import { ref, watch, onMounted, onBeforeUnmount, computed } from 'vue'
 import { useDebounceFn } from '@vueuse/core'
 import { isString } from '@vue/shared'
 import Underline from '@tiptap/extension-underline'
@@ -9,13 +9,30 @@ import TextAlign from '@tiptap/extension-text-align'
 import { Color } from '@tiptap/extension-color';
 import ListItem from '@tiptap/extension-list-item';
 import TextStyle from '@tiptap/extension-text-style';
-import {Button} from '@/components/ui/button'
+import Mention from '@tiptap/extension-mention'
+import { Button } from '@/components/ui/button'
+import MentionList from '@/components/MentionList.vue'
+import tippy from 'tippy.js'
+// Add this function to handle mentions
+
 
 const modelValue = defineModel()
 
 const emit = defineEmits<{
   (e: 'update:modelValue', value: any): void
 }>()
+
+const fetchUsers = async (query: string) => {
+  // TODO: Replace this with an actual API call
+  const allUsers = [
+    { id: 1, name: 'John Doe' },
+    { id: 2, name: 'Jane Smith' },
+    { id: 3, name: 'Alice Johnson' },
+    { id: 4, name: 'Bob Williams' },
+    { id: 5, name: 'Charlie Brown' },
+  ];
+  return allUsers.filter(user => user.name.toLowerCase().includes(query.toLowerCase()));
+}
 
 const editor = ref<Editor | null>(null)
 
@@ -42,15 +59,21 @@ const initEditor = () => {
     extensions: [
         Color.configure( { types: [ TextStyle.name, ListItem.name ] } ),
         TextStyle.configure( { types: [ ListItem.name ] } ),
-          Underline.configure( {
-              HTMLAttributes: {
-                  class: 'text-underline',
-              },
+        Underline.configure( {
+            HTMLAttributes: {
+                class: 'text-underline',
+            },
         }),
         TextAlign.configure({
             types: ['heading', 'paragraph'],
         }),
         StarterKit,
+        Mention.configure({
+          HTMLAttributes: {
+            class: 'mention',
+          },
+          suggestion,
+        }),
     ],
     content: parseContent(modelValue.value),
     onUpdate: ({ editor }) => {
@@ -84,6 +107,19 @@ const toggleUnderline = () => editor.value?.chain().focus().toggleUnderline().ru
     <div v-if="editor" class="tiptap-editor border rounded-md overflow-hidden">
         <editor-content :editor="editor" class="p-0 min-h-[150px]" />
         <div class="editor-menu bg-gray-100 p-2 flex flex-wrap gap-1 border-t">
+            <!-- Existing buttons -->
+            <DropdownMenu v-if="mentionUsers.length > 0">
+                <DropdownMenuTrigger>
+                    <Button size="xxs" variant="secondary">
+                        @
+                    </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>
+                    <DropdownMenuItem v-for="user in mentionUsers" :key="user.id" @click="insertMention(user)">
+                        {{ user.name }}
+                    </DropdownMenuItem>
+                </DropdownMenuContent>
+            </DropdownMenu>
             <Button size="xxs" :variant="editor.isActive('bold') ? 'primary' : 'secondary'" @click="editor.chain().focus().toggleBold().run()" :disabled="!editor.can().chain().focus().toggleBold().run()">
                 B
             </Button>
@@ -152,6 +188,43 @@ const toggleUnderline = () => editor.value?.chain().focus().toggleUnderline().ru
 
 .ProseMirror:focus {
   outline: none;
+}
+</style>
+
+<style>
+.mention {
+  background-color: #e2e8f0;
+  border-radius: 0.25rem;
+  padding: 0.125rem 0.25rem;
+  font-weight: 500;
+  color: #4a5568;
+}
+
+.mentions-container {
+  position: absolute;
+  z-index: 10;
+}
+
+.mentions-menu {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.25rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.mention-item {
+  display: block;
+  padding: 0.5rem;
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.mention-item:hover {
+  background-color: #f7fafc;
 }
 </style>
 

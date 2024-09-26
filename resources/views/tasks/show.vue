@@ -340,7 +340,8 @@ onUnmounted( () =>
                 <div class="   ">
                     <form @submit.prevent=" onSubmit ">
                         <div class="flex flex-col gap-2 p-2">
-                            <TextInput class="border-0 w-full" type="text" name="body"
+                            <span class="text-sm font-semibold">Add Comment</span>
+                            <TiptapEditor class="border-0 w-full" type="text" name="body"
                                 v-model=" commentForm.fields.body " />
                             <div class="actions flex justify-between items-center">
                                 <p class="text-sm">Add comment</p>
