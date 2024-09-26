@@ -12,6 +12,7 @@ import TextInput from '@/components/TextInput.vue';
 import TiptapEditor from '@/components/TiptapEditor.vue';
 import { ref as vueRef } from 'vue';
 import { BiCheckCircle, BiCircle } from "oh-vue-icons/icons";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
 const props = defineProps<{
     task: App.Data.TaskData;
@@ -20,18 +21,19 @@ const props = defineProps<{
     users: App.Data.UserData[];
 }>();
 
-const assignedUser = ref(props.task.assigned_to ? props.task.assigned_to.id : null);
+const assignedUser = ref(props.task.assigned_to ? props.task.assigned_to.id.toString() : '');
+
+console.log(assignedUser);
 
 const assignUser = (userId) => {
-    router.put( route( 'tasks.assign', { task: props.task.id } ), {
+    assignedUser.value = userId;
+    router.put(route('tasks.assign', { task: props.task.id }), {
         data: {
-            user_id: userId,
+            user_id: userId || null, // Send null if no user is selected
         },
-
-        preserveState: true,
+        preserveState: false,
         preserveScroll: true,
-    }
-    );
+    });
 };
 
 
@@ -279,12 +281,16 @@ onUnmounted( () =>
                     <ul class="flex flex-col gap-4">
                         <li class="flex gap-2 items-center">
                             <h4 class="font-semibold text-sm flex-grow flex-shrink-0">Assignee:</h4>
-                            <select v-model="assignedUser" @change="assignUser($event.target.value)" class="border rounded px-2 py-1">
-                                <option value="">Unassigned</option>
-                                <option v-for="user in users" :key="user.id" :value="user.id">
-                                    {{ user.name }}
-                                </option>
-                            </select>
+                            <Select v-model="assignedUser" @update:model-value="assignUser">
+                                <SelectTrigger class="w-full">
+                                    <SelectValue placeholder="Select a user" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem v-for="user in users" :key="user.id" :value="user.id.toString()">
+                                        {{ user.name }}
+                                    </SelectItem>
+                                </SelectContent>
+                            </Select>
                         </li>
                         <li class="flex gap-2 items-center">
                             <h4 class="font-semibold text-sm flex-grow flex-shrink-0">Due date:
@@ -361,8 +367,8 @@ onUnmounted( () =>
 
             <div class="comments pb-4 bg-slate-100">
                 <header class="border-b px-4 mb-3 flex items-center gap-4">
-                    <H2 class="font-semibold text-sm border-b-slate-500 border-b-2 pb-2 pt-2">Comments</H2>
-                    <H2 class="font-semibold text-sm pb-2 pt-2">All Activity</H2>
+                    <h2 class="font-semibold text-sm border-b-slate-500 border-b-2 pb-2 pt-2">Comments</h2>
+                    <h2 class="font-semibold text-sm pb-2 pt-2">All Activity</h2>
                 </header>
                 <section class="px-4">
                     <CommentItem v-for=" comment in comments " :key=" comment.id " :comment=" comment " />
