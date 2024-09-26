@@ -205,10 +205,11 @@ class TasksController extends Controller
 
     public function addDependency(Request $request, Task $task)
     {
-        $request->validate([
+        $data = $request->validate([
             'dependency_id' => ['required','string','exists:tasks,id', Rule::in($task->project->tasks->pluck('id'))],
         ]);
 
+        ds($task->dependencies, $request->all(), $data);
         $task->dependencies()->syncWithoutDetaching($request->dependency_id);
 
         return back()->with('success', 'Dependency added successfully');

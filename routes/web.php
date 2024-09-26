@@ -88,8 +88,8 @@ Route::get('/tasks/{task}', [TasksController::class, 'show'])->middleware(['auth
 
 Route::post('/task/{task:id}/comment', [CommentController::class, 'store'])->name('task.comments.store');
 
-Route::post('/tasks/{task}/add-dependency', [TasksController::class, 'addDependency'])->name('tasks.add-dependency');
-Route::post('/tasks/{task}/remove-dependency', [TasksController::class, 'removeDependency'])->name('tasks.remove-dependency');
+Route::put('/tasks/{task:id}/add-dependency', [TasksController::class, 'addDependency'])->name('tasks.add-dependency');
+Route::put('/tasks/{task:id}/remove-dependency', [TasksController::class, 'removeDependency'])->name('tasks.remove-dependency');
 
 
 Route::middleware(['auth:sanctum'])->as('upgrade.')->group(function () {

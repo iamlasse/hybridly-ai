@@ -237,22 +237,26 @@ const toggleMainTaskCompletion = () => {
 const newDependency = ref('');
 
 const addDependency = (dependencyId) => {
-    router.post(route('tasks.add-dependency', { task: props.task.id }), {
-        dependency_id: dependencyId,
-    }, {
+    if (!dependencyId) return; // Prevent adding empty dependencies
+    router.put(route('tasks.add-dependency', { task: props.task.id }), {
+        data: {dependency_id: dependencyId},
+
         preserveState: false,
         preserveScroll: true,
     }).then(() => {
         newDependency.value = ''; // Reset the select input after successful addition
         router.reload({ only: ['task'] }); // Reload the task data
+    }).catch((error) => {
+        console.error('Error adding dependency:', error);
+        // You can add error handling here, such as showing an error message to the user
     });
 };
 
 const removeDependency = ( dependencyId ) =>
 {
-    router.post( route( 'tasks.remove-dependency', { task: props.task.id } ), {
-        dependency_id: dependencyId,
-    }, {
+    router.put( route( 'tasks.remove-dependency', { task: props.task.id } ), {
+        data: {dependency_id: dependencyId},
+
         preserveState: false,
         preserveScroll: true,
     } );
@@ -260,10 +264,13 @@ const removeDependency = ( dependencyId ) =>
 
 const availableTasks = computed(() => {
     // Filter out tasks that are already dependencies and the current task
-    return props.tasks?.filter(t =>
+    const filteredTasks = props.tasks?.filter(t =>
         t.id !== props.task.id &&
         !props.task.dependencies?.some(d => d.id === t.id)
     ) || [];
+
+    // Hide the select dropdown if there are no available tasks
+    return filteredTasks.length > 0 ? filteredTasks : null;
 });
 
 onMounted( () =>
@@ -335,24 +342,28 @@ onUnmounted( () =>
                         </li>
                         <li>
                             <h4 class="font-semibold text-sm">Dependencies:</h4>
-                            <ul v-if="task.dependencies && task.dependencies.length > 0">
-                                <li v-for="dependency in task.dependencies" :key="dependency.id">
-                                    {{ dependency.title }}
-                                    <Button @click="removeDependency(dependency.id)" size="xs" variant="ghost">
-                                        Remove
-                                    </Button>
-                                </li>
-                            </ul>
+
                             <Select v-model="newDependency" @update:model-value="addDependency">
                                 <SelectTrigger class="w-full">
                                     <SelectValue placeholder="Add dependency" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem v-for="availableTask in availableTasks" :key="availableTask.id" :value="availableTask.id.toString()">
+                                    <SelectItem v-for="availableTask in availableTasks" :key="availableTask.id"
+                                        :value="availableTask.id.toString()">
                                         {{ availableTask.title }}
                                     </SelectItem>
                                 </SelectContent>
                             </Select>
+                            <ul v-if=" task.dependencies && task.dependencies.length > 0 " class="mt-2 mb-2 space-y-2">
+                                <li v-for=" dependency in task.dependencies " :key=" dependency.id "
+                                    class="flex items-center justify-between bg-gray-100 rounded p-2">
+                                    <span>{{ dependency.title }}</span>
+                                    <Button @click="removeDependency( dependency.id )" size="icon" variant="ghost"
+                                        class="h-6 w-6">
+                                        <v-icon name="io-close-outline" class="h-4 w-4" />
+                                    </Button>
+                                </li>
+                            </ul>
                         </li>
                         <li>
                             <h4 class="font-semibold text-sm">Fields:</h4>

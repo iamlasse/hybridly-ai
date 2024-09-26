@@ -2,9 +2,9 @@ import { initializeHybridly } from 'virtual:hybridly/config';
 import { createHead, useHead } from '@unhead/vue';
 import { OhVueIcon, addIcons } from "oh-vue-icons";
 import './tailwind.css';
-import { FaTasks, OiCommentDiscussion, BiXLg, BiTrashFill, BiCheckCircle, BiCheckCircleFill, BiCircle, BiArrowCounterclockwise, BiArrowClockwise, BiCheck, IoCloseCircleOutline, RiMoreFill, BiPlus, IoShareSocialOutline, CoFilter } from "oh-vue-icons/icons";
+import { FaTasks, OiCommentDiscussion, BiXLg, BiTrashFill, BiCheckCircle, BiCheckCircleFill, BiCircle, BiArrowCounterclockwise, BiArrowClockwise, BiCheck, IoCloseCircleOutline, RiMoreFill, BiPlus, IoShareSocialOutline, CoFilter, IoCloseOutline } from "oh-vue-icons/icons";
 
-addIcons( FaTasks, OiCommentDiscussion, BiXLg, BiTrashFill, BiCheckCircle, BiCheckCircleFill, BiCircle, BiArrowCounterclockwise, BiArrowClockwise, BiCheck, IoCloseCircleOutline, RiMoreFill, BiPlus, IoShareSocialOutline, CoFilter );
+addIcons( FaTasks, OiCommentDiscussion, BiXLg, BiTrashFill, BiCheckCircle, BiCheckCircleFill, BiCircle, BiArrowCounterclockwise, BiArrowClockwise, BiCheck, IoCloseCircleOutline, RiMoreFill, BiPlus, IoShareSocialOutline, CoFilter, IoCloseOutline );
 initializeHybridly( {
     devtools: true,
     viewTransition: false,
