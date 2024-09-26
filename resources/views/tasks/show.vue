@@ -16,6 +16,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 
 const props = defineProps<{
     task: App.Data.TaskData;
+    tasks: App.Data.TaskData[];
     comments: Comment[];
     sub_tasks: App.Data.TaskData[];
     users: App.Data.UserData[];
@@ -233,16 +234,18 @@ const toggleMainTaskCompletion = () => {
     } );
 };
 
-const newDependency = ref( '' );
+const newDependency = ref('');
 
-const addDependency = ( dependencyId ) =>
-{
-    router.post( route( 'tasks.add-dependency', { task: props.task.id } ), {
+const addDependency = (dependencyId) => {
+    router.post(route('tasks.add-dependency', { task: props.task.id }), {
         dependency_id: dependencyId,
     }, {
         preserveState: false,
         preserveScroll: true,
-    } );
+    }).then(() => {
+        newDependency.value = ''; // Reset the select input after successful addition
+        router.reload({ only: ['task'] }); // Reload the task data
+    });
 };
 
 const removeDependency = ( dependencyId ) =>
@@ -257,7 +260,7 @@ const removeDependency = ( dependencyId ) =>
 
 const availableTasks = computed(() => {
     // Filter out tasks that are already dependencies and the current task
-    return props.project?.tasks?.filter(t =>
+    return props.tasks?.filter(t =>
         t.id !== props.task.id &&
         !props.task.dependencies?.some(d => d.id === t.id)
     ) || [];

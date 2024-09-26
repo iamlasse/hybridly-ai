@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use App\Models\User;
+use Illuminate\Validation\Rule;
 
 use function Hybridly\view;
 
@@ -62,6 +63,8 @@ class TasksController extends Controller
         $users = User::all();
         return view('Tasks.Show', [
             'task' => $task,
+            'tasks' => $task->project->tasks,
+            'project' => $task->project,
             'comments' => fn() => $task->comments,
             'sub_tasks' => $task->subTasks()->select(['id', 'title', 'completed', 'completed_at'])->get(),
             'users' => $users,
@@ -203,10 +206,10 @@ class TasksController extends Controller
     public function addDependency(Request $request, Task $task)
     {
         $request->validate([
-            'dependency_id' => 'required|exists:tasks,id',
+            'dependency_id' => ['required','string','exists:tasks,id', Rule::in($task->project->tasks->pluck('id'))],
         ]);
 
-        $task->dependencies()->attach($request->dependency_id);
+        $task->dependencies()->syncWithoutDetaching($request->dependency_id);
 
         return back()->with('success', 'Dependency added successfully');
     }
