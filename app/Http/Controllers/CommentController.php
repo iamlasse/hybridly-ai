@@ -12,7 +12,7 @@ class CommentController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
-            'body' => ['required', 'array'],
+            'body' => ['required', 'json'],
             'commentable_id' => 'required',
             'commentable_type' => 'required|in:task,project',
         ]);
@@ -26,7 +26,7 @@ class CommentController extends Controller
             : Project::findOrFail($commentableId);
 
         $comment = new Comment;
-        $comment->body = json_encode(data_get($data, 'body'));
+        $comment->body = $data['body'];
         $comment->user_id = auth()->id();
 
         $commentable->comments()->save($comment);

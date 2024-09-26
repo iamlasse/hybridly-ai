@@ -8,8 +8,6 @@ use Tests\TestCase;
 use Laravel\Cashier\Subscription;
 use PHPUnit\Framework\Attributes\Test;
 
-
-
 class UserSubscriptionTest extends TestCase
 {
     use LazilyRefreshDatabase;

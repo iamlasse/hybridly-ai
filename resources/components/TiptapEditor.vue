@@ -80,11 +80,7 @@ const initEditor = () =>
             Mention.configure( {
                 deleteTriggerWithBackspace: true,
                 HTMLAttributes: {
-                    class: 'mention text-indigo-500',
-                },
-                renderText ( { options, node } )
-                {
-                    return `${ options.suggestion.char }Test`;
+                    class: 'text-indigo-500 mr-1',
                 },
                 renderHTML ( { options, node, ...rest } )
                 {

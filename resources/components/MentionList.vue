@@ -93,7 +93,7 @@ export default {
             if ( item )
             {
                 console.log(this.command)
-                this.command( { item: item.id, label: item.name } );
+                this.command( { id: item.id, label: item.name } );
             }
         },
     },

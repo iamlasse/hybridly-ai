@@ -3,6 +3,12 @@ import Vue from 'vue';
 import { computed } from 'vue';
 import { generateHTML } from '@tiptap/vue-3';
 import StarterKit from '@tiptap/starter-kit';
+import Underline from '@tiptap/extension-underline';
+import TextAlign from '@tiptap/extension-text-align';
+import { Color } from '@tiptap/extension-color';
+import ListItem from '@tiptap/extension-list-item';
+import TextStyle from '@tiptap/extension-text-style';
+import Mention from '@tiptap/extension-mention';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 
@@ -34,7 +40,21 @@ const parsedDescription = computed( () =>
 {
     if ( !$props.task.description ) return '';
     const descriptionObj = JSON.parse( $props.task.description );
-    return generateHTML( descriptionObj, [ StarterKit ] );
+    console.log(descriptionObj)
+    return generateHTML( descriptionObj, [
+        StarterKit,
+        Underline,
+        TextAlign.configure( {
+            types: [ 'heading', 'paragraph' ],
+        } ),
+        Color.configure( { types: [ TextStyle.name, ListItem.name ] } ),
+        TextStyle.configure( { types: [ ListItem.name ] } ),
+        Mention.configure( {
+            HTMLAttributes: {
+                class: 'mention',
+            },
+        } ),
+     ] );
 } );
 
 const formattedDueDate = computed(() => {

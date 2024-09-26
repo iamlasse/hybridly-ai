@@ -56,6 +56,19 @@ export default usersFetcher => ({
                 } );
             },
 
+            onKeyUp ( props )
+            {
+                if ( props.event.key === 'Escape' )
+                {
+                    popup[ 0 ].hide();
+
+                    return true;
+                }
+
+                return component.ref?.onKeyUp( props );
+            },
+
+
             onKeyDown ( props )
             {
                 if ( props.event.key === 'Escape' )

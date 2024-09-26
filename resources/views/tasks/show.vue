@@ -81,27 +81,29 @@ const isVisible = ref( false );
 
 const targetIsVisible = useElementVisibility( target );
 
-const commentForm = useForm( {
+const commentForm = useForm({
     method: "POST",
-    url: route( "task.comments.store", { task: props.task } ),
+    url: route("task.comments.store", { task: props.task }),
     fields: {
         body: "",
         commentable_id: props.task.id,
         commentable_type: 'task'
     },
     hooks: {
-        success: ( payload: any, context: any ) =>
-        {
-            console.log( "comment added", payload, context );
+        success: (payload: any, context: any) => {
+            console.log("comment added", payload, context);
+            commentForm.reset();
         },
     },
-} );
+});
 
-const onSubmit = () =>
-{
-    commentForm.submitWith( {
-        preserveState: false,
-    } );
+const onSubmit = () => {
+    commentForm.submitWith({
+        transform: (fields) => ({
+            ...fields,
+            body: JSON.stringify(fields.body),
+        })
+    });
 };
 
 const createSubTask = ( task, cb = () => { } ) =>
@@ -230,8 +232,10 @@ onUnmounted( () =>
         <template #title>
             <header class="">
                 <div v-if=" targetIsVisible " class="flex items-center justify-between">
-                    <Button size="sm" :variant=" task.completed ? 'secondary' : 'outline'" @click="toggleMainTaskCompletion">
-                        <v-icon :name=" !task.completed ? 'bi-check-circle' : 'io-close-circle-outline'" class="mr-1"></v-icon>
+                    <Button size="sm" :variant=" task.completed ? 'secondary' : 'outline'"
+                        @click="toggleMainTaskCompletion">
+                        <v-icon :name=" !task.completed ? 'bi-check-circle' : 'io-close-circle-outline'"
+                            class="mr-1"></v-icon>
                         {{ task.completed ? 'Mark Incomplete' : 'Mark Complete' }}
                     </Button>
                     <div class="actions ml-auto">
@@ -333,13 +337,17 @@ onUnmounted( () =>
 
             </header>
 
-            <div class="comments pb-4 p-6 bg-slate-100">
-                <CommentItem
-                    v-for="                                                                                                                                                                                                                                                                                   comment in comments                                                                                                                                                                                                                                                                                   "
-                    :key=" comment.id " :comment=" comment " />
+            <div class="comments pb-4 bg-slate-100">
+                <header class="border-b px-4 mb-3 flex items-center gap-4">
+                    <H2 class="font-semibold text-sm border-b-slate-500 border-b-2 pb-2 pt-2">Comments</H2>
+                    <H2 class="font-semibold text-sm pb-2 pt-2">All Activity</H2>
+                </header>
+                <section class="px-4">
+                    <CommentItem v-for=" comment in comments " :key=" comment.id " :comment=" comment " />
+                </section>
             </div>
             <div class="bg-slate-100 border-t pb-4 sticky bottom-0">
-                <div class="   ">
+                <div class="p-2">
                     <form @submit.prevent=" onSubmit ">
                         <div class="flex flex-col gap-2 p-2">
                             <span class="text-sm font-semibold">Add Comment</span>

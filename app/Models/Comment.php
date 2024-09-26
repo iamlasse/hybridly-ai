@@ -15,7 +15,7 @@ class Comment extends Model
     protected $appends = ['readable_created_time', 'formatted_body'];
 
     protected $casts = [
-        'body'=> 'json',
+        'body' => 'json',
     ];
 
     public function commentable()
