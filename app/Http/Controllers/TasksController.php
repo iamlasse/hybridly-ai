@@ -64,7 +64,7 @@ class TasksController extends Controller
         return view('Tasks.Show', [
             'task' => $task,
             'tasks' => $task->project->tasks,
-            'project' => $task->project,
+            'project' => $task->project->loadMissing('stages'),
             'comments' => fn() => $task->comments,
             'sub_tasks' => $task->subTasks()->select(['id', 'title', 'completed', 'completed_at'])->get(),
             'users' => $users,
@@ -115,6 +115,7 @@ class TasksController extends Controller
             'subtasks' => ['nullable', 'array'],
             'due_date' => ['nullable', 'date'],
             'assigned_to_id' => ['nullable', 'exists:users,id'],
+            'status' => ['nullable', 'string', 'exists:stages,slug', Rule::in($task->project->stages->pluck('slug'))]
         ]));
 
         if ($subtasks = data_get($data, 'subtasks')) {
@@ -128,6 +129,10 @@ class TasksController extends Controller
         // Handle due_date separately
         if ($request->has('due_date')) {
             $updateData['due_date'] = $request->input('due_date') === false ? null : $request->input('due_date');
+        }
+
+        if($request->has('status')) {
+            $updateData['status'] = $request->status;
         }
 
         $task->update($updateData);
@@ -219,6 +224,8 @@ class TasksController extends Controller
         if ($this->wouldCreateCircularDependency($task, $data['dependency_id'])) {
             return back()->with('error', 'Adding this dependency would create a circular reference.');
         }
+
+        $dependencies = $task->dependencies->pluck('id');
 
         $task->dependencies()->detach($data['dependency_id']);
         $task->dependencies()->attach($data['dependency_id'], ['dependency_type' => data_get($data,'type')]);

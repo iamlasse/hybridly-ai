@@ -44,6 +44,7 @@
         "@tiptap/starter-kit": "^2.7.2",
         "@tiptap/vue-3": "^2.7.2",
         "@vuepic/vue-datepicker": "^9.0.3",
+        "@vueuse/components": "^11.1.0",
         "class-variance-authority": "^0.7.0",
         "clsx": "^2.1.1",
         "dayjs": "^1.11.13",

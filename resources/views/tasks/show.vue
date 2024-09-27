@@ -5,12 +5,15 @@ import '@vuepic/vue-datepicker/dist/main.css';
 import type { Comment, Task } from "@/types";
 import { useDebounceFn } from '@vueuse/core';
 import { useIntersectionObserver, useElementVisibility } from '@vueuse/core';
+import { vOnClickOutside } from '@vueuse/components'
 import Panel from "@/components/Panel.vue";
 import CommentItem from '@/components/Comment.vue';
 import { Button } from '@/components/ui/button';
 import TextInput from '@/components/TextInput.vue';
 import TiptapEditor from '@/components/TiptapEditor.vue';
-import { ref as vueRef } from 'vue';
+import type { OnClickOutsideHandler } from '@vueuse/core'
+import { onClickOutside } from '@vueuse/core'
+
 import { BiCheckCircle, BiCircle, BiHourglass, BiDashCircle } from "oh-vue-icons/icons";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { ComboboxAnchor, ComboboxContent, ComboboxInput, ComboboxPortal, ComboboxRoot } from 'radix-vue';
@@ -33,6 +36,8 @@ const props = defineProps<{
     project: App.Data.ProjectData;
 }>();
 
+
+
 const assignedUser = ref(props.task.assigned_to ? props.task.assigned_to.id.toString() : '');
 
 const assignUser = (userId) => {
@@ -53,6 +58,10 @@ const debouncedUpdateTask = useDebounceFn( ( task ) => updateTask( task ), 500 )
 const updateDueDate = (newDate) => {
     console.log(newDate);
     debouncedUpdateTask({ id: props.task.id, due_date: newDate ? newDate.toISOString().split('T')[0] : null });
+};
+
+const updateTaskStatus = (newStatus) => {
+    debouncedUpdateTask({ id: props.task.id, status: newStatus });
 };
 
 const taskDueDate = ref(props.task.due_date)
@@ -143,7 +152,7 @@ const createSubTask = ( task, cb = () => { } ) =>
 
 const updateTask = ( taskInformation ) =>
 {
-    const { description = null, title = null, id = null, due_date = null } = taskInformation;
+    const { description = null, title = null, id = null, due_date = null, status = null } = taskInformation;
     const data = {};
 
     if ( description )
@@ -156,9 +165,14 @@ const updateTask = ( taskInformation ) =>
         data[ 'title' ] = title;
     }
 
-    if ( due_date !== false || due_date !== null  )
+    if ( due_date !== false || due_date !== null )
     {
-        data['due_date'] = due_date === false ? false : due_date
+        data[ 'due_date' ] = due_date === false ? false : due_date;
+    }
+
+    if ( status )
+    {
+        data['status'] = status
     }
 
     handleUpdate( id, data );
@@ -299,6 +313,24 @@ const availableTasks = computed(() => {
     return filteredTasks;
 });
 
+const ignoreElRef = ref()
+
+const onClickOutsideHandler = [
+    ( ev ) => {
+        console.log( ev.target );
+        showDependencyInput.value = false;},
+    { ignore: [ ignoreElRef ] },
+]
+
+const dependencySelectorRef = ref(null)
+onClickOutside(
+    dependencySelectorRef,
+    ( event ) =>
+    {
+        console.log( event );
+        showDependencyInput.value = false;
+    },
+)
 // Add this log to check available tasks
 watch(availableTasks, (newTasks) => {
     console.log('Available tasks:', newTasks);
@@ -373,76 +405,110 @@ onUnmounted( () =>
                             <VueDatePicker format="MM/dd/yyyy" :enable-time-picker=" false " v-model="task.due_date"
                                 @update:model-value=" (modelValue) => updateDueDate(modelValue)" />
                         </li>
-                        <li>
+                        <li class="grid grid-cols-[auto_1fr] items-center gap-2">
                             <h4 class="font-semibold text-sm">Projects:</h4>
-                        </li>
-                        <li>
-                            <div class="flex items-center space-x-4">
-                                <p class="text-sm text-muted-foreground font-semibold">
-                                    Dependencies:
-                                </p>
-                                <div v-if=" !showDependencyInput && !task.dependencies.length ">
-                                    <Button @click="showDependencyInput = true" size="sm" variant="secondary">
-                                        Add Dependencies
-                                    </Button>
-                                </div>
-                                <div v-if=" task.dependencies.length " class="flex flex-wrap flex-1 gap-1">
-                                    <ul class="flex">
-                                        <li v-for="  task in task.dependencies  " :key="task.id"
-                                            class="flex rounded-md items-center hover:bg-slate-200 transition p-1 text-xs flex-shrink-0 gap-1">
-                                            <v-icon name="bi-check-circle" class="flex-shrink-0"></v-icon>
-                                            <span class="text-xs flex-shrink-0">{{ task.title }}</span>
-                                            <Button @click="removeDependency(task.id)" size="xxs" variant="ghost" class="p-0"><v-icon name="io-close-outline"
-                                                    class="flex-shrink-0 hover:"></v-icon></Button>
-                                        </li>
-                                    </ul>
-                                    <Button class="flex-shrink-0" @click="showDependencyInput = true" size="xxs"
-                                        variant="ghost">+</Button>
-                                </div>
-                                <div class="flex items-center" v-if="showDependencyInput">
-                                    <Select v-model=" dependencyType " class="p-0">
-                                        <SelectTrigger class="w-32 text-xs">
-                                            <SelectValue />
+                            <div>
+                                <div class="bg-slate-50 px-2 py-1 text-sm inline-flex rounded-md gap-2">
+                                    <span class="font-semibold">{{ task.project.name }} </span>
+                                    <Select v-model=" task.status " class="p-0" @update:model-value="updateTaskStatus">
+                                        <SelectTrigger class="w-full p-0 hover:bg-slate-200 transition focus:border-0 active:border-0 active:ring-0 focus:ring-0 px-2">
+                                            <SelectValue placeholder="...":value=" task.status " />
                                         </SelectTrigger>
-                                        <SelectContent>
-                                            <SelectItem value="blocked_by">
-                                                <div class="flex items-center">
-                                                    <v-icon name="bi-hourglass" class="mr-2 h-4 w-4" />
-                                                    <span>Blocked by</span>
-                                                </div>
-                                            </SelectItem>
-                                            <SelectItem value="is_blocking">
-                                                <div class="flex items-center">
-                                                    <v-icon name="bi-dash-circle" class="mr-2 h-4 w-4" />
-                                                    <span>Is blocking</span>
-                                                </div>
+                                        <SelectContent class="">
+                                            <SelectItem class="" v-for=" (status, index) in project.stages " :key=" status.id "
+                                                :value=" status.slug ">
+                                                {{ status.name }}
                                             </SelectItem>
                                         </SelectContent>
                                     </Select>
-
-                                    <Command>
-                                        <CommandInput class="h-8" placeholder="Search tasks..."></CommandInput>
-                                        <!-- <CommandEmpty>No tasks found.</CommandEmpty> -->
-                                        <CommandList>
-                                            <CommandGroup>
-                                                <CommandItem v-for=" task in availableTasks " :key=" task.id "
-                                                    :value=" task.title " @select=" ( ev ) =>
-                                                            {
-                                                                if ( typeof ev.detail.value === 'string' )
-                                                                {
-                                                                    value = ev.detail.value;
-                                                                }
-                                                                addDependency(task.id)
-                                                                showDependencyInput = false;
-                                                            } ">
-                                                    {{ task.title }}
-
-                                                </CommandItem>
-                                            </CommandGroup>
-                                        </CommandList>
-                                    </Command>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="grid  gap-2 grid-cols-[auto_1fr]">
+                            <h4 class="font-semibold text-sm">Dependencies:</h4>
+                            <div class="flex flex-col gap-2 -mt-1">
+                                <div class="flex">
+                                    <div v-if=" task.dependencies.length " class="flex flex-wrap gap-1">
+                                        <ul class="flex flex-wrap gap-1">
+                                            <li v-for=" dependency in task.dependencies " :key=" dependency.id "
+                                                class="flex rounded-md items-center hover:bg-slate-100 transition p-1 text-xs flex-shrink-0 gap-1">
+                                                <v-icon name="bi-check-circle" class="flex-shrink-0"></v-icon>
+                                                <span class="text-xs flex-shrink-0">{{ dependency.title }}</span>
+                                                <Button @click="removeDependency( dependency.id )" size="xxs"
+                                                    variant="ghost" class="p-0">
+                                                    <v-icon name="io-close-outline" class="flex-shrink-0"></v-icon>
+                                                </Button>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <div>
+                                        <Button @click="showDependencyInput = true" size="xxs" variant="ghost">
+                                            <v-icon v-if=" task.dependencies.length " name="bi-plus"></v-icon>
+                                            <span v-else>Add Dependencies</span>
+                                        </Button>
+                                    </div>
                                 </div>
 
+                                <div v-if="showDependencyInput" class="flex flex-col gap-2">
+                                    <div class="flex items-center gap-2">
+                                        <Select v-model="dependencyType" class="flex-shrink-0">
+                                            <SelectTrigger class="w-28 h-8 text-xs">
+                                                <SelectValue />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectItem value="blocked_by">
+                                                    <div class="flex items-center">
+                                                        <v-icon name="bi-hourglass" class="mr-2 h-4 w-4" />
+                                                        <span>Blocked by</span>
+                                                    </div>
+                                                </SelectItem>
+                                                <SelectItem value="is_blocking">
+                                                    <div class="flex items-center">
+                                                        <v-icon name="bi-dash-circle" class="mr-2 h-4 w-4" />
+                                                        <span>Is blocking</span>
+                                                    </div>
+                                                </SelectItem>
+                                            </SelectContent>
+                                        </Select>
+                                        <Popover class="flex-grow">
+                                            <PopoverTrigger asChild>
+                                                <Command class="w-full">
+                                                    <CommandInput class="h-8 text-xs w-full"
+                                                        placeholder="Search tasks..."
+                                                        @input="event => dependencySearchTerm = event.target.value" />
+                                                </Command>
+                                            </PopoverTrigger>
+                                            <PopoverContent class="w-[300px] p-0" align="start">
+                                                <Command>
+                                                    <CommandEmpty class="p-0 pb-1 px-2 pt-1 text-left">No available
+                                                        tasks</CommandEmpty>
+                                                    <CommandList class="max-h-[300px] overflow-y-auto"
+                                                        ref="dependencySelectorRef">
+                                                        <CommandGroup>
+                                                            <CommandItem v-for="task in availableTasks" :key="task.id"
+                                                                :value="task.title" @select="() => {
+                                                                    addDependency(task.id);
+                                                                    showDependencyInput = false;
+                                                                }" class="text-xs">
+                                                                <div class="flex items-center">
+                                                                    <v-icon
+                                                                        :name="task.completed ? 'bi-check-circle-fill' : 'bi-check-circle'"
+                                                                        :class="{'text-indigo-600': task.completed}"
+                                                                        class="mr-2 h-3 w-3" />
+                                                                    <span
+                                                                        class="flex-grow truncate">{{ task.title }}</span>
+                                                                    <span v-if="task.project"
+                                                                        class="ml-2 text-xs text-gray-500 truncate">{{ task.project.name }}</span>
+                                                                </div>
+                                                            </CommandItem>
+                                                        </CommandGroup>
+                                                    </CommandList>
+                                                </Command>
+                                            </PopoverContent>
+                                        </Popover>
+                                    </div>
+
+                                </div>
                             </div>
                         </li>
                         <li>
