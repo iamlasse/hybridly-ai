@@ -313,24 +313,19 @@ const availableTasks = computed(() => {
     return filteredTasks;
 });
 
-const ignoreElRef = ref()
-
-const onClickOutsideHandler = [
-    ( ev ) => {
-        console.log( ev.target );
-        showDependencyInput.value = false;},
-    { ignore: [ ignoreElRef ] },
-]
+import { onClickOutside } from '@vueuse/core'
 
 const dependencySelectorRef = ref(null)
-onClickOutside(
-    dependencySelectorRef,
-    ( event ) =>
-    {
-        console.log( event );
+const dependencyTypeRef = ref(null)
+const dependencyListRef = ref(null)
+
+onClickOutside( dependencySelectorRef, ( event ) =>
+{
+    console.log('Click outside?', dependencyTypeRef)
+    if (!dependencyTypeRef.value?.contains(event.target)) {
         showDependencyInput.value = false;
-    },
-)
+    }
+}, { ignore: [ dependencyTypeRef, dependencyListRef ] })
 // Add this log to check available tasks
 watch(availableTasks, (newTasks) => {
     console.log('Available tasks:', newTasks);
@@ -411,12 +406,13 @@ onUnmounted( () =>
                                 <div class="bg-slate-50 px-2 py-1 text-sm inline-flex rounded-md gap-2">
                                     <span class="font-semibold">{{ task.project.name }} </span>
                                     <Select v-model=" task.status " class="p-0" @update:model-value="updateTaskStatus">
-                                        <SelectTrigger class="w-full p-0 hover:bg-slate-200 transition focus:border-0 active:border-0 active:ring-0 focus:ring-0 px-2">
-                                            <SelectValue placeholder="...":value=" task.status " />
+                                        <SelectTrigger
+                                            class="w-full p-0 hover:bg-slate-200 transition focus:border-0 active:border-0 active:ring-0 focus:ring-0 px-2">
+                                            <SelectValue placeholder="..." :value=" task.status " />
                                         </SelectTrigger>
                                         <SelectContent class="">
-                                            <SelectItem class="" v-for=" (status, index) in project.stages " :key=" status.id "
-                                                :value=" status.slug ">
+                                            <SelectItem class="" v-for=" (status, index) in project.stages "
+                                                :key=" status.id " :value=" status.slug ">
                                                 {{ status.name }}
                                             </SelectItem>
                                         </SelectContent>
@@ -450,7 +446,7 @@ onUnmounted( () =>
                                 </div>
 
                                 <div v-if="showDependencyInput" class="flex flex-col gap-2">
-                                    <div class="flex items-center gap-2">
+                                    <div class="flex items-center gap-2" ref="dependencyTypeRef">
                                         <Select v-model="dependencyType" class="flex-shrink-0">
                                             <SelectTrigger class="w-28 h-8 text-xs">
                                                 <SelectValue />
@@ -478,12 +474,13 @@ onUnmounted( () =>
                                                         @input="event => dependencySearchTerm = event.target.value" />
                                                 </Command>
                                             </PopoverTrigger>
-                                            <PopoverContent class="w-[300px] p-0" align="start">
+                                            <PopoverContent class="w-[300px] p-0" align="start"
+                                                ref="dependencySelectorRef">
                                                 <Command>
                                                     <CommandEmpty class="p-0 pb-1 px-2 pt-1 text-left">No available
                                                         tasks</CommandEmpty>
                                                     <CommandList class="max-h-[300px] overflow-y-auto"
-                                                        ref="dependencySelectorRef">
+                                                        ref="dependencyListRef">
                                                         <CommandGroup>
                                                             <CommandItem v-for="task in availableTasks" :key="task.id"
                                                                 :value="task.title" @select="() => {
@@ -507,7 +504,6 @@ onUnmounted( () =>
                                             </PopoverContent>
                                         </Popover>
                                     </div>
-
                                 </div>
                             </div>
                         </li>
