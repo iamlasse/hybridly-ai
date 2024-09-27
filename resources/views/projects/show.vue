@@ -287,7 +287,7 @@ function deleteStage ( {
         <div class="hidden">{{ project }}</div>
 
         <div
-            class="bg-gradient-to-b from-indigo-800 via-pink-500 to-indigo-200 h-full overflow-scroll pb-12 dark:from-gray-800 dark:to-gray-900">
+            class="bg-gradient-to-b from-indigo-800 via-pink-500 to-indigo-200 h-full overflow-scroll dark:from-gray-800 dark:to-gray-900">
             <div v-if=" !user?.is_premium "
                 class="bg-yellow-50 border border-yellow-200 text-yellow-800 p-4 my-6 mx-4 rounded-lg shadow-sm"
                 role="alert">

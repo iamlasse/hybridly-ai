@@ -51,7 +51,7 @@ class TasksController extends Controller
             'title' => $request->input('name') ?? 'Test',
             'description' => $request->input('description'),
             'status' => $request->input('status'),
-            'order' => $project->tasks()->where('status', $request->input('status'))->max('order') + 1,
+            'order' => $project->tasks()->where('status', $request->input('status'))->max('order') + 1 ?? 0,
         ]);
 
         return back()->with('success', 'Task created successfully.');
@@ -217,8 +217,10 @@ class TasksController extends Controller
             'type' => ['nullable', 'in:is_blocking,blocked_by']
         ]);
 
+
+
         // Prevent adding the task as its own dependency
-        if ($data['dependency_id'] == $task->id) {
+        if ($data['dependency_id'] === $task->id) {
             return back()->with('error', 'A task cannot depend on itself.');
         }
 

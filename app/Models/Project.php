@@ -24,7 +24,7 @@ class Project extends Model
 
     public function tasks(): HasMany
     {
-        return $this->hasMany(Task::class)->whereNull('parent_id');
+        return $this->hasMany(Task::class)->whereNull('parent_id')->orderBy('order');
     }
 
     public function stages(): MorphMany
