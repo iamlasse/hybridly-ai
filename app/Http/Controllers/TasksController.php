@@ -143,8 +143,10 @@ class TasksController extends Controller
     public function assignTask(Request $request, Task $task)
     {
         $request->validate([
-            'user_id' => 'required|exists:users,id',
+            'user_id' => 'nullable|exists:users,id',
         ]);
+
+        ds($request->all());
 
         $task->update(['assigned_to_id' => $request->user_id]);
 

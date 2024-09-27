@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { ref, computed } from "vue";
 import { can } from "hybridly";
-import { Task } from "~/resources/types";
 
 import
     {
@@ -179,7 +178,7 @@ const renderColumns = computed( () =>
 function updateTasks ( updatedTasks: any )
 {
     // Update local state
-    updatedTasks.forEach( ( updatedTask: Task ) =>
+    updatedTasks.forEach( ( updatedTask: App.Data.TaskData ) =>
     {
         const task = localProject.value.tasks?.find( ( t ) => t.id === updatedTask.id );
         if ( task )
@@ -190,7 +189,7 @@ function updateTasks ( updatedTasks: any )
     } );
 
     // Sort tasks within each column
-    renderColumns.value.forEach( ( column: { tasks: Task[]; } ) =>
+    renderColumns.value.forEach( ( column: { tasks:App.Data.TaskData[]; } ) =>
     {
         column.tasks.sort( ( a, b ) => a.order - b.order );
     } );

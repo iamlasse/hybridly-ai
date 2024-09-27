@@ -33,6 +33,7 @@
         }
     },
     "dependencies": {
+        "@internationalized/date": "^3.5.5",
         "@radix-icons/vue": "^1.0.0",
         "@tiptap/extension-color": "^2.7.2",
         "@tiptap/extension-list-item": "^2.7.2",

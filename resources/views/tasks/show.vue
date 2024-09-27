@@ -13,11 +13,25 @@ import TextInput from '@/components/TextInput.vue';
 import TiptapEditor from '@/components/TiptapEditor.vue';
 import type { OnClickOutsideHandler } from '@vueuse/core'
 import { onClickOutside } from '@vueuse/core'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+
+import ShadDatePicker from '@/components/ShadDatePicker.vue'
+
+import {cn} from '@/lib/utils'
+import
+{
+    today,
+        DateFormatter,
+        type DateValue,
+        getLocalTimeZone,
+    } from '@internationalized/date'
 
 import { BiCheckCircle, BiCircle, BiHourglass, BiDashCircle } from "oh-vue-icons/icons";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { ComboboxAnchor, ComboboxContent, ComboboxInput, ComboboxPortal, ComboboxRoot } from 'radix-vue';
 import { Command, CommandInput, CommandEmpty, CommandList, CommandItem, CommandGroup } from '@/components/ui/command'
+import { Calendar } from '@/components/ui/calendar'
+
 import
     {
         Popover,
@@ -25,6 +39,8 @@ import
         PopoverTrigger,
     } from '@/components/ui/popover';
 import DependencySelector from '@/components/DependencySelector.vue'
+
+
 
 
 const props = defineProps<{
@@ -37,10 +53,13 @@ const props = defineProps<{
 }>();
 
 
+const df = new DateFormatter( 'en-US', {
+    dateStyle: 'long',
+} )
 
 const assignedUser = ref(props.task.assigned_to ? props.task.assigned_to.id.toString() : '');
 
-const assignUser = (userId) => {
+const assignUser = (userId = null) => {
     assignedUser.value = userId;
     router.put(route('tasks.assign', { task: props.task.id }), {
         data: {
@@ -55,16 +74,16 @@ const assignUser = (userId) => {
 
 const debouncedUpdateTask = useDebounceFn( ( task ) => updateTask( task ), 500 ); // Adjust
 
-const updateDueDate = (newDate) => {
-    console.log(newDate);
-    debouncedUpdateTask({ id: props.task.id, due_date: newDate ? newDate.toISOString().split('T')[0] : null });
+const updateDueDate = (newDate: string | null) => {
+    console.log('update due date: ', newDate);
+    debouncedUpdateTask({ id: props.task.id, due_date: newDate ? new Date(newDate).toISOString() : null });
 };
 
 const updateTaskStatus = (newStatus) => {
     debouncedUpdateTask({ id: props.task.id, status: newStatus });
 };
 
-const taskDueDate = ref(props.task.due_date)
+// const taskDueDate = ref(props.task.due_date)
 
 const subtasks = computed( () => props.sub_tasks || [] );
 const newSubtask = ref( '' );
@@ -325,7 +344,9 @@ onClickOutside( dependencySelectorRef, ( event ) =>
     if (!dependencyTypeRef.value?.contains(event.target)) {
         showDependencyInput.value = false;
     }
-}, { ignore: [ dependencyTypeRef, dependencyListRef ] })
+}, { ignore: [ dependencyTypeRef, dependencyListRef ] } )
+
+const showTaskDueDateSelect = ref(false)
 // Add this log to check available tasks
 watch(availableTasks, (newTasks) => {
     console.log('Available tasks:', newTasks);
@@ -345,6 +366,8 @@ onUnmounted( () =>
 {
     document.removeEventListener( 'click', hideContextMenu );
 } );
+
+const taskDueDate = ref<DateValue>(props.task.due_date);
 </script>
 
 <template>
@@ -382,23 +405,66 @@ onUnmounted( () =>
                 <div class="info p-4 ">
                     <ul class="flex flex-col gap-4">
                         <li class="flex gap-2 items-center">
-                            <h4 class="font-semibold text-sm flex-grow flex-shrink-0">Assignee:</h4>
-                            <Select v-model="assignedUser" @update:model-value="assignUser">
-                                <SelectTrigger class="w-full">
-                                    <SelectValue placeholder="Select a user" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem v-for="user in users" :key="user.id" :value="user.id.toString()">
-                                        {{ user.name }}
-                                    </SelectItem>
-                                </SelectContent>
-                            </Select>
+                            <h4 class="font-semibold text-sm flex-shrink-0">Assignee:</h4>
+                            <Popover class="flex">
+                                <PopoverTrigger asChild>
+                                    <!-- <Command class="w-full">
+                                        <CommandInput class="h-8 text-xs w-full" placeholder="Search tasks..."
+                                            @input=" event => dependencySearchTerm = event.target.value " />
+                                    </Command> -->
+                                    <Button variant="ghost" class="font-normal text-sm gap-2 p-1">
+                                        <template v-if="task.assigned_to_id">
+                                            <Avatar size="xs">
+                                                <AvatarImage src="https://github.com/radix-vue.png" alt="@radix-vue" />
+                                                <AvatarFallback>CN</AvatarFallback>
+                                            </Avatar>
+                                            {{ users.find( u => u.id === task.assigned_to_id ).name }}
+                                        </template>
+                                        <template v-else>
+                                            <span class="text-sm">Assign user</span>
+                                        </template>
+                                    </Button>
+                                    <v-icon v-if="task.assigned_to_id" name="io-close-outline"
+                                        class="hover:bg-slate-100 hover:cursor-pointer"
+                                        @click="assignUser(null)"></v-icon>
+                                </PopoverTrigger>
+                                <PopoverContent class="w-[300px] p-0" align="start">
+                                    <Command>
+                                        <CommandInput placeholder="Type a command or search..." />
+                                        <CommandEmpty class="p-0 pb-1 px-2 pt-1 text-left">No available
+                                            users</CommandEmpty>
+                                        <CommandList class="max-h-[300px] overflow-y-auto">
+                                            <CommandGroup>
+                                                <CommandItem v-for=" user in users " :key=" user.id " :value=" user "
+                                                    @select=" (v) =>
+{
+    console.log( v.detail.value )
+                                                        assignUser(v.detail.value.id)
+                                                        // addDependency( task.id );
+                                                        // showDependencyInput = false;
+                                                    } " class="text-xs gap-2">
+                                                    <Avatar size="xs">
+                                                        <AvatarImage src="https://github.com/radix-vue.png"
+                                                            alt="@radix-vue" />
+                                                        <AvatarFallback>CN</AvatarFallback>
+                                                    </Avatar>
+                                                    <div class="flex items-center">
+
+                                                        <span class="flex-grow truncate">{{ user.name }}</span>
+                                                        <span
+                                                            class="ml-2 text-xs text-gray-500 truncate">{{ user.email }}</span>
+                                                    </div>
+                                                </CommandItem>
+                                            </CommandGroup>
+                                        </CommandList>
+                                    </Command>
+                                </PopoverContent>
+                            </Popover>
                         </li>
-                        <li class="flex gap-2 items-center">
-                            <h4 class="font-semibold text-sm flex-grow flex-shrink-0">Due date:
-                            </h4>
-                            <VueDatePicker format="MM/dd/yyyy" :enable-time-picker=" false " v-model="task.due_date"
-                                @update:model-value=" (modelValue) => updateDueDate(modelValue)" />
+                        <li class="flex gap-2 items-center ">
+                            <h4 class="font-semibold text-sm flex-shrink-0">Due date:</h4>
+                            <ShadDatePicker v-model="task.due_date" @update:model-value="updateDueDate" />
+
                         </li>
                         <li class="grid grid-cols-[auto_1fr] items-center gap-2">
                             <h4 class="font-semibold text-sm">Projects:</h4>

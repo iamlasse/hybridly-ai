@@ -33,7 +33,6 @@ class ProjectController extends Controller
 
     public function store(CreateProjectRequest $request): RedirectResponse
     {
-        ds($request->all());
         $user = $request->user();
         $projectCount = $user->projects()->count();
 
@@ -77,7 +76,7 @@ class ProjectController extends Controller
                 $query->orderBy('order');
             },
             'tasks' => function ($query) {
-                $query->withCount('comments')->orderBy('status')->orderBy('order');
+                $query->with(['dependencies'])->withCount('comments')->orderBy('status')->orderBy('order');
             },
             'user'
         ]));

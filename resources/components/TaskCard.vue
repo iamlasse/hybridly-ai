@@ -76,19 +76,27 @@ const formattedDueDate = computed(() => {
         <div :class=" { 'bg-indigo-100/30': selected } "
             class="task-card h-full flex flex-col border-l-6 bg-white text-gray-800 p-3 rounded-lg shadow cursor-move"
             @click.stop="$emit( 'selectTask', task )">
-            <h4 class="font-medium mb-2">{{ task.title }}</h4>
+            <h4 class="font-medium mb-2 flex items-center gap-1">
+                <v-icon :name=" task.completed ? 'bi-check-circle-fill' : 'bi-check-circle' "
+                    class="text-indigo-400" ></v-icon>
+                {{ task.title }}
+            </h4>
             <div class="flex-grow">
                 <div class="text-sm text-gray-600 line-clamp-2" v-html=" parsedDescription "></div>
             </div>
             <div class="mt-2 flex items-center">
-                <div class="flex flex-1 gap-2 items-center justify-between ">
+                <div class="flex flex-1 gap-2 items-center justify-start ">
                     <div class="flex gap-1 items-center">
                         <v-icon name="oi-comment-discussion" class="text-gray-600"></v-icon>
                         <p class="text-xs text-gray-600">{{ task.comments_count }}</p>
                     </div>
-                    <div v-if="formattedDueDate" class="flex gap-1 items-center">
+                    <div v-if=" task.dependencies.length " class="flex items-center hover:bg-slate-100">
+                        <v-icon class="h-[14px]" name="bi-hourglass"></v-icon>
+                        <span class="text-sm">{{ task.dependencies.length }}</span>
+                    </div>
+                    <div v-if="formattedDueDate" class="flex gap-1 items-center flex-1 flex-shrink-0">
                         <v-icon name="oi-calendar" class="text-gray-600"></v-icon>
-                        <p class="text-xs text-gray-600">Due: {{ formattedDueDate }}</p>
+                        <p class="text-xs text-gray-600 flex-shrink-0"> {{ formattedDueDate }}</p>
                     </div>
                 </div>
             </div>
