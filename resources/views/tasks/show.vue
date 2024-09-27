@@ -13,6 +13,9 @@ import TiptapEditor from '@/components/TiptapEditor.vue';
 import { ref as vueRef } from 'vue';
 import { BiCheckCircle, BiCircle } from "oh-vue-icons/icons";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { ComboboxAnchor, ComboboxContent, ComboboxInput, ComboboxPortal, ComboboxRoot } from 'radix-vue';
+import { CommandEmpty, CommandGroup, CommandItem, CommandList } from '@/components/ui/command'
+import { TagsInput, TagsInputInput, TagsInputItem, TagsInputItemDelete, TagsInputItemText } from '@/components/ui/tags-input'
 
 const props = defineProps<{
     task: App.Data.TaskData;
@@ -235,7 +238,7 @@ const toggleMainTaskCompletion = () => {
 };
 
 const newDependency = ref('');
-
+const dependencySearchTerm = ref('')
 const addDependency = (dependencyId) => {
     if (!dependencyId) return; // Prevent adding empty dependencies
     router.put(route('tasks.add-dependency', { task: props.task.id }), {
@@ -343,17 +346,7 @@ onUnmounted( () =>
                         <li>
                             <h4 class="font-semibold text-sm">Dependencies:</h4>
 
-                            <Select v-model="newDependency" @update:model-value="addDependency">
-                                <SelectTrigger class="w-full">
-                                    <SelectValue placeholder="Add dependency" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem v-for="availableTask in availableTasks" :key="availableTask.id"
-                                        :value="availableTask.id.toString()">
-                                        {{ availableTask.title }}
-                                    </SelectItem>
-                                </SelectContent>
-                            </Select>
+
                             <ul v-if=" task.dependencies && task.dependencies.length > 0 " class="mt-2 mb-2 space-y-2">
                                 <li v-for=" dependency in task.dependencies " :key=" dependency.id "
                                     class="flex items-center justify-between bg-gray-100 rounded p-2">
