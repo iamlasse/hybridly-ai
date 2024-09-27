@@ -207,6 +207,7 @@ class TasksController extends Controller
     {
         $data = $request->validate([
             'dependency_id' => ['required', 'exists:tasks,id', Rule::in($task->project->tasks->pluck('id'))],
+            'type' => ['nullable', 'in:is_blocking,blocked_by']
         ]);
 
         // Prevent adding the task as its own dependency
@@ -219,7 +220,8 @@ class TasksController extends Controller
             return back()->with('error', 'Adding this dependency would create a circular reference.');
         }
 
-        $task->dependencies()->syncWithoutDetaching($data['dependency_id']);
+        $task->dependencies()->detach($data['dependency_id']);
+        $task->dependencies()->attach($data['dependency_id'], ['dependency_type' => data_get($data,'type')]);
 
         return back()->with('success', 'Dependency added successfully');
     }

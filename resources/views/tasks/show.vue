@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue';
+import { ref, onMounted, onUnmounted, computed } from 'vue';
 import VueDatePicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css';
 import type { Comment, Task } from "@/types";
@@ -11,11 +11,18 @@ import { Button } from '@/components/ui/button';
 import TextInput from '@/components/TextInput.vue';
 import TiptapEditor from '@/components/TiptapEditor.vue';
 import { ref as vueRef } from 'vue';
-import { BiCheckCircle, BiCircle } from "oh-vue-icons/icons";
+import { BiCheckCircle, BiCircle, BiHourglass, BiDashCircle } from "oh-vue-icons/icons";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { ComboboxAnchor, ComboboxContent, ComboboxInput, ComboboxPortal, ComboboxRoot } from 'radix-vue';
-import { CommandEmpty, CommandGroup, CommandItem, CommandList } from '@/components/ui/command'
-import { TagsInput, TagsInputInput, TagsInputItem, TagsInputItemDelete, TagsInputItemText } from '@/components/ui/tags-input'
+import { Command, CommandInput, CommandEmpty, CommandList, CommandItem, CommandGroup } from '@/components/ui/command'
+import
+    {
+        Popover,
+        PopoverContent,
+        PopoverTrigger,
+    } from '@/components/ui/popover';
+import DependencySelector from '@/components/DependencySelector.vue'
+
 
 const props = defineProps<{
     task: App.Data.TaskData;
@@ -237,13 +244,18 @@ const toggleMainTaskCompletion = () => {
     } );
 };
 
+const showDependencyInput = ref(false);
 const newDependency = ref('');
-const dependencySearchTerm = ref('')
+const dependencyType = ref('blocked_by');
+const dependencySearchTerm = ref('');
+
 const addDependency = (dependencyId) => {
     if (!dependencyId) return; // Prevent adding empty dependencies
     router.put(route('tasks.add-dependency', { task: props.task.id }), {
-        data: {dependency_id: dependencyId},
-
+        data: {
+            dependency_id: dependencyId,
+            type: dependencyType.value
+        },
         preserveState: false,
         preserveScroll: true,
     }).then(() => {
@@ -255,25 +267,46 @@ const addDependency = (dependencyId) => {
     });
 };
 
-const removeDependency = ( dependencyId ) =>
-{
-    router.put( route( 'tasks.remove-dependency', { task: props.task.id } ), {
-        data: {dependency_id: dependencyId},
-
+const removeDependency = (dependencyId) => {
+    router.put(route('tasks.remove-dependency', { task: props.task.id }), {
+        data: { dependency_id: dependencyId },
         preserveState: false,
         preserveScroll: true,
-    } );
+    });
 };
 
 const availableTasks = computed(() => {
+    // Ensure props.tasks is defined and is an array
+    if (!Array.isArray(props.tasks)) {
+        console.warn('props.tasks is not an array:', props.tasks);
+        return [];
+    }
+
     // Filter out tasks that are already dependencies and the current task
-    const filteredTasks = props.tasks?.filter(t =>
+    const filteredTasks = props.tasks.filter(t =>
         t.id !== props.task.id &&
         !props.task.dependencies?.some(d => d.id === t.id)
-    ) || [];
+    );
 
-    // Hide the select dropdown if there are no available tasks
-    return filteredTasks.length > 0 ? filteredTasks : null;
+    // Apply search filter
+    if (dependencySearchTerm.value) {
+        return filteredTasks.filter(t =>
+            t.title.toLowerCase().includes(dependencySearchTerm.value.toLowerCase()) ||
+            (t.project && t.project.name && t.project.name.toLowerCase().includes(dependencySearchTerm.value.toLowerCase()))
+        );
+    }
+
+    return filteredTasks;
+});
+
+// Add this log to check available tasks
+watch(availableTasks, (newTasks) => {
+    console.log('Available tasks:', newTasks);
+});
+
+// Add this to check the structure of props.tasks
+onMounted(() => {
+    console.log('props.tasks:', props.tasks);
 });
 
 onMounted( () =>
@@ -344,19 +377,73 @@ onUnmounted( () =>
                             <h4 class="font-semibold text-sm">Projects:</h4>
                         </li>
                         <li>
-                            <h4 class="font-semibold text-sm">Dependencies:</h4>
-
-
-                            <ul v-if=" task.dependencies && task.dependencies.length > 0 " class="mt-2 mb-2 space-y-2">
-                                <li v-for=" dependency in task.dependencies " :key=" dependency.id "
-                                    class="flex items-center justify-between bg-gray-100 rounded p-2">
-                                    <span>{{ dependency.title }}</span>
-                                    <Button @click="removeDependency( dependency.id )" size="icon" variant="ghost"
-                                        class="h-6 w-6">
-                                        <v-icon name="io-close-outline" class="h-4 w-4" />
+                            <div class="flex items-center space-x-4">
+                                <p class="text-sm text-muted-foreground font-semibold">
+                                    Dependencies:
+                                </p>
+                                <div v-if=" !showDependencyInput && !task.dependencies.length ">
+                                    <Button @click="showDependencyInput = true" size="sm" variant="secondary">
+                                        Add Dependencies
                                     </Button>
-                                </li>
-                            </ul>
+                                </div>
+                                <div v-if=" task.dependencies.length " class="flex flex-wrap flex-1 gap-1">
+                                    <ul class="flex">
+                                        <li v-for="  task in task.dependencies  " :key="task.id"
+                                            class="flex rounded-md items-center hover:bg-slate-200 transition p-1 text-xs flex-shrink-0 gap-1">
+                                            <v-icon name="bi-check-circle" class="flex-shrink-0"></v-icon>
+                                            <span class="text-xs flex-shrink-0">{{ task.title }}</span>
+                                            <Button @click="removeDependency(task.id)" size="xxs" variant="ghost" class="p-0"><v-icon name="io-close-outline"
+                                                    class="flex-shrink-0 hover:"></v-icon></Button>
+                                        </li>
+                                    </ul>
+                                    <Button class="flex-shrink-0" @click="showDependencyInput = true" size="xxs"
+                                        variant="ghost">+</Button>
+                                </div>
+                                <div class="flex items-center" v-if="showDependencyInput">
+                                    <Select v-model=" dependencyType " class="p-0">
+                                        <SelectTrigger class="w-32 text-xs">
+                                            <SelectValue />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="blocked_by">
+                                                <div class="flex items-center">
+                                                    <v-icon name="bi-hourglass" class="mr-2 h-4 w-4" />
+                                                    <span>Blocked by</span>
+                                                </div>
+                                            </SelectItem>
+                                            <SelectItem value="is_blocking">
+                                                <div class="flex items-center">
+                                                    <v-icon name="bi-dash-circle" class="mr-2 h-4 w-4" />
+                                                    <span>Is blocking</span>
+                                                </div>
+                                            </SelectItem>
+                                        </SelectContent>
+                                    </Select>
+
+                                    <Command>
+                                        <CommandInput class="h-8" placeholder="Search tasks..."></CommandInput>
+                                        <!-- <CommandEmpty>No tasks found.</CommandEmpty> -->
+                                        <CommandList>
+                                            <CommandGroup>
+                                                <CommandItem v-for=" task in availableTasks " :key=" task.id "
+                                                    :value=" task.title " @select=" ( ev ) =>
+                                                            {
+                                                                if ( typeof ev.detail.value === 'string' )
+                                                                {
+                                                                    value = ev.detail.value;
+                                                                }
+                                                                addDependency(task.id)
+                                                                showDependencyInput = false;
+                                                            } ">
+                                                    {{ task.title }}
+
+                                                </CommandItem>
+                                            </CommandGroup>
+                                        </CommandList>
+                                    </Command>
+                                </div>
+
+                            </div>
                         </li>
                         <li>
                             <h4 class="font-semibold text-sm">Fields:</h4>

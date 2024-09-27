@@ -47,7 +47,10 @@ class Task extends Model
 
     public function dependencies(): BelongsToMany
     {
-        return $this->belongsToMany(Task::class, 'task_dependencies', 'task_id', 'dependency_id');
+        return $this->belongsToMany(Task::class, 'task_dependencies', 'task_id', 'dependency_id')
+            ->using(Dependency::class)
+            ->withTimestamps()
+            ->withPivot('dependency_type');
     }
 
     public function dependents(): BelongsToMany

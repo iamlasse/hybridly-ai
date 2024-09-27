@@ -8,15 +8,15 @@ return new class extends Migration
 {
     public function up()
     {
-        Schema::table('tasks', function (Blueprint $table) {
-            $table->date('due_date')->nullable();
+        Schema::table('task_dependencies', function (Blueprint $table) {
+            $table->string('dependency_type')->default('blocking');
         });
     }
 
     public function down()
     {
-        Schema::table('tasks', function (Blueprint $table) {
-            $table->dropColumn('due_date');
+        Schema::table('task_dependencies', function (Blueprint $table) {
+            $table->dropColumn('dependency_type');
         });
     }
 };
