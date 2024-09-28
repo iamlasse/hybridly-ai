@@ -539,7 +539,7 @@ const taskDueDate = ref<DateValue>( props.task.due_date );
                         </li>
                         <li class="grid  gap-2 grid-cols-[auto_1fr]">
                             <h4 class="font-semibold text-sm">Dependencies:</h4>
-                            <TaskDependencies />
+                            <TaskDependencies :task="task" :dependencies="availableTasks" />
                             <!-- <div class="flex flex-col gap-2 -mt-1">
                                 <div class="flex">
                                     <div v-if=" task.dependencies.length " class="flex flex-wrap gap-1">
