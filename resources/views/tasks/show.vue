@@ -17,6 +17,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useToast } from '@/components/ui/toast/use-toast';
 import ShadDatePicker from '@/components/ShadDatePicker.vue';
 import TaskDependencies from '@/components/TaskDependencies.vue';
+import Dependencies from '@/components/Dependencies.vue';
 
 import { cn } from '@/lib/utils';
 import
@@ -319,13 +320,13 @@ const newDependency = ref( '' );
 const dependencyType = ref( 'blocked_by' );
 const dependencySearchTerm = ref( '' );
 
-const addDependency = ( dependencyId ) =>
+const addDependency = ( { id: dependencyId, type }: {id: number, type: string},  ) =>
 {
     if ( !dependencyId ) return; // Prevent adding empty dependencies
     router.put( route( 'tasks.add-dependency', { task: props.task.id } ), {
         data: {
             dependency_id: dependencyId,
-            type: dependencyType.value
+            type
         },
         preserveState: false,
         preserveScroll: true,
@@ -539,92 +540,8 @@ const taskDueDate = ref<DateValue>( props.task.due_date );
                         </li>
                         <li class="grid  gap-2 grid-cols-[auto_1fr]">
                             <h4 class="font-semibold text-sm">Dependencies:</h4>
-                            <TaskDependencies :task="task" :dependencies="availableTasks" />
-                            <!-- <div class="flex flex-col gap-2 -mt-1">
-                                <div class="flex">
-                                    <div v-if=" task.dependencies.length " class="flex flex-wrap gap-1">
-                                        <ul class="flex flex-wrap gap-1">
-                                            <li v-for="    dependency in task.dependencies    " :key=" dependency.id "
-                                                class="flex rounded-md items-center hover:bg-slate-100 transition p-1 text-xs flex-shrink-0 gap-1">
-                                                <v-icon name="bi-check-circle" class="flex-shrink-0"></v-icon>
-                                                <span class="text-xs flex-shrink-0">{{ dependency.title }}</span>
-                                                <Button @click="removeDependency( dependency.id )" size="xxs"
-                                                    variant="ghost" class="p-0">
-                                                    <v-icon name="io-close-outline" class="flex-shrink-0"></v-icon>
-                                                </Button>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                    <div>
-                                        <Button @click="showDependencyInput = true" size="xxs" variant="ghost">
-                                            <v-icon v-if=" task.dependencies.length " name="bi-plus"></v-icon>
-                                            <span v-else>Add Dependencies</span>
-                                        </Button>
-                                    </div>
-                                </div>
+                            <Dependencies :task="task" :dependencies="availableTasks" @add-dependency="addDependency" @remove-dependency=" removeDependency " />
 
-                                <div v-if=" showDependencyInput " class="flex flex-col gap-2">
-                                    <div class="flex items-center gap-2" ref="dependencyTypeRef">
-                                        <Select v-model=" dependencyType " class="flex-shrink-0">
-                                            <SelectTrigger class="w-28 h-8 text-xs">
-                                                <SelectValue />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                <SelectItem value="blocked_by">
-                                                    <div class="flex items-center">
-                                                        <v-icon name="bi-hourglass" class="mr-2 h-4 w-4" />
-                                                        <span>Blocked by</span>
-                                                    </div>
-                                                </SelectItem>
-                                                <SelectItem value="is_blocking">
-                                                    <div class="flex items-center">
-                                                        <v-icon name="bi-dash-circle" class="mr-2 h-4 w-4" />
-                                                        <span>Is blocking</span>
-                                                    </div>
-                                                </SelectItem>
-                                            </SelectContent>
-                                        </Select>
-                                        <Popover class="flex-grow">
-                                            <PopoverTrigger asChild>
-                                                <Command class="w-full">
-                                                    <CommandInput class="h-8 text-xs w-full"
-                                                        placeholder="Search tasks..."
-                                                        @input=" event => dependencySearchTerm = event.target.value " />
-                                                </Command>
-                                            </PopoverTrigger>
-                                            <PopoverContent class="w-[300px] p-0" align="start"
-                                                ref="dependencySelectorRef">
-                                                <Command>
-                                                    <CommandEmpty class="p-0 pb-1 px-2 pt-1 text-left">No available
-                                                        tasks</CommandEmpty>
-                                                    <CommandList class="max-h-[300px] overflow-y-auto"
-                                                        ref="dependencyListRef">
-                                                        <CommandGroup>
-                                                            <CommandItem v-for="   task in availableTasks   "
-                                                                :key=" task.id " :value=" task.title " @select=" () =>
-                                                                {
-                                                                    addDependency( task.id );
-                                                                    showDependencyInput = false;
-                                                                } " class="text-xs">
-                                                                <div class="flex items-center">
-                                                                    <v-icon
-                                                                        :name=" task.completed ? 'bi-check-circle-fill' : 'bi-check-circle' "
-                                                                        :class=" { 'text-indigo-600': task.completed } "
-                                                                        class="mr-2 h-3 w-3" />
-                                                                    <span
-                                                                        class="flex-grow truncate">{{ task.title }}</span>
-                                                                    <span v-if=" task.project "
-                                                                        class="ml-2 text-xs text-gray-500 truncate">{{ task.project.name }}</span>
-                                                                </div>
-                                                            </CommandItem>
-                                                        </CommandGroup>
-                                                    </CommandList>
-                                                </Command>
-                                            </PopoverContent>
-                                        </Popover>
-                                    </div>
-                                </div>
-                            </div> -->
                         </li>
                         <li>
                             <h4 class="font-semibold text-sm">Fields:</h4>
