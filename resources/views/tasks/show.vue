@@ -1,51 +1,39 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, computed } from 'vue';
-import VueDatePicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css';
 import type { Comment, Task } from "@/types";
 import { useDebounceFn } from '@vueuse/core';
-import { useIntersectionObserver, useElementVisibility } from '@vueuse/core';
-import { vOnClickOutside } from '@vueuse/components';
-import Panel from "@/components/Panel.vue";
-import CommentItem from '@/components/Comment.vue';
-import { Button } from '@/components/ui/button';
-import TextInput from '@/components/TextInput.vue';
-import TiptapEditor from '@/components/TiptapEditor.vue';
-import type { OnClickOutsideHandler } from '@vueuse/core';
-import { onClickOutside } from '@vueuse/core';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { useToast } from '@/components/ui/toast/use-toast';
-import ShadDatePicker from '@/components/ShadDatePicker.vue';
-import TaskDependencies from '@/components/TaskDependencies.vue';
-import Dependencies from '@/components/Dependencies.vue';
-
-import { cn } from '@/lib/utils';
+import { useElementVisibility } from '@vueuse/core';
 import
 {
-    today,
     DateFormatter,
     type DateValue,
-    getLocalTimeZone,
 } from '@internationalized/date';
 
-import { BiCheckCircle, BiCircle, BiHourglass, BiDashCircle } from "oh-vue-icons/icons";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { ComboboxAnchor, ComboboxContent, ComboboxInput, ComboboxPortal, ComboboxRoot } from 'radix-vue';
-import { Command, CommandInput, CommandEmpty, CommandList, CommandItem, CommandGroup } from '@/components/ui/command';
-import { Calendar } from '@/components/ui/calendar';
+// Components
+import Panel from "@/components/Panel.vue";
+import CommentItem from '@/components/Comment.vue';
+import TextInput from '@/components/TextInput.vue';
+import TiptapEditor from '@/components/TiptapEditor.vue';
+import ShadDatePicker from '@/components/ShadDatePicker.vue';
+import Dependencies from '@/components/Dependencies.vue';
 
+// Shadcn | Radix
+import { ComboboxAnchor, ComboboxContent, ComboboxInput, ComboboxPortal, ComboboxRoot } from 'radix-vue';
+import { Button } from '@/components/ui/button';
+import { useToast } from '@/components/ui/toast/use-toast';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import
 {
     Popover,
     PopoverContent,
     PopoverTrigger,
 } from '@/components/ui/popover';
-import DependencySelector from '@/components/DependencySelector.vue';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Command, CommandInput, CommandEmpty, CommandList, CommandItem, CommandGroup } from '@/components/ui/command';
+import { Calendar } from '@/components/ui/calendar';
 
-
-
-
-const props = defineProps<{
+const $props = defineProps<{
     task: App.Data.TaskData;
     tasks: App.Data.TaskData[];
     comments: Comment[];
@@ -62,9 +50,9 @@ const df = new DateFormatter( 'en-US', {
 const { toast } = useToast();
 const flash = useProperty( 'flash' );
 
-watch( flash, ( val ) =>
+watch( flash, ( val: any ) =>
 {
-    const { error, success, warning, info } = val;
+    const { error = null, success = null, warning = null, info = null } = val;
     console.log( error, success, warning, info );
     if ( error )
     {
@@ -86,14 +74,14 @@ watch( flash, ( val ) =>
 
 } );
 
-const assignedUser = ref( props.task.assigned_to ? props.task.assigned_to.id.toString() : '' );
+const assignedUser = ref<string|null>( $props.task.assigned_to ? $props.task.assigned_to.id.toString(): null );
 
 const showAssigneeInput = ref( false );
 
-const assignUser = ( userId ) =>
+const assignUser = ( userId: string ) =>
 {
     assignedUser.value = userId;
-    router.put( route( 'tasks.assign', { task: props.task.id } ), {
+    router.put( route( 'tasks.assign', { task: $props.task.id } ), {
         data: {
             user_id: userId, // The Command component will only call this when a user is selected
         },
@@ -102,36 +90,31 @@ const assignUser = ( userId ) =>
     } );
 };
 
-
-
 const debouncedUpdateTask = useDebounceFn( ( task ) => updateTask( task ), 500 ); // Adjust
 
 const updateDueDate = ( newDate: string | null ) =>
 {
     console.log( 'update due date: ', newDate );
-    debouncedUpdateTask( { id: props.task.id, due_date: newDate ? new Date( newDate ).toISOString() : null } );
+    debouncedUpdateTask( { id: $props.task.id, due_date: newDate ? new Date( newDate ).toISOString() : null } );
 };
 
-const updateTaskStatus = ( newStatus ) =>
+const updateTaskStatus = ( newStatus: string ) =>
 {
-    debouncedUpdateTask( { id: props.task.id, status: newStatus } );
+    debouncedUpdateTask( { id: $props.task.id, status: newStatus } );
 };
 
-// const taskDueDate = ref(props.task.due_date)
-
-const subtasks = computed( () => props.sub_tasks || [] );
+const subtasks = computed( () => $props.sub_tasks || [] );
 const newSubtask = ref( '' );
 
-const addSubtask = ( tasks, index: number ) =>
+const addSubtask = ( tasks: App.Data.TaskData[], index: number ) =>
 {
     if ( newSubtask.value.trim() )
     {
-        // subtasks.value.push( newSubtask.value.trim() );
         const newTask = newSubtask.value;
         createSubTask( newTask, () =>
         {
             newSubtask.value = '';
-            const previousId = props.task.sub_tasks ? props.task.sub_tasks.at( -1 ).id : props.task.id;
+            const previousId = $props.task.sub_tasks ? $props.task.sub_tasks.at( -1 ).id : $props.task.id;
         } );
 
     }
@@ -155,28 +138,15 @@ const handleKeySubtaskDown = ( event: KeyboardEvent, index: number ) =>
     }
 };
 
-const root = ref( null );
 const target = ref( null );
-const isVisible = ref( false );
-
-// const { isActive, pause, resume } = useIntersectionObserver(
-//     target,
-//     ( [ { isIntersecting } ] ) =>
-//     {
-//         console.log( isIntersecting );
-//         isVisible.value = isIntersecting;
-//     },
-//     { root },
-// );
-
 const targetIsVisible = useElementVisibility( target );
 
 const commentForm = useForm( {
     method: "POST",
-    url: route( "task.comments.store", { task: props.task } ),
+    url: route( "task.comments.store", { task: $props.task } ),
     fields: {
         body: "",
-        commentable_id: props.task.id,
+        commentable_id: $props.task.id,
         commentable_type: 'task'
     },
     hooks: {
@@ -198,14 +168,14 @@ const onSubmit = () =>
     } );
 };
 
-const createSubTask = ( task, cb = () => { } ) =>
+const createSubTask = ( task: App.Data.TaskData, cb = () => { } ) =>
 {
-    handleUpdate( props.task.id, {
+    handleUpdate( $props.task.id, {
         subtasks: [ task ]
     }, cb );
 };
 
-const updateTask = ( taskInformation ) =>
+const updateTask = ( taskInformation: App.Data.TaskData ) =>
 {
     const { description = null, title = null, id = null, due_date = null, status = null } = taskInformation;
     const data = {};
@@ -234,13 +204,12 @@ const updateTask = ( taskInformation ) =>
 
 };
 
-watch( props.task.description, ( newDescription ) =>
+watch( $props.task.description, ( newDescription ) =>
 {
-    console.log( 'new description', newDescription );
-    debouncedUpdateTask( { id: props.task.id, description: newDescription } );
+    debouncedUpdateTask( { id: $props.task.id, description: newDescription } );
 } );
 
-const handleUpdate = ( id, data = {}, cb = () => { } ) =>
+const handleUpdate = ( id: string|number, data = {}, cb = () => { } ) =>
 {
     router.put( route( 'tasks.update', { task: id } ), {
         preserveState: false,
@@ -256,7 +225,7 @@ const handleUpdate = ( id, data = {}, cb = () => { } ) =>
 
 const showSubtasks = ref( false );
 
-const deleteSubtask = ( subtaskId ) =>
+const deleteSubtask = ( subtaskId: string ) =>
 {
     router.delete( route( 'tasks.destroy', { task: subtaskId } ), {
         preserveState: false,
@@ -275,9 +244,14 @@ const deleteSubtask = ( subtaskId ) =>
     } );
 };
 
-const contextMenu = ref( { show: false, x: 0, y: 0, subtaskId: null } );
+const contextMenu = ref<{
+    show: boolean;
+    x: number;
+    y: number;
+    subtaskId: number | null;
+}>( { show: false, x: 0, y: 0, subtaskId: null } );
 
-const showContextMenu = ( event: MouseEvent, subtaskId: number ) =>
+const showContextMenu = ( event: MouseEvent, subtaskId: number|null ) =>
 {
     event.preventDefault();
     contextMenu.value = {
@@ -303,7 +277,7 @@ const toggleSubtaskCompletion = ( subtaskId: number ) =>
 
 const toggleMainTaskCompletion = () =>
 {
-    router.post( route( 'tasks.toggle-completion', { task: props.task.id } ), {
+    router.post( route( 'tasks.toggle-completion', { task: $props.task.id } ), {
         preserveState: false,
         preserveScroll: true,
         hooks: {
@@ -315,15 +289,12 @@ const toggleMainTaskCompletion = () =>
     } );
 };
 
-const showDependencyInput = ref( false );
-const newDependency = ref( '' );
-const dependencyType = ref( 'blocked_by' );
 const dependencySearchTerm = ref( '' );
 
 const addDependency = ( { id: dependencyId, type }: {id: number, type: string},  ) =>
 {
     if ( !dependencyId ) return; // Prevent adding empty dependencies
-    router.put( route( 'tasks.add-dependency', { task: props.task.id } ), {
+    router.put( route( 'tasks.add-dependency', { task: $props.task.id } ), {
         data: {
             dependency_id: dependencyId,
             type
@@ -332,7 +303,6 @@ const addDependency = ( { id: dependencyId, type }: {id: number, type: string}, 
         preserveScroll: true,
     } ).then( () =>
     {
-        newDependency.value = ''; // Reset the select input after successful addition
         router.reload( { only: [ 'task' ] } ); // Reload the task data
     } ).catch( ( error ) =>
     {
@@ -341,9 +311,9 @@ const addDependency = ( { id: dependencyId, type }: {id: number, type: string}, 
     } );
 };
 
-const removeDependency = ( dependencyId ) =>
+const removeDependency = ( dependencyId: string|number ) =>
 {
-    router.put( route( 'tasks.remove-dependency', { task: props.task.id } ), {
+    router.put( route( 'tasks.remove-dependency', { task: $props.task.id } ), {
         data: { dependency_id: dependencyId },
         preserveState: false,
         preserveScroll: true,
@@ -352,17 +322,17 @@ const removeDependency = ( dependencyId ) =>
 
 const availableTasks = computed( () =>
 {
-    // Ensure props.tasks is defined and is an array
-    if ( !Array.isArray( props.tasks ) )
+    // Ensure $props.tasks is defined and is an array
+    if ( !Array.isArray( $props.tasks ) )
     {
-        console.warn( 'props.tasks is not an array:', props.tasks );
+        console.warn( '$props.tasks is not an array:', $props.tasks );
         return [];
     }
 
     // Filter out tasks that are already dependencies and the current task
-    const filteredTasks = props.tasks.filter( t =>
-        t.id !== props.task.id &&
-        !props.task.dependencies?.some( d => d.id === t.id )
+    const filteredTasks = $props.tasks.filter( t =>
+        t.id !== $props.task.id &&
+        !$props.task.dependencies?.some( (d: App.Data.TaskData) => d.id === t.id )
     );
 
     // Apply search filter
@@ -377,42 +347,15 @@ const availableTasks = computed( () =>
     return filteredTasks;
 } );
 
-import { onClickOutside } from '@vueuse/core';
-
-const dependencySelectorRef = ref( null );
-const dependencyTypeRef = ref( null );
-const dependencyListRef = ref( null );
-
-onClickOutside( dependencySelectorRef, ( event ) =>
+function userFilterFunction ( list: any, searchTerm: string )
 {
-    console.log( 'Click outside?', dependencyTypeRef );
-    if ( !dependencyTypeRef.value?.contains( event.target ) )
-    {
-        showDependencyInput.value = false;
-    }
-}, { ignore: [ dependencyTypeRef, dependencyListRef ] } );
-
-const showTaskDueDateSelect = ref( false );
-
-function filterFunction ( list: any, searchTerm: string )
-{
-    return list.filter( ( user ) =>
+    return list.filter( ( user: any ) =>
     {
         return user.name.toLowerCase().includes( searchTerm.toLowerCase() );
     } );
 }
-// Add this log to check available tasks
-watch( availableTasks, ( newTasks ) =>
-{
-    console.log( 'Available tasks:', newTasks );
-} );
 
-// Add this to check the structure of props.tasks
-onMounted( () =>
-{
-    console.log( 'props.tasks:', props.tasks );
-} );
-
+// Add this to check the structure of $props.tasks
 onMounted( () =>
 {
     document.addEventListener( 'click', hideContextMenu );
@@ -422,8 +365,6 @@ onUnmounted( () =>
 {
     document.removeEventListener( 'click', hideContextMenu );
 } );
-
-const taskDueDate = ref<DateValue>( props.task.due_date );
 </script>
 
 <template>
@@ -481,7 +422,7 @@ const taskDueDate = ref<DateValue>( props.task.due_date );
                                         @click="assignUser( null )"></v-icon>
                                 </PopoverTrigger>
                                 <PopoverContent class="w-[300px] p-0" align="start">
-                                    <Command :filter-function=" filterFunction ">
+                                    <Command :filter-function=" userFilterFunction ">
                                         <CommandInput placeholder="Type a command or search..." />
                                         <CommandEmpty class="p-0 pb-1 px-2 pt-1 text-left">No available
                                             users</CommandEmpty>

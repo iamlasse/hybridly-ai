@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
+import { useDebounceFn, onClickOutside } from '@vueuse/core';
 
 import
     {
@@ -42,9 +43,19 @@ const removeDependency = (id: number) => {
 
 const showDependencyInput = ref( false )
 
-const dependencyListRef = ref<InstanceType<typeof PopoverContent>>()
-const dependencySelectorRef = ref<InstanceType<typeof PopoverContent>>()
-const dependencyTypeRef = ref<InstanceType<typeof PopoverContent>>()
+const dependencyListRef = ref(null)
+const dependencySelectorRef = ref(null)
+const dependencyTypeRef = ref(null)
+
+onClickOutside( dependencySelectorRef, ( event ) =>
+{
+    console.log( 'Click outside?', dependencyTypeRef );
+    if ( !dependencyTypeRef.value?.contains( event.target ) )
+    {
+        showDependencyInput.value = false;
+    }
+}, { ignore: [ dependencyTypeRef, dependencyListRef ] } );
+
 
 const dependencyType = ref( 'blocked_by' )
 
