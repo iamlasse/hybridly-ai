@@ -85,7 +85,7 @@ const updateDependency = ( dependency: App.Data.TaskData, type: string ) =>
 
 const activeDependency = ref<App.Data.TaskData | null>( null );
 
-const dependencySearchTerm = ref( '' );
+const dependencySearchTerm = ref( 'Test' );
 
 const availableTasks = computed( () =>
 {
@@ -95,6 +95,12 @@ const availableTasks = computed( () =>
     );
 } );
 
+watch( dependencySearchTerm, (value) =>
+{
+    console.log( value )
+})
+
+// The filterTasks function has been removed as it's no longer needed
 function filterTasks ( list: any, searchTerm: string )
 {
     return list.filter( ( task: App.Data.TaskData ) =>
@@ -159,6 +165,7 @@ function filterTasks ( list: any, searchTerm: string )
         </div>
 
         <div v-if=" showDependencyInput " class="flex flex-col gap-2">
+            {{ dependencySearchTerm }}
             <div class="flex items-center gap-2" ref="dependencyTypeRef">
                 <Select v-model=" dependencyType " class="flex-shrink-0">
                     <SelectTrigger class="w-24 h-7 text-xs">
@@ -181,22 +188,19 @@ function filterTasks ( list: any, searchTerm: string )
                 </Select>
                 <Popover class="flex-grow">
                     <PopoverTrigger asChild>
-                        <Command class="w-full">
-                            <CommandInput class="h-8 text-xs w-full" placeholder="Search tasks..." />
+                        <Command class="w-full" >
+                            <CommandInput v-model="dependencySearchTerm" class="h-8 text-xs w-full"
+                                placeholder="Search tasks..." />
                         </Command>
                     </PopoverTrigger>
                     <PopoverContent class="w-[300px] p-0" align="start" ref="dependencySelectorRef">
-                        <Command :filter-function=" filterTasks ">
+                        <Command :search-term=" dependencySearchTerm " :filter-function=" filterTasks ">
                             <CommandEmpty class="p-0 pb-1 px-2 pt-1 text-left">No available
                                 tasks</CommandEmpty>
                             <CommandList class="max-h-[300px] overflow-y-auto" ref="dependencyListRef">
                                 <CommandGroup>
-                                    <CommandItem v-for=" task in availableTasks " :key=" task.id " :value=" task "
-                                        @select=" ( v ) =>
-                                        {
-                                            if ( !v.detail.value ) return;
-                                            addDependency( v.detail.value.id );
-                                        } " class="text-xs gap-2">
+                                    <CommandItem v-for="task in availableTasks" :key="task.id" :value="task.title"
+                                        @select="addDependency(task.id)" class="text-xs gap-2">
                                         <div class="flex items-center">
                                             <span class="flex-grow truncate">{{ task.title }}</span>
                                         </div>
