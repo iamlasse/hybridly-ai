@@ -57,6 +57,15 @@ onClickOutside( dependencySelectorRef, ( event ) =>
 }, { ignore: [ dependencyTypeRef, dependencyListRef ] } );
 
 
+const showUpdateDependencyInput = ref(false);
+const updateDependencySelectorRef = ref( null )
+onClickOutside( updateDependencySelectorRef, ( event ) =>
+{
+    showUpdateDependencyInput.value = false
+}, {
+    ignore: [dependencySelectorRef, dependencyTypeRef]
+})
+
 const dependencyType = ref( 'blocked_by' )
 
 const addDependency = (id: number) => {
@@ -100,12 +109,15 @@ function filterFunction ( list: any, searchTerm: string )
                         <Popover>
                             <PopoverTrigger>
                                 <Button variant="ghost" size="xxs" class="px-1">
-                                    <v-icon :name=" dependency.pivot.dependency_type === 'blocked_by' ? 'bi-hourglass' : 'bi-dash-circle'" class="flex-shrink-0"></v-icon>
+                                    <v-icon
+                                        :name=" dependency.pivot.dependency_type === 'blocked_by' ? 'bi-hourglass' : 'bi-dash-circle'"
+                                        class="flex-shrink-0 h-4"></v-icon>
                                     <span class="text-xs flex-shrink-0 ml-1">{{ dependency.title }}</span>
                                 </Button>
                             </PopoverTrigger>
-                            <PopoverContent class="w-32 p-0">
-                                <Select :model-value=" dependency.pivot.dependency_type " @update:model-value="(newType) => updateDependency(dependency, newType)">
+                            <PopoverContent class="w-32 p-0" ref="updateDependencySelectorRef">
+                                <Select :model-value=" dependency.pivot.dependency_type "
+                                    @update:model-value="(newType) => updateDependency(dependency, newType)">
                                     <SelectTrigger class="w-32 text-xs p-1">
                                         <SelectValue />
                                     </SelectTrigger>
@@ -174,7 +186,8 @@ function filterFunction ( list: any, searchTerm: string )
                                 tasks</CommandEmpty>
                             <CommandList class="max-h-[300px] overflow-y-auto" ref="dependencyListRef">
                                 <CommandGroup>
-                                    <CommandItem v-for="      task in availableTasks      " :key=" task.id " :value=" task " @select=" ( v ) => {
+                                    <CommandItem v-for="      task in availableTasks      " :key=" task.id "
+                                        :value=" task " @select=" ( v ) => {
                                         if ( !v.detail.value ) return
                                         addDependency( v.detail.value.id )
                                     }" class="text-xs gap-2">
