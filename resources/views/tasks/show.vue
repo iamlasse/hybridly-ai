@@ -16,6 +16,7 @@ import { onClickOutside } from '@vueuse/core';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useToast } from '@/components/ui/toast/use-toast';
 import ShadDatePicker from '@/components/ShadDatePicker.vue';
+import TaskDependencies from '@/components/TaskDependencies.vue';
 
 import { cn } from '@/lib/utils';
 import
@@ -538,7 +539,8 @@ const taskDueDate = ref<DateValue>( props.task.due_date );
                         </li>
                         <li class="grid  gap-2 grid-cols-[auto_1fr]">
                             <h4 class="font-semibold text-sm">Dependencies:</h4>
-                            <div class="flex flex-col gap-2 -mt-1">
+                            <TaskDependencies />
+                            <!-- <div class="flex flex-col gap-2 -mt-1">
                                 <div class="flex">
                                     <div v-if=" task.dependencies.length " class="flex flex-wrap gap-1">
                                         <ul class="flex flex-wrap gap-1">
@@ -622,7 +624,7 @@ const taskDueDate = ref<DateValue>( props.task.due_date );
                                         </Popover>
                                     </div>
                                 </div>
-                            </div>
+                            </div> -->
                         </li>
                         <li>
                             <h4 class="font-semibold text-sm">Fields:</h4>
