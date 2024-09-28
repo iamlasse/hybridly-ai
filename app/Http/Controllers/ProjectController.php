@@ -146,6 +146,27 @@ class ProjectController extends Controller
         return back()->with('success', 'Stage added successfully.');
     }
 
+    public function updateStage(Request $request, Project $project, Stage $stage)
+    {
+        $validated = $request->validate([
+            'name' => ['required', 'string'],
+        ]);
+
+        $slug = Str::slug($validated['name']);
+
+        $order = $project->stages()->max('order') + 1;
+        $project->stages()->where('slug', $stage->slug)->update([
+            'name' => $validated['name'],
+            'slug' => $slug,
+        ]);
+
+        $project->tasks()->where('slug', $stage->slug)->update([
+            'status' => $slug
+        ]);
+
+        return back()->with('success', 'Stage updated');
+    }
+
     public function destroyStage(Request $request, Project $project, Stage $stage)
     {
         DB::transaction(function () use ($project, $stage, $request) {
@@ -155,7 +176,7 @@ class ProjectController extends Controller
             $project->tasks()->where('status', $stage->slug)->update(['status' => 'pending']);
         });
 
-        return back()->with('success','Section removed');
+        return back()->with('success', 'Section removed');
     }
 
     public function updateStagesOrder(Request $request, Project $project)

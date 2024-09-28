@@ -280,6 +280,17 @@ function deleteStage ( {
         }
     );
 }
+
+function updateStage ( { columnId, newName } )
+{
+    router.put(route('projects.stages.update', {project: localProject.value.id, stage: columnId}, {
+        data: {
+            name: newName
+        },
+        preserveState: false,
+        preserveScroll: true
+    }))
+}
 </script>
 
 <template layout="dashboard">
@@ -311,7 +322,7 @@ function deleteStage ( {
                 </TeamMembers>
             </header>
             <KanBanBoard :columns=" renderColumns " :project-id=" localProject.id " @update-tasks=" updateTasks "
-                @select-task=" selectTask " @add-task=" addTask " @delete-stage=" deleteStage " />
+                @select-task=" selectTask " @add-task=" addTask " @delete-stage=" deleteStage " @update-stage="updateStage" />
         </div>
 
         <!-- Add Collaborator Modal -->

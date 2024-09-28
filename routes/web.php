@@ -47,6 +47,10 @@ Route::post('/projects/{project}/stages', [ProjectController::class, 'addStage']
     ->middleware(['auth:sanctum'])
     ->name('projects.stages.store');
 
+Route::put('/projects/{project}/stages/{stage:slug}', [ProjectController::class, 'updateStage'])
+    ->middleware(['auth:sanctum'])
+    ->name('projects.stages.update');
+
 Route::delete('/projects/{project}/stages/{stage:slug}', [ProjectController::class, 'destroyStage'])
     ->middleware(['auth:sanctum'])
     ->name('projects.stages.destroy');

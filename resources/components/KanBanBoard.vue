@@ -2,6 +2,10 @@
 import draggable from "vuedraggable";
 import type { Column, Task } from "@/types";
 import { Button } from "@/components/ui/button";
+import { OhVueIcon, addIcons } from "oh-vue-icons";
+import { RiMoreFill } from "oh-vue-icons/icons";
+
+addIcons(RiMoreFill);
 const props = defineProps<{
     columns: Object[];
     projectId: number;
@@ -15,6 +19,7 @@ const emit = defineEmits( [
     "addColumn",
     "deleteStage",
     "updateColumns",
+    "updateStage",
 ] );
 
 const localColumns = ref<Column[]>( [] );
@@ -31,9 +36,53 @@ watchEffect( () =>
             newTaskName: "",
             showAddTask: false,
             order: index,
+            showDropdown: false,
+            isEditing: false,
+            editName: column.name,
         } )
     );
 } );
+
+function toggleDropdown(column: Column & any) {
+    column.showDropdown = !column.showDropdown;
+}
+
+function renameStage(column: Column & any) {
+    column.isEditing = true;
+    column.showDropdown = false;
+    nextTick(() => {
+        const input = document.querySelector(`input[type="text"][value="${column.name}"]`) as HTMLInputElement;
+        if (input) {
+            input.focus();
+        }
+    });
+}
+
+function updateColumnName(column: Column & any) {
+    if (column.editName.trim() !== '' && column.editName !== column.name) {
+        emit('updateStage', { columnId: column.id, newName: column.editName });
+        column.name = column.editName;
+    }
+    column.isEditing = false;
+}
+
+// Close dropdowns when clicking outside
+function handleOutsideClickColumn(event: MouseEvent) {
+    const target = event.target as HTMLElement;
+    if (!target.closest('.relative')) {
+        localColumns.value.forEach((column: any) => {
+            column.showDropdown = false;
+        });
+    }
+}
+
+onMounted(() => {
+    document.addEventListener('click', handleOutsideClickColumn);
+});
+
+onUnmounted(() => {
+    document.removeEventListener('click', handleOutsideClickColumn);
+});
 
 const computedColumns = computed( {
     get: () => localColumns.value,
@@ -309,19 +358,26 @@ watchEffect( () =>
             <template #item=" { element: column } ">
                 <div class="kanban-column flex-shrink-0 w-64 bg-slate-100 p-4 mr-4 rounded flex flex-col">
                     <div class="flex justify-between items-center mb-4 column-handle cursor-move">
-                        <h3 class="text-lg text-gray-800 font-semibold">
+                        <h3 v-if="!column.isEditing" class="text-lg text-gray-800 font-semibold">
                             {{ column.name }}
                         </h3>
-                        <span class="group">
-                            <button @click.stop="deleteStage( column )"
-                                class="text-red-500 hover:text-red-700 opacity-0 group-hover:opacity-100 transition duration-300">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
-                                    stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                </svg>
+                        <input
+                            v-else
+                            v-model="column.editName"
+                            @blur="updateColumnName(column)"
+                            @keyup.enter="updateColumnName(column)"
+                            type="text"
+                            class="text-lg text-gray-800 font-semibold bg-transparent border-b border-gray-300 focus:outline-none focus:border-blue-500"
+                        />
+                        <div class="relative">
+                            <button @click.stop="toggleDropdown(column)" class="text-gray-500 hover:text-gray-700">
+                                <oh-vue-icon name="ri-more-fill" />
                             </button>
-                        </span>
+                            <div v-if="column.showDropdown" class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-10">
+                                <a @click.stop="renameStage(column)" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Rename section</a>
+                                <a @click.stop="deleteStage(column)" class="block px-4 py-2 text-sm text-red-600 hover:bg-gray-100">Remove section</a>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="flex-grow overflow-y-auto">
