@@ -61,7 +61,7 @@ const openDependencyInput = () => {
     showDependencyInput.value = true;
     dependencyPopoverOpen.value = true;
     nextTick(() => {
-        dependencyInputRef.value?.focus();
+        // dependencyInputRef.value?.focus();
     });
 };
 
