@@ -28,7 +28,7 @@ updated_at: string | null;
 ends_at: string | null;
 };
 export type TaskData = {
-id: number | null;
+id: number;
 title: string;
 description: string | null;
 slug: string | null;

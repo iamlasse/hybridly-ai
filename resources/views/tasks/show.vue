@@ -311,6 +311,20 @@ const addDependency = ( { id: dependencyId, type }: {id: number, type: string}, 
     } );
 };
 
+const updateDependency = ( {id: dependencyId, type }: {id: number|string, type: string} ) =>
+{
+    if ( !dependencyId ) return
+    router.put( route('tasks.update-dependency', {task: $props.task.id}), {
+        data: {
+            dependency_id: dependencyId,
+            type
+        },
+        preserveState: false,
+        preserveScroll: true,
+    })
+
+}
+
 const removeDependency = ( dependencyId: string|number ) =>
 {
     router.put( route( 'tasks.remove-dependency', { task: $props.task.id } ), {
@@ -481,7 +495,8 @@ onUnmounted( () =>
                         </li>
                         <li class="grid  gap-2 grid-cols-[auto_1fr]">
                             <h4 class="font-semibold text-sm">Dependencies:</h4>
-                            <Dependencies :task="task" :dependencies="availableTasks" @add-dependency="addDependency" @remove-dependency=" removeDependency " />
+                            <Dependencies :task="task" :dependencies="availableTasks" @add-dependency="addDependency"
+                                @update-dependency="updateDependency" @remove-dependency=" removeDependency " />
 
                         </li>
                         <li>

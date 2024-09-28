@@ -237,6 +237,20 @@ class TasksController extends Controller
         return back()->with('success', 'Dependency added successfully');
     }
 
+    public function updateDependency(Request $request, Task $task) {
+
+        $data = $request->validate([
+            'dependency_id' => ['required', 'exists:tasks,id', Rule::in($task->project->tasks->pluck('id'))],
+            'type' => ['nullable', 'in:is_blocking,blocked_by']
+        ]);
+
+        $task->dependencies()->syncWithPivotValues([$data['dependency_id']], [
+            'dependency_type' => data_get($data,'type')
+        ], false);
+
+        return back()->with('success', 'Dependency updated successfully');
+    }
+
     private function wouldCreateCircularDependency(Task $task, $newDependencyId, $visited = [])
     {
         if (in_array($task->id, $visited)) {

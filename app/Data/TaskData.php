@@ -14,7 +14,7 @@ class TaskData extends DataResource
     public static array $authorizations = [];
 
     public function __construct(
-        public readonly ?int $id,
+        public readonly int $id,
         public readonly string $title,
         public readonly ?string $description,
         public readonly ?string $slug,

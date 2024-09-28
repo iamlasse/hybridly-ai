@@ -89,6 +89,7 @@ Route::get('/tasks/{task}', [TasksController::class, 'show'])->middleware(['auth
 Route::post('/task/{task:id}/comment', [CommentController::class, 'store'])->name('task.comments.store');
 
 Route::put('/tasks/{task:id}/add-dependency', [TasksController::class, 'addDependency'])->name('tasks.add-dependency');
+Route::put('/tasks/{task:id}/update-dependency', [TasksController::class, 'updateDependency'])->name('tasks.update-dependency');
 Route::put('/tasks/{task:id}/remove-dependency', [TasksController::class, 'removeDependency'])->name('tasks.remove-dependency');
 
 

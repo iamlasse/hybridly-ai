@@ -100,26 +100,26 @@ function filterFunction ( list: any, searchTerm: string )
                         <Popover>
                             <PopoverTrigger>
                                 <Button variant="ghost" size="xxs" class="px-1">
-                                    <v-icon :name="dependency.pivot.type === 'blocked_by' ? 'bi-hourglass' : 'bi-dash-circle'" class="flex-shrink-0"></v-icon>
+                                    <v-icon :name=" dependency.pivot.dependency_type === 'blocked_by' ? 'bi-hourglass' : 'bi-dash-circle'" class="flex-shrink-0"></v-icon>
                                     <span class="text-xs flex-shrink-0 ml-1">{{ dependency.title }}</span>
                                 </Button>
                             </PopoverTrigger>
-                            <PopoverContent class="w-48">
-                                <Select :model-value="dependency.pivot.type" @update:model-value="(newType) => updateDependency(dependency, newType)">
-                                    <SelectTrigger class="w-full">
+                            <PopoverContent class="w-32 p-0">
+                                <Select :model-value=" dependency.pivot.dependency_type " @update:model-value="(newType) => updateDependency(dependency, newType)">
+                                    <SelectTrigger class="w-32 text-xs p-1">
                                         <SelectValue />
                                     </SelectTrigger>
                                     <SelectContent>
                                         <SelectItem value="blocked_by">
                                             <div class="flex items-center">
                                                 <v-icon name="bi-hourglass" class="mr-2 h-4 w-4" />
-                                                <span>Blocked by</span>
+                                                <span class="text-xs">Blocked by</span>
                                             </div>
                                         </SelectItem>
                                         <SelectItem value="is_blocking">
                                             <div class="flex items-center">
                                                 <v-icon name="bi-dash-circle" class="mr-2 h-4 w-4" />
-                                                <span>Is blocking</span>
+                                                <span class="text-xs">Is blocking</span>
                                             </div>
                                         </SelectItem>
                                     </SelectContent>
@@ -174,36 +174,15 @@ function filterFunction ( list: any, searchTerm: string )
                                 tasks</CommandEmpty>
                             <CommandList class="max-h-[300px] overflow-y-auto" ref="dependencyListRef">
                                 <CommandGroup>
-                                    <CommandItem v-for="      task in dependencies      " :key=" task.id " :value=" task " @select=" ( v ) =>
-                                    {
+                                    <CommandItem v-for="      task in availableTasks      " :key=" task.id " :value=" task " @select=" ( v ) => {
+                                        if ( !v.detail.value ) return
                                         addDependency( v.detail.value.id )
-
-                                    } " class="text-xs gap-2">
-                                        <Avatar size="xs">
-                                            <AvatarImage src="https://github.com/radix-vue.png" alt="@radix-vue" />
-                                            <AvatarFallback>CN</AvatarFallback>
-                                        </Avatar>
+                                    }" class="text-xs gap-2">
                                         <div class="flex items-center">
-
                                             <span class="flex-grow truncate">{{ task.title }}</span>
                                         </div>
                                     </CommandItem>
-                                    <!-- <CommandItem v-for="    task in availableTasks    " :key=" task.id "
-                                        :value=" task " @select=" (v) => {
-                                            const selectedTask = v.detail.value ?? null
-                                            if(!selectedTask.id ) return
-                                            addDependency( selectedTask.id );
-                                            showDependencyInput = false;
-                                        } " class="text-xs">
-                                        <div class="flex items-center">
-                                            <v-icon
-                                                :name=" task.completed ? 'bi-check-circle-fill' : 'bi-check-circle' "
-                                                :class=" { 'text-indigo-600': task.completed } " class="mr-2 h-3 w-3" />
-                                            <span class="flex-grow truncate">{{ task.title }}</span>
-                                            <span v-if=" task.project "
-                                                class="ml-2 text-xs text-gray-500 truncate">{{ task.project.name }}</span>
-                                        </div>
-                                    </CommandItem> -->
+
                                 </CommandGroup>
                             </CommandList>
                         </Command>
