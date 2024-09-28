@@ -43,20 +43,32 @@ const removeDependency = ( dependency: App.Data.TaskData ) =>
     }
 };
 
-const showDependencyInput = ref( false );
+const showDependencyInput = ref(false);
+const dependencyPopoverOpen = ref(false);
+const dependencyInputRef = ref(null);
 
-const dependencyListRef = ref( null );
-const dependencySelectorRef = ref( null );
-const dependencyTypeRef = ref( null );
+const dependencyListRef = ref(null);
+const dependencySelectorRef = ref(null);
+const dependencyTypeRef = ref(null);
 
-onClickOutside( dependencySelectorRef, ( event ) =>
-{
-    console.log( 'Click outside?', dependencyTypeRef );
-    if ( !dependencyTypeRef.value?.contains( event.target ) )
-    {
-        showDependencyInput.value = false;
+onClickOutside(dependencySelectorRef, (event) => {
+    if (!dependencyTypeRef.value?.contains(event.target)) {
+        closeDependencyInput();
     }
-}, { ignore: [ dependencyTypeRef, dependencyListRef ] } );
+}, { ignore: [dependencyTypeRef, dependencyListRef] });
+
+const openDependencyInput = () => {
+    showDependencyInput.value = true;
+    dependencyPopoverOpen.value = true;
+    nextTick(() => {
+        dependencyInputRef.value?.focus();
+    });
+};
+
+const closeDependencyInput = () => {
+    showDependencyInput.value = false;
+    dependencyPopoverOpen.value = false;
+};
 
 
 const showUpdateDependencyInput = ref( false );
@@ -85,30 +97,24 @@ const updateDependency = ( dependency: App.Data.TaskData, type: string ) =>
 
 const activeDependency = ref<App.Data.TaskData | null>( null );
 
-const dependencySearchTerm = ref( 'Test' );
+const dependencySearchTerm = ref('');
 
-const availableTasks = computed( () =>
-{
-    return $props.dependencies?.filter( t =>
+const availableTasks = computed(() => {
+    return $props.dependencies?.filter(t =>
         t.id !== $props.task.id &&
-        !$props.task.dependencies.some( ( d: App.Data.TaskData ) => d.id === t.id )
+        !$props.task.dependencies.some((d: App.Data.TaskData) => d.id === t.id)
     );
-} );
+});
 
-watch( dependencySearchTerm, (value) =>
-{
-    console.log( value )
-})
+const filteredTasks = computed(() => {
+    return availableTasks.value.filter((task) =>
+        task.title.toLowerCase().includes(dependencySearchTerm.value.toLowerCase())
+    );
+});
 
-// The filterTasks function has been removed as it's no longer needed
-function filterTasks ( list: any, searchTerm: string )
-{
-    return list.filter( ( task: App.Data.TaskData ) =>
-    {
-        console.log( task, list );
-        return task.title.toLowerCase().includes( searchTerm.toLowerCase() );
-    } );
-}
+watch(dependencySearchTerm, (value) => {
+    console.log(value);
+});
 </script>
 
 <template>
@@ -157,17 +163,16 @@ function filterTasks ( list: any, searchTerm: string )
                 </ul>
             </div>
             <div>
-                <Button @click="showDependencyInput = true" size="xxs" variant="ghost">
-                    <v-icon v-if=" task.dependencies.length " name="bi-plus"></v-icon>
+                <Button @click="openDependencyInput" size="xxs" variant="ghost">
+                    <v-icon v-if="task.dependencies.length" name="bi-plus"></v-icon>
                     <span v-else>Add Dependencies</span>
                 </Button>
             </div>
         </div>
 
-        <div v-if=" showDependencyInput " class="flex flex-col gap-2">
-            {{ dependencySearchTerm }}
+        <div v-if="showDependencyInput" class="flex flex-col gap-2">
             <div class="flex items-center gap-2" ref="dependencyTypeRef">
-                <Select v-model=" dependencyType " class="flex-shrink-0">
+                <Select v-model="dependencyType" class="flex-shrink-0">
                     <SelectTrigger class="w-24 h-7 text-xs">
                         <SelectValue />
                     </SelectTrigger>
@@ -186,26 +191,33 @@ function filterTasks ( list: any, searchTerm: string )
                         </SelectItem>
                     </SelectContent>
                 </Select>
-                <Popover class="flex-grow">
+                <Popover class="flex-grow" v-model:open="dependencyPopoverOpen">
                     <PopoverTrigger asChild>
-                        <Command class="w-full" >
-                            <CommandInput v-model="dependencySearchTerm" class="h-8 text-xs w-full"
-                                placeholder="Search tasks..." />
+                        <Command class="w-full">
+                            <CommandInput
+                                v-model="dependencySearchTerm"
+                                class="h-8 text-xs w-full"
+                                placeholder="Search tasks..."
+                                ref="dependencyInputRef"
+                            />
                         </Command>
                     </PopoverTrigger>
                     <PopoverContent class="w-[300px] p-0" align="start" ref="dependencySelectorRef">
-                        <Command :search-term=" dependencySearchTerm " :filter-function=" filterTasks ">
-                            <CommandEmpty class="p-0 pb-1 px-2 pt-1 text-left">No available
-                                tasks</CommandEmpty>
+                        <Command>
+                            <CommandEmpty class="p-0 pb-1 px-2 pt-1 text-left">No available tasks</CommandEmpty>
                             <CommandList class="max-h-[300px] overflow-y-auto" ref="dependencyListRef">
                                 <CommandGroup>
-                                    <CommandItem v-for="task in availableTasks" :key="task.id" :value="task.title"
-                                        @select="addDependency(task.id)" class="text-xs gap-2">
+                                    <CommandItem
+                                        v-for="task in filteredTasks"
+                                        :key="task.id"
+                                        :value="task.title"
+                                        @select="addDependency(task.id)"
+                                        class="text-xs gap-2"
+                                    >
                                         <div class="flex items-center">
                                             <span class="flex-grow truncate">{{ task.title }}</span>
                                         </div>
                                     </CommandItem>
-
                                 </CommandGroup>
                             </CommandList>
                         </Command>
