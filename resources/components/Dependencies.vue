@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { useDebounceFn, onClickOutside } from '@vueuse/core';
 
 import
@@ -35,9 +35,9 @@ const $props = defineProps<{
 
 const emit = defineEmits(['add-dependency', 'update-dependency', 'remove-dependency'])
 
-const removeDependency = (id: number) => {
+const removeDependency = (dependency: App.Data.TaskData) => {
     if (confirm('Are you sure you want to remove this dependency?')) {
-        emit('remove-dependency', id)
+        emit('remove-dependency', dependency.id)
     }
 }
 
@@ -66,11 +66,11 @@ const addDependency = (id: number) => {
     showDependencyInput.value = false
 }
 
-const updateDependency = (id: number) => {
-    emit('update-dependency', {id, type: dependencyType.value})
-
-    showDependencyInput.value = false
+const updateDependency = (dependency: App.Data.TaskData, type: string) => {
+    emit('update-dependency', {id: dependency.id, type})
 }
+
+const activeDependency = ref<App.Data.TaskData | null>(null)
 
 const dependencySearchTerm = ref( '' )
 
@@ -93,13 +93,40 @@ function filterFunction ( list: any, searchTerm: string )
 <template>
     <div class="flex flex-col gap-2 -mt-1">
         <div class="flex">
-            <div v-if=" task.dependencies.length " class="flex flex-wrap gap-1">
+            <div v-if="task.dependencies.length" class="flex flex-wrap gap-1">
                 <ul class="flex flex-wrap gap-1">
-                    <li v-for="     dependency in task.dependencies     " :key=" dependency.id "
+                    <li v-for="dependency in task.dependencies" :key="dependency.id"
                         class="flex rounded-md items-center hover:bg-slate-100 transition p-1 text-xs flex-shrink-0 gap-1">
-                        <v-icon name="bi-check-circle" class="flex-shrink-0"></v-icon>
-                        <span class="text-xs flex-shrink-0">{{ dependency.title }}</span>
-                        <Button @click="removeDependency( dependency.id )" size="xxs" variant="ghost" class="p-0">
+                        <Popover>
+                            <PopoverTrigger>
+                                <Button variant="ghost" size="xxs" class="px-1">
+                                    <v-icon :name="dependency.pivot.type === 'blocked_by' ? 'bi-hourglass' : 'bi-dash-circle'" class="flex-shrink-0"></v-icon>
+                                    <span class="text-xs flex-shrink-0 ml-1">{{ dependency.title }}</span>
+                                </Button>
+                            </PopoverTrigger>
+                            <PopoverContent class="w-48">
+                                <Select :model-value="dependency.pivot.type" @update:model-value="(newType) => updateDependency(dependency, newType)">
+                                    <SelectTrigger class="w-full">
+                                        <SelectValue />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="blocked_by">
+                                            <div class="flex items-center">
+                                                <v-icon name="bi-hourglass" class="mr-2 h-4 w-4" />
+                                                <span>Blocked by</span>
+                                            </div>
+                                        </SelectItem>
+                                        <SelectItem value="is_blocking">
+                                            <div class="flex items-center">
+                                                <v-icon name="bi-dash-circle" class="mr-2 h-4 w-4" />
+                                                <span>Is blocking</span>
+                                            </div>
+                                        </SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            </PopoverContent>
+                        </Popover>
+                        <Button @click="removeDependency(dependency)" size="xxs" variant="ghost" class="p-0">
                             <v-icon name="io-close-outline" class="flex-shrink-0"></v-icon>
                         </Button>
                     </li>
@@ -115,20 +142,20 @@ function filterFunction ( list: any, searchTerm: string )
 
         <div v-if=" showDependencyInput " class="flex flex-col gap-2">
             <div class="flex items-center gap-2" ref="dependencyTypeRef">
-                <Select v-model=" dependencyType " class="flex-shrink-0">
-                    <SelectTrigger class="w-28 h-8 text-xs">
+                <Select v-model="dependencyType" class="flex-shrink-0">
+                    <SelectTrigger class="w-24 h-7 text-xs">
                         <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
                         <SelectItem value="blocked_by">
-                            <div class="flex items-center">
-                                <v-icon name="bi-hourglass" class="mr-2 h-4 w-4" />
+                            <div class="flex items-center text-xs">
+                                <v-icon name="bi-hourglass" class="mr-2 h-3 w-3" />
                                 <span>Blocked by</span>
                             </div>
                         </SelectItem>
                         <SelectItem value="is_blocking">
-                            <div class="flex items-center">
-                                <v-icon name="bi-dash-circle" class="mr-2 h-4 w-4" />
+                            <div class="flex items-center text-xs">
+                                <v-icon name="bi-dash-circle" class="mr-2 h-3 w-3" />
                                 <span>Is blocking</span>
                             </div>
                         </SelectItem>
