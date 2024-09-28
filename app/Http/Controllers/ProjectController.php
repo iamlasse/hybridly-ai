@@ -155,9 +155,7 @@ class ProjectController extends Controller
             $project->tasks()->where('status', $stage->slug)->update(['status' => 'pending']);
         });
 
-        return hybridly(properties: [
-            'project' => $project->fresh()->loadMissing(['stages']),
-        ]);
+        return back()->with('success','Section removed');
     }
 
     public function updateStagesOrder(Request $request, Project $project)
