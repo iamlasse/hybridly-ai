@@ -76,7 +76,7 @@ class ProjectController extends Controller
                 $query->orderBy('order');
             },
             'tasks' => function ($query) {
-                $query->with(['dependencies'])->withCount('comments')->orderBy('status')->orderBy('order');
+                $query->with(['dependencies', 'user'])->withCount('comments')->orderBy('status')->orderBy('order');
             },
             'user'
         ]));

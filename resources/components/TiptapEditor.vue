@@ -131,50 +131,55 @@ const toggleUnderline = () => editor.value?.chain().focus().toggleUnderline().ru
 <template>
     <div v-if=" editor " class="tiptap-editor border rounded-md overflow-hidden">
         <editor-content :editor=" editor " class="p-0 min-h-[150px]" />
-        <div class="editor-menu bg-gray-100 p-2 flex flex-wrap gap-1 border-t">
+        <div class="editor-menu flex justify-between">
             <!-- Existing buttons -->
-            <Button size="xxs" :variant=" editor.isActive( 'bold' ) ? 'primary' : 'secondary' "
-                @click="editor.chain().focus().toggleBold().run()"
-                :disabled=" !editor.can().chain().focus().toggleBold().run() ">
-                B
-            </Button>
-            <Button size="xxs" :variant=" editor.isActive( 'italic' ) ? 'primary' : 'secondary' "
-                @click="editor.chain().focus().toggleItalic().run()"
-                :disabled=" !editor.can().chain().focus().toggleItalic().run() ">
-                <span class="italic font-serif">I</span>
-            </Button>
-            <Button size="xxs" :variant=" editor.isActive( 'underline' ) ? 'primary' : 'secondary' "
-                @click="editor.chain().focus().toggleUnderline().run()"
-                :disabled=" !editor.can().chain().focus().toggleUnderline().run() ">
-                U
-            </Button>
-            <!-- <Button size="xs" :variant="editor.isActive('paragraph') ? 'primary' : 'secondary'" @click="editor.chain().focus().setParagraph().run()">
+            <div class="flex items-center gap-1">
+                <Button size="xxs" :variant=" editor.isActive( 'bold' ) ? 'primary' : 'secondary' "
+                    @click="editor.chain().focus().toggleBold().run()"
+                    :disabled=" !editor.can().chain().focus().toggleBold().run() ">
+                    B
+                </Button>
+                <Button size="xxs" :variant=" editor.isActive( 'italic' ) ? 'primary' : 'secondary' "
+                    @click="editor.chain().focus().toggleItalic().run()"
+                    :disabled=" !editor.can().chain().focus().toggleItalic().run() ">
+                    <span class="italic font-serif">I</span>
+                </Button>
+                <Button size="xxs" :variant=" editor.isActive( 'underline' ) ? 'primary' : 'secondary' "
+                    @click="editor.chain().focus().toggleUnderline().run()"
+                    :disabled=" !editor.can().chain().focus().toggleUnderline().run() ">
+                    U
+                </Button>
+                <!-- <Button size="xs" :variant="editor.isActive('paragraph') ? 'primary' : 'secondary'" @click="editor.chain().focus().setParagraph().run()">
                 <v-icon name="bi-text-paragraph" />
             </Button> -->
-            <Button size="xxs" :variant=" editor.isActive( 'heading', { level: 1 } ) ? 'primary' : 'secondary' "
-                @click="editor.chain().focus().toggleHeading( { level: 1 } ).run()">
-                H1
-            </Button>
-            <Button size="xxs" :variant=" editor.isActive( 'heading', { level: 2 } ) ? 'primary' : 'secondary' "
-                @click="editor.chain().focus().toggleHeading( { level: 2 } ).run()">
-                H2
-            </Button>
-            <Button size="xxs" :variant=" editor.isActive( 'bulletList' ) ? 'primary' : 'secondary' "
-                @click="editor.chain().focus().toggleBulletList().run()">
-                UL
-            </Button>
-            <Button size="xxs" :variant=" editor.isActive( 'orderedList' ) ? 'primary' : 'secondary' "
-                @click="editor.chain().focus().toggleOrderedList().run()">
-                OL
-            </Button>
-            <Button size="xxs" variant="secondary" @click="editor.chain().focus().undo().run()"
-                :disabled=" !editor.can().chain().focus().undo().run() ">
-                <v-icon name="bi-arrow-counterclockwise" />
-            </Button>
-            <Button size="xxs" variant="secondary" @click="editor.chain().focus().redo().run()"
-                :disabled=" !editor.can().chain().focus().redo().run() ">
-                <v-icon name="bi-arrow-clockwise" />
-            </Button>
+                <Button size="xxs" :variant=" editor.isActive( 'heading', { level: 1 } ) ? 'primary' : 'secondary' "
+                    @click="editor.chain().focus().toggleHeading( { level: 1 } ).run()">
+                    H1
+                </Button>
+                <Button size="xxs" :variant=" editor.isActive( 'heading', { level: 2 } ) ? 'primary' : 'secondary' "
+                    @click="editor.chain().focus().toggleHeading( { level: 2 } ).run()">
+                    H2
+                </Button>
+                <Button size="xxs" :variant=" editor.isActive( 'bulletList' ) ? 'primary' : 'secondary' "
+                    @click="editor.chain().focus().toggleBulletList().run()">
+                    UL
+                </Button>
+                <Button size="xxs" :variant=" editor.isActive( 'orderedList' ) ? 'primary' : 'secondary' "
+                    @click="editor.chain().focus().toggleOrderedList().run()">
+                    OL
+                </Button>
+                <Button size="xxs" variant="secondary" @click="editor.chain().focus().undo().run()"
+                    :disabled=" !editor.can().chain().focus().undo().run() ">
+                    <v-icon name="bi-arrow-counterclockwise" scale="0.8" />
+                </Button>
+                <Button size="xxs" variant="secondary" @click="editor.chain().focus().redo().run()"
+                    :disabled=" !editor.can().chain().focus().redo().run() ">
+                    <v-icon name="bi-arrow-clockwise" scale="0.8" />
+                </Button>
+            </div>
+            <div class="flex-end">
+                <slot :content=" editor.getText()"></slot>
+            </div>
         </div>
     </div>
 </template>

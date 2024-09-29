@@ -10,7 +10,7 @@ const { show, close, unmount } = useDialog();
             <dialog-overlay
                 class="data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 fixed inset-0 z-50 " />
             <dialog-content aria-describedby="sheet" class="
-            bg-white border-l shadow-sm
+            bg-white border-l focus:ring-0 focus:shadow-lg focus:bg-white focus:outline-none shadow-sm
             h-screen w-2/5 fixed right-0 top-0 z-50
             data-[state=open]:animate-in data-[state=closed]:animate-out
             data-[state=open]:slide-in-from-right data-[state=closed]:slide-out-to-right" @interact-outside=" close "

@@ -18,11 +18,10 @@ class ProjectData extends DataResource
         public readonly ?string $description,
         public readonly string $slug,
         public readonly ?string $status,
-        public readonly UserData $user,
+        public readonly ?UserData $user,
         public readonly Collection $stages,
         public readonly ?Collection $collaborators,
         public readonly ?int $tasks_count,
-        #[DataCollectionOf(TaskData::class)]
         public readonly ?Collection $tasks,
     ) {}
 }

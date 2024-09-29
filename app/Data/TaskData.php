@@ -5,7 +5,7 @@ namespace App\Data;
 use DateTimeInterface;
 use Hybridly\Support\Data\DataResource;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Support\Carbon;
+use Spatie\LaravelData\Attributes\LoadRelation;
 use Spatie\LaravelData\Attributes\MapName;
 use Spatie\LaravelData\Attributes\MapOutputName;
 
@@ -19,6 +19,9 @@ class TaskData extends DataResource
         public readonly ?string $description,
         public readonly ?string $slug,
         public readonly ?string $status,
+        #[LoadRelation]
+        #[MapOutputName('created_by')]
+        public readonly ?UserData $user,
         #[MapOutputName('due_date')]
         public DateTimeInterface|string|null $due_date,
         public bool $completed,
@@ -36,4 +39,12 @@ class TaskData extends DataResource
         #[MapOutputName('dependencies')]
         public readonly ?Collection $dependencies
     ) {}
+
+    // public static function normalizers(): array
+    // {
+    //     return [
+    //         ...config('data.normalizers'),
+
+    //     ];
+    // }
 }

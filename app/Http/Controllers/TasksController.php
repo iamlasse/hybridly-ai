@@ -52,6 +52,7 @@ class TasksController extends Controller
             'description' => $request->input('description'),
             'status' => $request->input('status'),
             'order' => $project->tasks()->where('status', $request->input('status'))->max('order') + 1 ?? 0,
+            'created_by' => $user->id,
         ]);
 
         return back()->with('success', 'Task created successfully.');
@@ -59,7 +60,7 @@ class TasksController extends Controller
 
     public function show(Task $task)
     {
-        $task->loadMissing(['comments.user', 'subTasks', 'assignedTo', 'dependencies']);
+        $task->loadMissing(['comments.user', 'subTasks', 'assignedTo', 'dependencies', 'user']);
         $users = User::all();
         return view('Tasks.Show', [
             'task' => $task,

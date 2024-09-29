@@ -5,11 +5,11 @@ name: string;
 description: string | null;
 slug: string;
 status: string | null;
-user: App.Data.UserData;
+user: App.Data.UserData | null;
 stages: any;
 collaborators: any | null;
 tasks_count: number | null;
-tasks: Array<App.Data.TaskData> | null;
+tasks: any | null;
 authorization: { addCollaborators: boolean; }
 };
 export type SecurityData = {
@@ -33,6 +33,7 @@ title: string;
 description: string | null;
 slug: string | null;
 status: string | null;
+created_by: App.Data.UserData | null;
 due_date: any | string | null;
 completed: boolean;
 completed_at: any | null;

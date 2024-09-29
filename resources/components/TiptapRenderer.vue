@@ -54,6 +54,7 @@ const renderedContent = computed( () =>
 <style scoped>
 .tiptap-content :deep(*) {
   margin-bottom: 0.5em;
+  font-size: 14px;
 }
 
 .tiptap-content :deep(ul), .tiptap-content :deep(ol) {

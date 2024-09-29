@@ -47,6 +47,11 @@ import {
 } from "@/components/ui/command";
 import { Calendar } from "@/components/ui/calendar";
 
+import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
+
+dayjs.extend( relativeTime );
+
 const $props = defineProps<{
   task: App.Data.TaskData;
   tasks: App.Data.TaskData[];
@@ -61,7 +66,23 @@ const df = new DateFormatter("en-US", {
 });
 
 const { toast } = useToast();
-const flash = useProperty("flash");
+const flash = useProperty( "flash" );
+
+const formattedCreatedDate = computed( () =>
+{
+    if ( !$props.task.created_at ) return '';
+    const createdDate = dayjs( $props.task.created_at );
+    const now = dayjs();
+    const diffInDays = createdDate.diff( now, 'day' );
+
+    if ( diffInDays < 1 && diffInDays > -1 )
+    {
+        return createdDate.fromNow(); // "in 3 hours" or "3 hours ago"
+    } else
+    {
+        return createdDate.format( 'MMM D, YYYY' ); // "Apr 15, 2023"
+    }
+} );
 
 watch(flash, (val: any) => {
   const { error = null, success = null, warning = null, info = null } = val;
@@ -587,9 +608,18 @@ onUnmounted(() => {
                 <section class="px-4">
                     <div class="flex items-start gap-2 mb-4">
                         <Avatar>
-                            <v-icon name="bi-person-circle"></v-icon>
+                            <AvatarImage v-if="task.user?.avatar" :src="task.user.avatar" :alt="task.user?.name" />
+                            <AvatarFallback v-else>
+                                <v-icon name="bi-person-circle"></v-icon>
+                            </AvatarFallback>
                         </Avatar>
-                        <span>Created by: Test User <small>0 seconds ago</small></span>
+                        <div class="flex gap-2">
+                            <span
+                                class="text-slate-500 text-sm font-semibold">{{ task.user?.email || 'Unknown' }}</span>
+                            <span class="text-sm ml-1 text-slate-600">created this task</span>
+                            <small class="text-slate-600">-
+                                {{ task.created_at ? formattedCreatedDate : 'Unknown time' }}</small>
+                        </div>
                     </div>
                     <CommentItem v-for="comment in comments" :key="comment.id" :comment="comment" />
                 </section>
@@ -600,11 +630,14 @@ onUnmounted(() => {
                         <div class="flex flex-col gap-2 p-2">
                             <span class="text-sm font-semibold">Add Comment</span>
                             <TiptapEditor class="border-0 w-full" type="text" name="body"
-                                v-model="commentForm.fields.body" />
-                            <div class="actions flex justify-between items-center">
-                                <p class="text-sm">Add comment</p>
-                                <primary-button size="sm" type="submit">Submit</primary-button>
-                            </div>
+                                v-model="commentForm.fields.body">
+                                <template #default="{content}">
+                                    <div class="">
+                                        <Button size="sm" :disabled="!content" type="submit">Comment</Button>
+                                    </div>
+                                </template>
+                            </TiptapEditor>
+
                         </div>
                     </form>
                 </div>

@@ -361,21 +361,22 @@ watchEffect( () =>
                         <h3 v-if="!column.isEditing" class="text-lg text-gray-800 font-semibold">
                             {{ column.name }}
                         </h3>
-                        <input
-                            v-else
-                            v-model="column.editName"
-                            @blur="updateColumnName(column)"
-                            @keyup.enter="updateColumnName(column)"
-                            type="text"
-                            class="text-lg text-gray-800 font-semibold bg-transparent border-b border-gray-300 focus:outline-none focus:border-blue-500"
-                        />
+                        <input v-else v-model="column.editName" @blur="updateColumnName(column)"
+                            @keyup.enter="updateColumnName(column)" type="text"
+                            class="text-lg text-gray-800 font-semibold bg-transparent border-b border-gray-300 focus:outline-none focus:border-blue-500" />
                         <div class="relative">
                             <button @click.stop="toggleDropdown(column)" class="text-gray-500 hover:text-gray-700">
                                 <oh-vue-icon name="ri-more-fill" />
                             </button>
-                            <div v-if="column.showDropdown" class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-10">
-                                <a @click.stop="renameStage(column)" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Rename section</a>
-                                <a @click.stop="deleteStage(column)" class="block px-4 py-2 text-sm text-red-600 hover:bg-gray-100">Remove section</a>
+                            <div v-if="column.showDropdown"
+                                class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-10">
+                                <a @click.stop="renameStage(column)"
+                                    class="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-1"><v-icon
+                                        name="ri-edit-line"></v-icon>Rename section</a>
+                                <a @click.stop="deleteStage(column)"
+                                    class="px-4 py-2 text-sm text-red-600 hover:bg-gray-100 flex items-center gap-1"><v-icon
+                                        name="bi-trash-fill"></v-icon>Remove
+                                    section</a>
                             </div>
                         </div>
                     </div>
@@ -391,7 +392,8 @@ watchEffect( () =>
                         </draggable>
                         <div class="mt-4">
                             <div v-if=" column.showAddTask " class="add-task-card bg-white shadow-sm p-1" @click.stop>
-                                <TextInput v-model=" column.newTaskName " aria-autocomplete="none" type="text" placeholder="Write a task name"
+                                <TextInput v-model=" column.newTaskName " aria-autocomplete="none" type="text"
+                                    placeholder="Write a task name"
                                     class="w-full mb-2 border-0 active:border-0 ring-0 active:ring-0 focus:ring-0 shadow-none"
                                     @keyup.enter="addTask( column )" @keyup.esc="cancelAddTask( column )"
                                     ref="newTaskInput" />
