@@ -54,6 +54,7 @@ const dependencyTypeRef = ref(null);
 onClickOutside(dependencySelectorRef, (event) => {
     if (!dependencyTypeRef.value?.contains(event.target)) {
         closeDependencyInput();
+        dependencySearchTerm.value = ''
     }
 }, { ignore: [dependencyTypeRef, dependencyListRef] });
 
@@ -104,9 +105,24 @@ const availableTasks = computed(() => {
         t.id !== $props.task.id &&
         !$props.task.dependencies.some((d: App.Data.TaskData) => d.id === t.id)
     );
-});
+} );
 
-const filteredTasks = computed(() => {
+const filterTasks = ( val: any, term: string ) =>
+{
+    dependencySearchTerm.value = term;
+    // if ( !term )
+    // {
+        return val;
+    // }
+    // return val.filter( ( task: App.Data.TaskData ) =>
+    // {
+    //     return task.title.toLowerCase().includes( term.toLowerCase() );
+    // } );
+}
+
+const filteredTasks = computed( () =>
+{
+    console.log( 'search term: ', dependencySearchTerm )
     return availableTasks.value.filter((task) =>
         task.title.toLowerCase().includes(dependencySearchTerm.value.toLowerCase())
     );
@@ -193,27 +209,20 @@ watch(dependencySearchTerm, (value) => {
                 </Select>
                 <Popover class="flex-grow" v-model:open="dependencyPopoverOpen">
                     <PopoverTrigger asChild>
-                        <Command class="w-full">
-                            <CommandInput
-                                v-model="dependencySearchTerm"
-                                class="h-8 text-xs w-full"
-                                placeholder="Search tasks..."
-                                ref="dependencyInputRef"
-                            />
+                        <Command class="w-full" :filter-function=" filterTasks ">
+                            <CommandInput v-model="dependencySearchTerm" class="h-8 text-xs w-full"
+                                placeholder="Search tasks..." ref="dependencyInputRef"
+                                @focus=" dependencyPopoverOpen  = true" />
                         </Command>
                     </PopoverTrigger>
-                    <PopoverContent class="w-[300px] p-0" align="start" ref="dependencySelectorRef">
-                        <Command>
+                    <PopoverContent class="w-[250px] p-0" align="start" ref="dependencySelectorRef">
+                        <Command class="rounded-lg border shadow-md max-w-[250px]"
+                            >
                             <CommandEmpty class="p-0 pb-1 px-2 pt-1 text-left">No available tasks</CommandEmpty>
                             <CommandList class="max-h-[300px] overflow-y-auto" ref="dependencyListRef">
                                 <CommandGroup>
-                                    <CommandItem
-                                        v-for="task in filteredTasks"
-                                        :key="task.id"
-                                        :value="task.title"
-                                        @select="addDependency(task.id)"
-                                        class="text-xs gap-2"
-                                    >
+                                    <CommandItem v-for="task in filteredTasks" :key="task.id" :value="task"
+                                        @select="addDependency(task.id)" @key-up:enter="addDependency(task.id)" class="text-xs gap-2">
                                         <div class="flex items-center">
                                             <span class="flex-grow truncate">{{ task.title }}</span>
                                         </div>

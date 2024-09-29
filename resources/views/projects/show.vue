@@ -310,19 +310,21 @@ function updateStage ( { columnId, newName } )
                     </router-link>
                 </p>
             </div>
-            <header class="flex items-center justify-end">
+            <header class="pl-3 bg-indigo-500 flex items-center justify-between">
+                <h1 class="text-white text-3xl font-semibold">{{ project.name }}</h1>
                 <TeamMembers :collaborators=" localProject.collaborators ">
                     <template #form>
                         <PrimaryButton
-                            class="disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-slate-500 disabled:hover:bg-slate-500 flex justify-center items-center !rounded-full w-8 h-8 p-1 -m-3 hover:bg-pink-600 transition duration-300"
+                            class="disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-indigo-100 disabled:text-slate-700 text-xl disabled:hover:bg-indigo-200 flex justify-center items-center !rounded-full w-8 h-8 p-1 -m-3 hover:bg-pink-600 transition duration-300"
                             :disabled=" !canAddCollaborators " @click=" openCollaboratorModal ">
-                            +
+                            <v-icon name="bi-plus" scale="1.5"></v-icon>
                         </PrimaryButton>
                     </template>
                 </TeamMembers>
             </header>
             <KanBanBoard :columns=" renderColumns " :project-id=" localProject.id " @update-tasks=" updateTasks "
-                @select-task=" selectTask " @add-task=" addTask " @delete-stage=" deleteStage " @update-stage="updateStage" />
+                @select-task=" selectTask " @add-task=" addTask " @delete-stage=" deleteStage "
+                @update-stage="updateStage" />
         </div>
 
         <!-- Add Collaborator Modal -->
@@ -353,7 +355,8 @@ function updateStage ( { columnId, newName } )
             <template #footer>
                 <div class="flex justify-end mt-6">
                     <PrimaryButton @click=" addCollaborator " type="submit" :disabled=" collaboratorForm.processing || !collaboratorForm.fields.user_id
-                        " class="transition disabled:opacity-50 duration-300 ease-in-out transform text-sm px-4 py-2 bg-gradient-to-r from-indigo-400 to-indigo-600 hover:from-indigo-500 hover:to-indigo-700">
+                        "
+                        class="transition disabled:opacity-50 duration-300 ease-in-out transform text-sm px-4 py-2 bg-gradient-to-r from-indigo-400 to-indigo-600 hover:from-indigo-500 hover:to-indigo-700">
                         Add Collaborator
                     </PrimaryButton>
                 </div>

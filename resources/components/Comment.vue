@@ -1,13 +1,16 @@
 <template>
-    <div class="flex items-start">
-        <img :src=" comment.user?.profile_photo_url " :alt=" comment.user?.name " class="w-12 h-12 rounded-full mr-4">
+    <div class="flex items-start gap-2">
+        <!-- <img :src=" comment.user?.profile_photo_url " :alt=" comment.user?.name " class="w-12 h-12 rounded-full mr-4"> -->
+        <Avatar>
+            <AvatarImage :src=" comment.user?.profile_photo_url " :alt=" comment.user?.name " />
+        </Avatar>
         <div class="flex-1">
             <div class="text-sm">
                 <span class="font-bold">{{ comment.user.name }}</span>
                 <span class="text-gray-600 ml-2">{{ comment.readable_created_time }}</span>
             </div>
             <!-- <div class="text-sm text-gray-600 line-clamp-2" v-html=" parsedBody "></div> -->
-             <TiptapRenderer :content=" comment.body " />
+            <TiptapRenderer :content=" comment.body " />
         </div>
     </div>
 </template>
@@ -22,6 +25,12 @@ import { Color } from '@tiptap/extension-color';
 import ListItem from '@tiptap/extension-list-item';
 import TextStyle from '@tiptap/extension-text-style';
 import Mention from '@tiptap/extension-mention';
+import
+    {
+        Avatar,
+        AvatarFallback,
+    AvatarImage
+} from '@/components/ui/avatar'
 // import TiptapRenderer from './TiptapRenderer.vue';
 
 const $props = defineProps<{
