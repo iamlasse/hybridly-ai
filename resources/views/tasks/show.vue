@@ -46,6 +46,7 @@ import {
   CommandGroup,
 } from "@/components/ui/command";
 import { Calendar } from "@/components/ui/calendar";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
@@ -598,31 +599,36 @@ onUnmounted(() => {
                 </div>
             </header>
 
-            <div class="comments pb-4 bg-slate-100">
-                <header class="border-b px-4 mb-3 flex items-center gap-4">
-                    <h2 class="font-semibold text-sm border-b-slate-500 border-b-2 pb-2 pt-2">
-                        Comments
-                    </h2>
-                    <h2 class="font-semibold text-sm pb-2 pt-2">All Activity</h2>
-                </header>
-                <section class="px-4">
-                    <div class="flex items-start gap-2 mb-4">
-                        <Avatar>
-                            <AvatarImage v-if="task.user?.avatar" :src="task.user.avatar" :alt="task.user?.name" />
-                            <AvatarFallback v-else>
-                                <v-icon name="bi-person-circle"></v-icon>
-                            </AvatarFallback>
-                        </Avatar>
-                        <div class="flex gap-2">
-                            <span
-                                class="text-slate-500 text-sm font-semibold">{{ task.user?.email || 'Unknown' }}</span>
-                            <span class="text-sm ml-1 text-slate-600">created this task</span>
-                            <small class="text-slate-600">-
-                                {{ task.created_at ? formattedCreatedDate : 'Unknown time' }}</small>
-                        </div>
-                    </div>
-                    <CommentItem v-for="comment in comments" :key="comment.id" :comment="comment" />
-                </section>
+            <div class="pb-4 bg-slate-100">
+
+                <Tabs default-value="comments" class="w-full">
+                    <TabsList class="border-b border-b-slate-300 rounded-none w-full p-0">
+                        <TabsTrigger value="comments">Comments</TabsTrigger>
+                        <TabsTrigger value="activity">All Activity</TabsTrigger>
+                    </TabsList>
+                    <TabsContent value="comments">
+                        <section class="px-4">
+                            <div class="flex items-start gap-2 mb-4">
+                                <Avatar>
+                                    <AvatarImage v-if=" task.user?.avatar " :src=" task.user.avatar "
+                                        :alt=" task.user?.name " />
+                                    <AvatarFallback v-else>
+                                        <v-icon name="bi-person-circle"></v-icon>
+                                    </AvatarFallback>
+                                </Avatar>
+                                <div class="flex gap-2">
+                                    <span
+                                        class="text-slate-500 text-sm font-semibold">{{ task.user?.email || 'Unknown' }}</span>
+                                    <span class="text-sm ml-1 text-slate-600">created this task</span>
+                                    <small class="text-slate-600">-
+                                        {{ task.created_at ? formattedCreatedDate : 'Unknown time' }}</small>
+                                </div>
+                            </div>
+                            <CommentItem v-for=" comment in comments " :key=" comment.id " :comment=" comment " />
+                        </section>
+                    </TabsContent>
+                    </Tabs>
+
             </div>
             <div class="bg-slate-100 border-t pb-4 sticky bottom-0">
                 <div class="p-2">
