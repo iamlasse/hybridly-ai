@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Editor, EditorContent, VueRenderer } from '@tiptap/vue-3';
+import { Editor, EditorContent, VueRenderer, FloatingMenu, BubbleMenu } from '@tiptap/vue-3';
 import StarterKit from '@tiptap/starter-kit';
 import { ref, watch, onMounted, onBeforeUnmount, computed } from 'vue';
 import { useDebounceFn } from '@vueuse/core';
@@ -10,8 +10,12 @@ import { Color } from '@tiptap/extension-color';
 import ListItem from '@tiptap/extension-list-item';
 import TextStyle from '@tiptap/extension-text-style';
 import Mention from '@tiptap/extension-mention';
+import { FontBoldIcon, FontItalicIcon } from '@radix-icons/vue';
 import { Button } from '@/components/ui/button';
+import { Toggle } from "@/components/ui/toggle";
+
 import MentionList from '@/components/MentionList.vue';
+
 import tippy from 'tippy.js';
 // Add this function to handle mentions
 import suggestion from '@/suggestion';
@@ -84,14 +88,14 @@ const initEditor = () =>
                 },
                 renderHTML ( { options, node, ...rest } )
                 {
-                    console.log('render option: ', node.attrs, node, rest)
+                    console.log( 'render option: ', node.attrs, node, rest );
                     return [
                         'a',
-                        Object.assign( { href: route('dashboard') }, options.HTMLAttributes ),
+                        Object.assign( { href: route( 'dashboard' ) }, options.HTMLAttributes ),
                         `${ options.suggestion.char }${ node.attrs.label ?? node.attrs.id }`,
                     ];
                 },
-                suggestion: suggestion(fetchUsers)
+                suggestion: suggestion( fetchUsers )
 
             } ),
         ],
@@ -130,55 +134,81 @@ const toggleUnderline = () => editor.value?.chain().focus().toggleUnderline().ru
 
 <template>
     <div v-if=" editor " class="tiptap-editor border rounded-md overflow-hidden">
-        <editor-content :editor=" editor " class="p-0 min-h-[150px]" />
-        <div class="editor-menu flex justify-between">
-            <!-- Existing buttons -->
-            <div class="flex items-center gap-1">
-                <Button size="xxs" :variant=" editor.isActive( 'bold' ) ? 'primary' : 'secondary' "
-                    @click="editor.chain().focus().toggleBold().run()"
-                    :disabled=" !editor.can().chain().focus().toggleBold().run() ">
-                    B
-                </Button>
-                <Button size="xxs" :variant=" editor.isActive( 'italic' ) ? 'primary' : 'secondary' "
-                    @click="editor.chain().focus().toggleItalic().run()"
-                    :disabled=" !editor.can().chain().focus().toggleItalic().run() ">
-                    <span class="italic font-serif">I</span>
-                </Button>
-                <Button size="xxs" :variant=" editor.isActive( 'underline' ) ? 'primary' : 'secondary' "
+        <bubble-menu class="bubble-menu flex gap-1 bg-white" :tippy-options=" { duration: 100, placement: 'top' } "
+            :editor=" editor ">
+            <Toggle size="xs" :pressed=" editor.isActive( 'bold' ) " @click="editor.chain().focus().toggleBold().run()"
+                :disabled=" !editor.can().chain().focus().toggleBold().run() ">
+                <FontBoldIcon />
+            </Toggle>
+            <Toggle size="xs" :pressed=" editor.isActive( 'italics' ) "
+                @click="editor.chain().focus().toggleItalic().run()"
+                :disabled=" !editor.can().chain().focus().toggleItalic().run() ">
+                <FontItalicIcon />
+            </Toggle>
+            <Toggle size="xs" :pressed=" editor.isActive( 'underline' ) "
+                @click="editor.chain().focus().toggleUnderline().run()"
+                :disabled=" !editor.can().chain().focus().toggleUnderline().run() ">
+                U
+            </Toggle>
+            <Toggle size="xs" :pressed=" editor.isActive( 'heading', { level: 1 } ) "
+                @click="editor.chain().focus().toggleHeading( { level: 1 } ).run()">
+                H1
+            </Toggle>
+            <Toggle size="xs" :pressed=" editor.isActive( 'heading', { level: 2 } ) "
+                @click="editor.chain().focus().toggleHeading( { level: 2 } ).run()">
+                H2
+            </Toggle>
+            <Toggle size="xs" :pressed=" editor.isActive( 'bulletList' ) "
+                @click="editor.chain().focus().toggleBulletList().run()">
+                UL
+            </Toggle>
+            <Toggle size="xs" :pressed=" editor.isActive( 'orderedList' ) "
+                @click="editor.chain().focus().toggleOrderedList().run()">
+                OL
+            </Toggle>
+            <Toggle size="xs" @click="editor.chain().focus().undo().run()"
+                :disabled=" !editor.can().chain().focus().undo().run() ">
+                <v-icon name="bi-arrow-counterclockwise" scale="0.8" />
+            </Toggle>
+            <Toggle size="xs" @click="editor.chain().focus().redo().run()"
+                :disabled=" !editor.can().chain().focus().redo().run() ">
+                <v-icon name="bi-arrow-clockwise" scale="0.8" />
+            </Toggle>
+        </bubble-menu>
+
+        <floating-menu :editor=" editor " :tippy-options=" { duration: 100 } " v-if=" editor ">
+            <div class="floating-menu bg-slate-50 p-1">
+                <Toggle size="xs" @click="editor.chain().focus().toggleBold( ).run()"
+                    :class=" { 'is-active': editor.isActive( 'bold' ) } ">
+                    <FontBoldIcon />
+                </Toggle>
+                <Toggle size="xs" @click="editor.chain().focus().toggleItalic( ).run()"
+                    :class=" { 'is-active': editor.isActive( 'italic' ) } ">
+                    <FontItalicIcon />
+                </Toggle>
+                <Toggle size="xs" :pressed=" editor.isActive( 'underline' ) "
                     @click="editor.chain().focus().toggleUnderline().run()"
                     :disabled=" !editor.can().chain().focus().toggleUnderline().run() ">
                     U
-                </Button>
-                <!-- <Button size="xs" :variant="editor.isActive('paragraph') ? 'primary' : 'secondary'" @click="editor.chain().focus().setParagraph().run()">
-                <v-icon name="bi-text-paragraph" />
-            </Button> -->
-                <Button size="xxs" :variant=" editor.isActive( 'heading', { level: 1 } ) ? 'primary' : 'secondary' "
-                    @click="editor.chain().focus().toggleHeading( { level: 1 } ).run()">
+                </Toggle>
+                <Toggle size="xs" @click="editor.chain().focus().toggleHeading( { level: 1 } ).run()"
+                    :class=" { 'is-active': editor.isActive( 'heading', { level: 1 } ) } ">
                     H1
-                </Button>
-                <Button size="xxs" :variant=" editor.isActive( 'heading', { level: 2 } ) ? 'primary' : 'secondary' "
-                    @click="editor.chain().focus().toggleHeading( { level: 2 } ).run()">
+                </Toggle>
+                <Toggle size="xs" @click="editor.chain().focus().toggleHeading( { level: 2 } ).run()"
+                    :class=" { 'is-active': editor.isActive( 'heading', { level: 2 } ) } ">
                     H2
-                </Button>
-                <Button size="xxs" :variant=" editor.isActive( 'bulletList' ) ? 'primary' : 'secondary' "
-                    @click="editor.chain().focus().toggleBulletList().run()">
-                    UL
-                </Button>
-                <Button size="xxs" :variant=" editor.isActive( 'orderedList' ) ? 'primary' : 'secondary' "
-                    @click="editor.chain().focus().toggleOrderedList().run()">
-                    OL
-                </Button>
-                <Button size="xxs" variant="secondary" @click="editor.chain().focus().undo().run()"
-                    :disabled=" !editor.can().chain().focus().undo().run() ">
-                    <v-icon name="bi-arrow-counterclockwise" scale="0.8" />
-                </Button>
-                <Button size="xxs" variant="secondary" @click="editor.chain().focus().redo().run()"
-                    :disabled=" !editor.can().chain().focus().redo().run() ">
-                    <v-icon name="bi-arrow-clockwise" scale="0.8" />
-                </Button>
+                </Toggle>
+                <Toggle size="xs" @click="editor.chain().focus().toggleBulletList().run()"
+                    :class=" { 'is-active': editor.isActive( 'bulletList' ) } ">
+                    Bullet list
+                </Toggle>
             </div>
-            <div class="flex-end">
-                <slot :content=" editor.getText()"></slot>
+        </floating-menu>
+        <editor-content :editor=" editor " class="p-0 min-h-[150px]" />
+        <div class="editor-menu flex justify-end">
+            <div class="justify-self-end">
+                <slot :content=" editor.getText() "></slot>
             </div>
         </div>
     </div>
@@ -348,6 +378,59 @@ const toggleUnderline = () => editor.value?.chain().focus().toggleUnderline().ru
         border: none;
         border-top: 1px solid var(--gray-2);
         margin: 2rem 0;
+    }
+}
+
+/* Bubble menu */
+.bubble-menu {
+    background-color: var(--white, #fff);
+    border: 0px solid var(--gray-1);
+    border-radius: 0.7rem;
+    box-shadow: var(--shadow);
+    display: flex;
+    padding: 0.5rem;
+
+    button {
+        background-color: unset;
+
+        &:hover {
+            background-color: var(--gray-3);
+        }
+
+        &.is-active {
+            background-color: var(--purple);
+
+            &:hover {
+                background-color: var(--purple-contrast);
+            }
+        }
+    }
+}
+
+/* Floating menu */
+.floating-menu {
+    display: flex;
+    background-color: var(--gray-3, --white);
+    padding: 0.1rem;
+    border-radius: 0.5rem;
+
+    button {
+        background-color: unset;
+        padding: 0.275rem 0.425rem;
+        border-radius: 0.3rem;
+
+        &:hover {
+            background-color: var(--gray-3);
+        }
+
+        &.is-active {
+            background-color: var(--white);
+            color: var(--purple);
+
+            &:hover {
+                color: var(--purple-contrast);
+            }
+        }
     }
 }
 </style>

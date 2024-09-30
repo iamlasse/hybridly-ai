@@ -157,15 +157,25 @@ class TasksController extends Controller
     public function bulkUpdate(Request $request, Project $project)
     {
         $request->validate([
+            'task_updated' => ['required', 'integer', 'exists:tasks,id'],
             'tasks' => 'required|array',
             'tasks.*.id' => 'required|integer|exists:tasks,id',
             'tasks.*.status' => 'required|string',
             'tasks.*.order' => 'required|integer',
         ]);
 
+        $updatedTask = Task::find($request->task_updated);
+        $updatedStatus = collect($request->tasks)->where('id', $updatedTask->id)->first()['status'];
+        if($updatedTask->dependencies()->where('dependency_type', 'blocked_by')->exists() && $updatedStatus <> $updatedTask->status) {
+            return back()->with('error','Task has blocking dependencies and cannot change status');
+        }
+
         DB::transaction(function () use ($request, $project) {
             foreach ($request->tasks as $taskData) {
-                $task = $project->tasks()->findOrFail($taskData['id']);
+                $task = $project->tasks()->findOr(id: $taskData['id'], callback: function(){
+                    ds('no task found');
+                });
+                ds($task);
                 $task->update([
                     'status' => $taskData['status'],
                     'order' => $taskData['order'],

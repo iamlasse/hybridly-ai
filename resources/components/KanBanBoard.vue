@@ -96,7 +96,12 @@ const onDragChange = ( event: any, column: Column ) =>
 {
     if ( event.added || event.moved )
     {
-        updateTasksOrder();
+        console.log(event.added?.element)
+
+        const {id: addedId} = event.added?.element ?? {}
+        const { id: movedId } = event.moved?.element ?? {}
+
+        updateTasksOrder(addedId ?? movedId);
     }
 };
 
@@ -108,7 +113,7 @@ const onColumnDragChange = ( event: any ) =>
     }
 };
 
-function updateTasksOrder ()
+function updateTasksOrder (taskId)
 {
     const updatedTasks: { id: number; status: string; order: number; }[] = [];
 
@@ -124,7 +129,7 @@ function updateTasksOrder ()
         } );
     } );
 
-    emit( "updateTasks", updatedTasks );
+    emit( "updateTasks", {updatedTasks, taskId} );
 }
 
 function updateColumnsOrder ()

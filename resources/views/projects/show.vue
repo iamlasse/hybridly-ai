@@ -11,17 +11,43 @@ import
         SelectLabel,
         Select,
     } from "@/components/ui/select";
+    import { useToast } from "@/components/ui/toast/use-toast";
 
-const props = defineProps<{
+const $props = defineProps<{
     project: App.Data.ProjectData;
     users: App.Data.UserData[];
 }>();
 
+const flash = useProperty( "flash" );
+const { toast } = useToast();
+watch( flash, ( val: any ) =>
+{
+    const { error = null, success = null, warning = null, info = null } = val;
+    console.log( error, success, warning, info );
+    if ( error )
+    {
+        toast( {
+            title: "Error",
+            description: error,
+            variant: "destructive",
+        } );
+    }
+
+    if ( success )
+    {
+        toast( {
+            title: "...",
+            description: success,
+            variant: "success",
+        } );
+    }
+} );
+
 const user = useProperty( "security.user" );
 
-const canAddCollaborators = can( props.project, "addCollaborators" );
+const canAddCollaborators = can( $props.project, "addCollaborators" );
 
-const localProject = computed( () => props.project );
+const localProject = computed( () => $props.project );
 
 // New state for selected task and panel visibility
 const selectedTask = ref<App.Data.TaskData | null>( null );
@@ -152,7 +178,7 @@ function closeCollaboratorModal ()
 
 const columns = computed( () =>
 {
-    return props.project.stages.map( ( stage: any ) => ( {
+    return $props.project.stages.map( ( stage: any ) => ( {
         id: stage.slug,
         name: stage.name,
     } ) );
@@ -175,7 +201,7 @@ const renderColumns = computed( () =>
     } ) );
 } );
 
-function updateTasks ( updatedTasks: any )
+function updateTasks ( {updatedTasks, taskId}: {updatedTasks: any, taskId: number} )
 {
     // Update local state
     updatedTasks.forEach( ( updatedTask: App.Data.TaskData ) =>
@@ -202,6 +228,7 @@ function updateTasks ( updatedTasks: any )
             preserveScroll: true,
             preserveUrl: true,
             data: {
+                task_updated: taskId,
                 tasks: updatedTasks,
             },
         }

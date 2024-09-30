@@ -493,9 +493,9 @@ onUnmounted( () =>
                     <ul class="flex flex-col gap-4">
                         <li class="flex gap-2 items-center">
                             <h4 class="font-semibold text-sm flex-shrink-0">Assignee:</h4>
-                            <Popover class="flex">
+                            <Popover class="flex" v-model:open="showAssigneeInput">
                                 <PopoverTrigger asChild>
-                                    <Button variant="ghost" class="font-normal text-sm gap-2 p-1">
+                                    <Button variant="ghost" size="xs" class="font-normal text-sm gap-2 py-2 px-2">
                                         <template v-if=" task.assigned_to_id ">
                                             <Avatar size="xs">
                                                 <AvatarImage src="https://github.com/radix-vue.png" alt="@radix-vue" />
@@ -511,9 +511,9 @@ onUnmounted( () =>
                                         class="hover:bg-slate-100 hover:cursor-pointer"
                                         @click="assignUser( null )"></v-icon>
                                 </PopoverTrigger>
-                                <PopoverContent class="w-[300px] p-0" align="start">
+                                <PopoverContent side="right" class="w-[300px] p-1" align="start">
                                     <Command :filter-function=" userFilterFunction ">
-                                        <CommandInput placeholder="Type a command or search..." />
+                                        <CommandInput placeholder="Search user..." class="p-2 ring-0 outline-none focus:outline-none active:outline-none focus:ring-0 focus:border-slate-400 active:ring-0 h-auto text-xs" />
                                         <CommandEmpty class="p-0 pb-1 px-2 pt-1 text-left">No available users
                                         </CommandEmpty>
                                         <CommandList class="max-h-[300px] overflow-y-auto">

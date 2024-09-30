@@ -3,8 +3,6 @@
 namespace App\Data;
 
 use Carbon\CarbonInterface;
-use Illuminate\Support\Collection;
-use Laravel\Cashier\Subscription;
 use Spatie\LaravelData\Data;
 
 final class UserData extends Data
