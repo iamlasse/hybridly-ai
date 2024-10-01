@@ -32,6 +32,10 @@ export default usersFetcher => ({
                 }
 
                 popup = tippy( 'body', {
+                    arrow: true,
+                    theme: 'light',
+                    sticky: true,
+                    allowHTML: true,
                     getReferenceClientRect: props.clientRect,
                     appendTo: () => document.body,
                     content: component.element,

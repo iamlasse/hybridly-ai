@@ -36,7 +36,6 @@ const renderedContent = computed( () =>
                 class: 'text-indigo-800 bg-indigo-100 p-1 rounded mr-1 text-sm',
                 },
                 renderHTML({ options, node, ...rest }) {
-                    console.log('render option: ', node.attrs, node, rest)
                     return [
                         'a',
                         Object.assign({ href: route('dashboard') }, options.HTMLAttributes),

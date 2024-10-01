@@ -1,7 +1,7 @@
 <template>
-    <div class="dropdown-menu bg-white shadow-sm p-3 border">
+    <div class="dropdown-menu bg-white shadow-sm p-0 border max-h-[200px] overflow-y-scroll">
         <template v-if=" items.length ">
-            <button :class=" { 'bg-indigo-300/30': index === selectedIndex } " v-for="( item, index) in items" :key=" index "
+            <button class="p-1" :class=" { '!bg-slate-100': index === selectedIndex } " v-for="( item, index) in items" :key=" index "
                 @click="selectItem( index )">
                 {{ item.name }}
             </button>

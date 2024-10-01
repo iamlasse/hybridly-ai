@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Editor, EditorContent, VueRenderer, FloatingMenu, BubbleMenu } from '@tiptap/vue-3';
 import StarterKit from '@tiptap/starter-kit';
-import { ref, watch, onMounted, onBeforeUnmount, computed } from 'vue';
+import { ref, watch, onMounted, onBeforeUnmount, computed, h, render } from 'vue';
 import { useDebounceFn } from '@vueuse/core';
 import { isString } from '@vue/shared';
 import Underline from '@tiptap/extension-underline';
@@ -21,6 +21,10 @@ import tippy from 'tippy.js';
 import suggestion from '@/suggestion';
 
 const modelValue = defineModel();
+
+const $props = defineProps<{
+    users: App.Data.UserData[]
+}>()
 
 const emit = defineEmits<{
     ( e: 'update:modelValue', value: any ): void;
@@ -50,14 +54,8 @@ const parseContent = ( content: any ) =>
 const fetchUsers = async ( query ) =>
 {
     // TODO: Replace this with an actual API call
-    const allUsers = [
-        { id: 1, name: 'John Doe' },
-        { id: 2, name: 'Jane Smith' },
-        { id: 3, name: 'Alice Johnson' },
-        { id: 4, name: 'Bob Williams' },
-        { id: 5, name: 'Charlie Brown' },
-    ];
-    return allUsers.filter( user => user.name.toLowerCase().includes( query.toLowerCase() ) );
+
+    return $props.users?.filter( user => user.name.toLowerCase().includes( query.toLowerCase() ) );
 };
 
 
@@ -84,16 +82,15 @@ const initEditor = () =>
             Mention.configure( {
                 deleteTriggerWithBackspace: true,
                 HTMLAttributes: {
-                    class: 'text-indigo-500 mr-1',
+                    class: 'text-indigo-800 bg-indigo-100 p-1 rounded-md text-sm',
                 },
                 renderHTML ( { options, node, ...rest } )
                 {
-                    console.log( 'render option: ', node.attrs, node, rest );
                     return [
                         'a',
-                        Object.assign( { href: route( 'dashboard' ) }, options.HTMLAttributes ),
+                        Object.assign( { href: route( 'dashboard' )}, options.HTMLAttributes ),
                         `${ options.suggestion.char }${ node.attrs.label ?? node.attrs.id }`,
-                    ];
+                    ]
                 },
                 suggestion: suggestion( fetchUsers )
 
@@ -433,4 +430,34 @@ const toggleUnderline = () => editor.value?.chain().focus().toggleUnderline().ru
         }
     }
 }
+
+[data-tippy-root] {
+    @pply bg-white shadow-md;
+    max-height: 200px;
+    overflow-y: scroll;
+}
+
+.tippy-box {
+    max-height: 200px;
+    overflow-y: scroll;
+}
+
+.tippy-content {
+    @apply overflow-y-scroll;
+    max-height: 200px;
+}
+
+.tippy-content .dropdown-menu {
+    max-height: 200px;
+    overflow-y: scroll;
+    @apply p-0;
+}
+
+.tippy-content {
+    .dropdown-menu {
+        button {
+        }
+    }
+}
 </style>
+
