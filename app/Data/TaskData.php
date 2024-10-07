@@ -5,9 +5,11 @@ namespace App\Data;
 use DateTimeInterface;
 use Hybridly\Support\Data\DataResource;
 use Illuminate\Database\Eloquent\Collection;
+use Spatie\LaravelData\Attributes\DataCollectionOf;
 use Spatie\LaravelData\Attributes\LoadRelation;
 use Spatie\LaravelData\Attributes\MapName;
 use Spatie\LaravelData\Attributes\MapOutputName;
+use Spatie\LaravelData\Optional;
 
 class TaskData extends DataResource
 {
@@ -37,7 +39,8 @@ class TaskData extends DataResource
         #[MapOutputName('assigned_to')]
         public readonly ?UserData $assignedTo,
         #[MapOutputName('dependencies')]
-        public readonly ?Collection $dependencies
+        #[DataCollectionOf(TaskData::class)]
+        public readonly Optional|Collection $dependencies,
     ) {}
 
     // public static function normalizers(): array

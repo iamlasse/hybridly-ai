@@ -3,7 +3,7 @@ import tippy from 'tippy.js';
 
 import MentionList from '@/components/MentionList.vue';
 
-export default usersFetcher => ({
+export default (usersFetcher) => ({
     items: async ( { query } ) =>
     {
         return await usersFetcher(query)
@@ -40,7 +40,7 @@ export default usersFetcher => ({
                     appendTo: () => document.body,
                     content: component.element,
                     showOnCreate: true,
-                    interactive: true,
+                    // interactive: true,
                     trigger: 'manual',
                     placement: 'bottom-start',
                 } );

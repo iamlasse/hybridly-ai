@@ -117,7 +117,7 @@ const assignedUser = ref<string | null>(
 
 const showAssigneeInput = ref( false );
 
-const assignUser = ( userId: string ) =>
+const assignUser = ( userId: string|null ) =>
 {
     assignedUser.value = userId;
     router.put( route( "tasks.assign", { task: $props.task.id } ), {
@@ -276,7 +276,7 @@ const handleUpdate = ( id: string | number, data = {}, cb = () => { } ) =>
 
 const showSubtasks = ref( false );
 
-const deleteSubtask = ( subtaskId: string ) =>
+const deleteSubtask = ( subtaskId: string|number|null ) =>
 {
     router.delete( route( "tasks.destroy", { task: subtaskId } ), {
         preserveState: false,
@@ -495,18 +495,18 @@ onUnmounted( () =>
                             <Popover class="flex" v-model:open=" showAssigneeInput ">
                                 <PopoverTrigger asChild>
                                     <Button variant="ghost" size="xs" class="font-normal text-sm gap-2 py-2 px-2">
-                                        <template v-if=" task.assigned_to_id ">
+                                        <template v-if=" task.assigned_to ">
                                             <Avatar size="xs">
                                                 <AvatarImage src="https://github.com/radix-vue.png" alt="@radix-vue" />
                                                 <AvatarFallback>CN</AvatarFallback>
                                             </Avatar>
-                                            {{ users.find( ( u ) => u.id === task.assigned_to_id ).name }}
+                                            {{ users.find( ( u ) => u.id === task.assigned_to?.id )?.name }}
                                         </template>
                                         <template v-else>
                                             <span class="text-sm">Assign user</span>
                                         </template>
                                     </Button>
-                                    <v-icon v-if=" task.assigned_to_id " name="io-close-outline"
+                                    <v-icon v-if=" task.assigned_to " name="io-close-outline"
                                         class="hover:bg-slate-100 hover:cursor-pointer"
                                         @click="assignUser( null )"></v-icon>
                                 </PopoverTrigger>
@@ -521,8 +521,8 @@ onUnmounted( () =>
                                                 <CommandItem v-for="  user in users  " :key=" user.id " :value=" user "
                                                     @select=" ( v ) =>
                                                     {
-                                                        assignUser( v.detail.value.id );
-                                                        showAssigneeInput.value = false;
+                                                        assignUser( v.detail.value?.id );
+                                                        showAssigneeInput = false;
                                                     }
                                                         " class="text-xs gap-2">
                                                     <Avatar size="xs">
@@ -553,7 +553,7 @@ onUnmounted( () =>
                             <h4 class="font-semibold text-sm ">Projects:</h4>
                             <div>
                                 <div class="bg-slate-50 px-2 py-1 text-sm inline-flex rounded-md gap-2">
-                                    <span class="font-semibold text-nowrap flex-1">{{ task.project.name }} </span>
+                                    <span class="font-semibold text-nowrap flex-1">{{ task.project?.name }} </span>
                                     <Select v-model=" task.status " class="p-0"
                                         @update:model-value=" updateTaskStatus ">
                                         <SelectTrigger
@@ -561,8 +561,8 @@ onUnmounted( () =>
                                             <SelectValue placeholder="..." :value=" task.status " />
                                         </SelectTrigger>
                                         <SelectContent class="">
-                                            <SelectItem class="" v-for="(  status, index) in project.stages"
-                                                :key=" status.id " :value=" status.slug ">
+                                            <SelectItem class="" v-for="(  status) in project.stages" :key=" status.id "
+                                                :value=" status.slug ">
                                                 {{ status.name }}
                                             </SelectItem>
                                         </SelectContent>
@@ -572,7 +572,7 @@ onUnmounted( () =>
                         </li>
                         <li class="grid gap-2 grid-cols-[auto_1fr]">
                             <h4 class="font-semibold text-sm">Dependencies:</h4>
-                            <Dependencies :task=" task " :dependencies=" availableTasks "
+                            <Dependencies :task=" task " :available-tasks=" availableTasks "
                                 @add-dependency=" addDependency " @update-dependency=" updateDependency "
                                 @remove-dependency=" removeDependency " />
                         </li>
@@ -582,7 +582,7 @@ onUnmounted( () =>
                         <li>
                             <div class="">
                                 <InputLabel value="Description" class="ml-2 mb-1" />
-                                <TiptapEditor :model-value=" task.description " @update:model-value=" ( modelValue ) =>
+                                <TiptapEditor :model-value=" task.description " :users=" users " @update:model-value=" ( modelValue ) =>
                                     debouncedUpdateTask( {
                                         id: task.id,
                                         description: modelValue,
@@ -681,7 +681,7 @@ onUnmounted( () =>
                     <form @submit.prevent=" onSubmit ">
                         <div class="flex flex-col gap-2 p-2">
                             <span class="text-sm font-semibold">Add Comment</span>
-                            <TiptapEditor class="border-0 w-full" type="text" name="body"
+                            <TiptapEditor :users=" users " class="border-0 w-full" type="text" name="body"
                                 v-model=" commentForm.fields.body ">
                                 <template #default=" { content } ">
                                     <div class="">

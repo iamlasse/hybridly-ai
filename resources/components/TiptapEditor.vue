@@ -13,10 +13,6 @@ import Mention from '@tiptap/extension-mention';
 import { FontBoldIcon, FontItalicIcon } from '@radix-icons/vue';
 import { Button } from '@/components/ui/button';
 import { Toggle } from "@/components/ui/toggle";
-
-import MentionList from '@/components/MentionList.vue';
-
-import tippy from 'tippy.js';
 // Add this function to handle mentions
 import suggestion from '@/suggestion';
 
@@ -54,7 +50,8 @@ const parseContent = ( content: any ) =>
 const fetchUsers = async ( query ) =>
 {
     // TODO: Replace this with an actual API call
-
+    console.log('Users: ', $props)
+    if ( !query ) return $props.users ?? [];
     return $props.users?.filter( user => user.name.toLowerCase().includes( query.toLowerCase() ) );
 };
 
@@ -92,7 +89,8 @@ const initEditor = () =>
                         `${ options.suggestion.char }${ node.attrs.label ?? node.attrs.id }`,
                     ]
                 },
-                suggestion: suggestion( fetchUsers )
+                suggestion: suggestion( fetchUsers ),
+
 
             } ),
         ],
@@ -431,33 +429,33 @@ const toggleUnderline = () => editor.value?.chain().focus().toggleUnderline().ru
     }
 }
 
-[data-tippy-root] {
-    @pply bg-white shadow-md;
-    max-height: 200px;
-    overflow-y: scroll;
-}
+// [data-tippy-root] {
+//     @pply bg-white shadow-md;
+//     max-height: 200px;
+//     overflow-y: scroll;
+// }
 
-.tippy-box {
-    max-height: 200px;
-    overflow-y: scroll;
-}
+// .tippy-box {
+//     max-height: 200px;
+//     overflow-y: scroll;
+// }
 
-.tippy-content {
-    @apply overflow-y-scroll;
-    max-height: 200px;
-}
+// .tippy-content {
+//     @apply overflow-y-scroll;
+//     max-height: 200px;
+// }
 
-.tippy-content .dropdown-menu {
-    max-height: 200px;
-    overflow-y: scroll;
-    @apply p-0;
-}
+// .tippy-content .dropdown-menu {
+//     max-height: 200px;
+//     overflow-y: scroll;
+//     @apply p-0;
+// }
 
-.tippy-content {
-    .dropdown-menu {
-        button {
-        }
-    }
-}
+// .tippy-content {
+//     .dropdown-menu {
+//         button {
+//         }
+//     }
+// }
 </style>
 

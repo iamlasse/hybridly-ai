@@ -3,21 +3,25 @@ import { ref } from 'vue';
 import { cn } from '@/lib/utils'
 
 import { Button } from '@/components/ui/button';
-import
-    {
-        Command,
-        CommandEmpty,
-        CommandGroup,
-        CommandInput,
-        CommandItem,
-        CommandList,
-    } from '@/components/ui/command';
-import
-    {
-        Popover,
-        PopoverContent,
-        PopoverTrigger,
-    } from '@/components/ui/popover';
+import {
+    Command,
+    CommandEmpty,
+    CommandGroup,
+    CommandInput,
+    CommandItem,
+    CommandList,
+} from '@/components/ui/command';
+import {
+    Popover,
+    PopoverContent,
+    PopoverTrigger,
+} from '@/components/ui/popover';
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipTrigger,
+} from '@/components/ui/tooltip';
+import { InfoIcon, CheckIcon } from 'lucide-vue-next';
 
 interface Status
 {
@@ -53,7 +57,8 @@ const selectedStatus = ref<Status>();
 const emit = defineEmits('selectTask')
 const $props = defineProps<{
     availableTasks: App.Data.TaskData[] | null,
-    dependencies: App.Data.TaskData[] | null
+    dependencies: App.Data.TaskData[] | null,
+    eligibleTasks: App.Data.TaskData[] | null
 }>()
 </script>
 
@@ -70,16 +75,29 @@ const $props = defineProps<{
             <CommandEmpty>No tasks found.</CommandEmpty>
             <CommandList>
                 <CommandGroup>
-                    <CommandItem v-for=" task in availableTasks " :key=" task.id " :value=" task.title " @select=" ( ev ) =>
-                        {
-                            if ( typeof ev.detail.value === 'string' )
-                            {
+                    <CommandItem 
+                        v-for="task in eligibleTasks" 
+                        :key="task.id" 
+                        :value="task.title" 
+                        :disabled="!task.isEligible"
+                        @select="(ev) => {
+                            if (typeof ev.detail.value === 'string' && task.isEligible) {
                                 emit('selectTask', task.id)
+                                open = false;
                             }
-                            open = false;
-                        } ">
+                        }"
+                        :class="{ 'opacity-50 cursor-not-allowed': !task.isEligible }"
+                    >
                         {{ task.title }}
                         <CheckIcon class="ml-auto h-4 w-4" :class="value === task.id ? 'opacity-100' : 'opacity-0'" />
+                        <Tooltip v-if="!task.isEligible">
+                            <TooltipTrigger>
+                                <InfoIcon class="ml-2 h-4 w-4 text-gray-400" />
+                            </TooltipTrigger>
+                            <TooltipContent>
+                                This task cannot be added as a dependency to avoid circular dependencies.
+                            </TooltipContent>
+                        </Tooltip>
                     </CommandItem>
                 </CommandGroup>
             </CommandList>

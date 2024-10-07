@@ -2,35 +2,32 @@
 import { ref, computed, watch } from 'vue';
 import { useDebounceFn, onClickOutside } from '@vueuse/core';
 
-import
-{
+import {
     Command,
     CommandEmpty,
     CommandGroup,
     CommandInput,
     CommandItem,
     CommandList,
+} from '../components/ui/command';
 
-} from '@/components/ui/command';
-
-import
-{
+import {
     Select,
     SelectContent,
     SelectItem,
     SelectTrigger,
     SelectValue,
+} from '../components/ui/select';
 
-} from '@/components/ui/select';
-
-
-import { Button } from '@/components/ui/button';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-
+import { Button } from '../components/ui/button';
+import { Popover, PopoverContent, PopoverTrigger } from '../components/ui/popover';
+import { Tooltip, TooltipContent, TooltipTrigger } from '../components/ui/tooltip';
+import { InfoIcon } from 'lucide-vue-next';
+import type {App} from '../types/generated'
 
 const $props = defineProps<{
     task: App.Data.TaskData,
-    dependencies: App.Data.TaskData[];
+    availableTasks: App.Data.TaskData[];
 }>();
 
 const emit = defineEmits( [ 'add-dependency', 'update-dependency', 'remove-dependency' ] );
@@ -101,10 +98,63 @@ const activeDependency = ref<App.Data.TaskData | null>( null );
 const dependencySearchTerm = ref('');
 
 const availableTasks = computed(() => {
-    return $props.dependencies?.filter(t =>
+    return $props.availableTasks?.filter(t =>
         t.id !== $props.task.id &&
         !$props.task.dependencies.some((d: App.Data.TaskData) => d.id === t.id)
     );
+});
+
+
+
+/**
+ * Checks if adding a task as a dependency would create a circular dependency.
+ *
+ * @param taskId - The ID of the task to check.
+ * @returns True if adding the task would create a circular dependency, false otherwise.
+ */
+function wouldCreateCircularDependency(taskId: number): boolean {
+    const visited = new Set<number>();
+
+    function dfs(currentTaskId: number): boolean {
+        console.log(`Checking task ${currentTaskId}`);
+        if (visited.has(currentTaskId)) {
+            console.log(`Circular dependency detected at task ${currentTaskId}`);
+            return true; // Circular dependency detected
+        }
+
+        visited.add(currentTaskId);
+
+        const currentTask: Partial<App.Data.TaskData> = $props.availableTasks.find((t: App.Data.TaskData) => t.id === currentTaskId);
+        if (!currentTask) {
+            console.log(`Task ${currentTaskId} not found in dependencies`);
+            return false;
+        }
+
+        console.log(`Checking dependencies of task ${currentTaskId}`, currentTask);
+
+        // for ( const dependency of currentTask.dependencies ) {
+        //     if (dfs(dependency.id)) {
+        //         return true; // Circular dependency detected
+        //     }
+        // }
+
+        visited.delete(currentTaskId);
+        return false;
+    }
+
+    // Start the DFS from the current task
+    visited.add($props.task.id);
+    const result = dfs(taskId);
+    console.log(`Checking if task ${taskId} would create a circular dependency: ${result}`);
+    return result;
+}
+
+// Use the wouldCreateCircularDependency function in the eligibleTasks computed property
+const eligibleTasks = computed(() => {
+    return availableTasks.value.map(task => ({
+        ...task,
+        isEligible: !wouldCreateCircularDependency(task.id)
+    }));
 } );
 
 const filterTasks = ( val: any, term: string ) =>
@@ -120,10 +170,8 @@ const filterTasks = ( val: any, term: string ) =>
     // } );
 }
 
-const filteredTasks = computed( () =>
-{
-    console.log( 'search term: ', dependencySearchTerm )
-    return availableTasks.value.filter((task) =>
+const filteredTasks = computed(() => {
+    return eligibleTasks.value.filter((task) =>
         task.title.toLowerCase().includes(dependencySearchTerm.value.toLowerCase())
     );
 });

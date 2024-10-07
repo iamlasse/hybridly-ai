@@ -43,7 +43,7 @@ sub_tasks: any | null;
 comments_count: number | null;
 order: number;
 assigned_to: App.Data.UserData | null;
-dependencies: any | null;
+dependencies?: Array<App.Data.TaskData>;
 };
 export type UserData = {
 id: number;

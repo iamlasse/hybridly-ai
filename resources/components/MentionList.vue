@@ -1,12 +1,12 @@
 <template>
-    <div class="dropdown-menu bg-white shadow-sm p-0 border max-h-[200px] overflow-y-scroll">
-        <template v-if=" items.length ">
+    <div class="bg-white shadow-sm p-1 text-xs border flex flex-col items-start">
+        <template v-if=" items?.length ">
             <button class="p-1" :class=" { '!bg-slate-100': index === selectedIndex } " v-for="( item, index) in items" :key=" index "
                 @click="selectItem( index )">
                 {{ item.name }}
             </button>
         </template>
-        <div class="item" v-else>
+        <div class="item text-xs" v-else>
             No result
         </div>
     </div>
@@ -102,34 +102,34 @@ export default {
 
 <style lang="scss">
 /* Dropdown menu */
-.dropdown-menu {
-    background: var(--white);
-    border: 1px solid var(--gray-1);
-    border-radius: 0.7rem;
-    box-shadow: var(--shadow);
-    display: flex;
-    flex-direction: column;
-    gap: 0.1rem;
-    overflow: auto;
-    padding: 0.4rem;
-    position: relative;
+// .dropdown-menu {
+//     background: var(--white);
+//     border: 1px solid var(--gray-1);
+//     border-radius: 0.7rem;
+//     box-shadow: var(--shadow);
+//     display: flex;
+//     flex-direction: column;
+//     gap: 0.1rem;
+//     overflow: auto;
+//     padding: 0.4rem;
+//     position: relative;
 
-    button {
-        align-items: center;
-        background-color: transparent;
-        display: flex;
-        gap: 0.25rem;
-        text-align: left;
-        width: 100%;
+//     button {
+//         align-items: center;
+//         background-color: transparent;
+//         display: flex;
+//         gap: 0.25rem;
+//         text-align: left;
+//         width: 100%;
 
-        &:hover,
-        &:hover.is-selected {
-            background-color: var(--gray-3);
-        }
+//         &:hover,
+//         &:hover.is-selected {
+//             background-color: var(--gray-3);
+//         }
 
-        &.is-selected {
-            background-color: var(--gray-2);
-        }
-    }
-}
+//         &.is-selected {
+//             background-color: var(--gray-2);
+//         }
+//     }
+// }
 </style>
