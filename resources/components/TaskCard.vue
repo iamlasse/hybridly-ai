@@ -90,7 +90,7 @@ const formattedDueDate = computed(() => {
                         <v-icon name="oi-comment-discussion" class="text-gray-600"></v-icon>
                         <p class="text-xs text-gray-600">{{ task.comments_count }}</p>
                     </div>
-                    <div v-if=" task.dependencies.length " class="flex items-center hover:bg-slate-100">
+                    <div v-if=" task.dependencies " class="flex items-center hover:bg-slate-100">
                         <v-icon class="h-[14px]" name="bi-hourglass"></v-icon>
                         <span class="text-sm">{{ task.dependencies.length }}</span>
                     </div>
