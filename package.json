@@ -41,6 +41,7 @@
         }
     },
     "dependencies": {
+        "@infectoone/vue-ganttastic": "^2.3.2",
         "@internationalized/date": "^3.5.5",
         "@radix-icons/vue": "^1.0.0",
         "@tiptap/extension-color": "^2.7.2",
@@ -56,14 +57,18 @@
         "@vueuse/components": "^11.1.0",
         "class-variance-authority": "^0.7.0",
         "clsx": "^2.1.1",
+        "date-fns": "^4.1.0",
         "dayjs": "^1.11.13",
+        "install": "^0.13.0",
         "lodash": "^4.17.21",
         "lodash-es": "^4.17.21",
+        "npm": "^10.9.0",
         "oh-vue-icons": "1.0.0-rc3",
         "radix-vue": "^1.9.6",
         "tailwind-merge": "^2.5.2",
         "tailwindcss-animate": "^1.0.7",
         "tippy.js": "^6.3.7",
+        "vue-ganttastic": "^0.9.34",
         "vuedraggable": "^4.1.0"
     }
 }

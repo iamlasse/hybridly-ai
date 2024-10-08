@@ -11,7 +11,8 @@ import
         SelectLabel,
         Select,
     } from "@/components/ui/select";
-    import { useToast } from "@/components/ui/toast/use-toast";
+import { useToast } from "@/components/ui/toast/use-toast";
+import GanttChart from "./GanttChart.vue";
 
 const $props = defineProps<{
     project: App.Data.ProjectData;
@@ -352,6 +353,11 @@ function updateStage ( { columnId, newName } )
             <KanBanBoard :columns=" renderColumns " :project-id=" localProject.id " @update-tasks=" updateTasks "
                 @select-task=" selectTask " @add-task=" addTask " @delete-stage=" deleteStage "
                 @update-stage="updateStage" />
+            
+            <div class="mt-8 px-4">
+                <h2 class="text-2xl font-bold mb-4 text-white">Gantt Chart</h2>
+                <GanttChart :tasks="localProject.tasks" />
+            </div>
         </div>
 
         <!-- Add Collaborator Modal -->
