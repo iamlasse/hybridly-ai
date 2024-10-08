@@ -428,34 +428,5 @@ const toggleUnderline = () => editor.value?.chain().focus().toggleUnderline().ru
         }
     }
 }
-
-// [data-tippy-root] {
-//     @pply bg-white shadow-md;
-//     max-height: 200px;
-//     overflow-y: scroll;
-// }
-
-// .tippy-box {
-//     max-height: 200px;
-//     overflow-y: scroll;
-// }
-
-// .tippy-content {
-//     @apply overflow-y-scroll;
-//     max-height: 200px;
-// }
-
-// .tippy-content .dropdown-menu {
-//     max-height: 200px;
-//     overflow-y: scroll;
-//     @apply p-0;
-// }
-
-// .tippy-content {
-//     .dropdown-menu {
-//         button {
-//         }
-//     }
-// }
 </style>
 

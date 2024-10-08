@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
 use Hybridly\View\Factory;
 use Hybridly\View\View;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -34,6 +35,24 @@ class AuthenticatedSessionController extends Controller
         $request->session()->regenerate();
 
         return redirect()->intended(route('dashboard', absolute: false));
+    }
+
+    public function loginApi(Request $request): JsonResponse
+    {
+        $request->validate([
+            'email' => ['required', 'email'],
+            'password' => ['required'],
+        ]);
+
+        if (Auth::attempt($request->only('email', 'password'))) {
+            $user = Auth::user();
+            $token = $user->createToken('auth_token')->plainTextToken;
+
+            return response()->json([
+                'token' => $token,
+                'token_type' => 'Bearer',
+            ]);
+        }
     }
 
     /**

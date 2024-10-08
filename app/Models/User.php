@@ -11,13 +11,14 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Cashier\Billable;
+use Laravel\Sanctum\HasApiTokens;
 
 /**
  * @mixin IdeHelperUser
  */
 class User extends Authenticatable
 {
-    use HasFactory, Notifiable, Billable;
+    use HasFactory, Notifiable, Billable, HasApiTokens;
 
     protected $casts = [
         'email_verified_at' => 'datetime',
